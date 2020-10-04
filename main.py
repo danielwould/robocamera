@@ -18,21 +18,20 @@ from helpers.ui import TextPrint
 from helpers.crane import crane
 from helpers.gimbal import gimbal
 
-gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0,0,0))
-crane_inst = crane("/dev/ttyACM1", cranepos(0,0))
-
+gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0))
+crane_inst = crane("/dev/ttyACM1", cranepos(0, 0))
 
 VALID_CHARS = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./"
 SHIFT_CHARS = '~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
-
 
 GIMBAL_CONTROL = 1
 CRANE_CONTROL = 0
 CONTROL_TOGGLE = GIMBAL_CONTROL
 
-FEED_RATE=0
-MOVE_TIME=1
+FEED_RATE = 0
+MOVE_TIME = 1
 MOVE_TOGGLE = FEED_RATE
+
 
 # waypoints are a tuple of a tuple of x,y,z positions and a time in seconds to hold at location
 # ((0,0,0),10)
@@ -44,6 +43,7 @@ def toggle_control(value):
     print(value)
     CONTROL_TOGGLE = value
 
+
 def toggle_move_mode(value):
     global MOVE_TOGGLE
     print("toggle move mode to")
@@ -54,11 +54,11 @@ def toggle_move_mode(value):
 def value_button(screen, msg, x, y, w, h, ic, ac, value, ui_info, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
-    if x+w > mouse[0] > x and y+h > mouse[1] > y:
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
         pygame.draw.rect(screen, ac, (x, y, w, h))
 
-        if click[0] == 1 and action != None:
-            if (ui_info.can_click()):
+        if click[0] == 1 and action is not None:
+            if ui_info.can_click():
                 print("clicked button")
                 action(value)
                 ui_info.clicked()
@@ -67,17 +67,17 @@ def value_button(screen, msg, x, y, w, h, ic, ac, value, ui_info, action=None):
 
     small_text = pygame.font.SysFont("comicsansms", 14)
     text_surface, text_rect = UI.text_objects(msg, small_text)
-    text_rect.center = ((x+int(w/2)), (y+int(h/2)))
+    text_rect.center = ((x + int(w / 2)), (y + int(h / 2)))
     screen.blit(text_surface, text_rect)
 
 
 def waypoint_button(screen, msg, x, y, w, h, ic, ac, value, item_list, ui_info, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
-    if x+w > mouse[0] > x and y+h > mouse[1] > y:
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
         pygame.draw.rect(screen, ac, (x, y, w, h))
 
-        if click[0] == 1 and action != None:
+        if click[0] == 1 and action is not None:
             if ui_info.can_click():
                 print("clicked waypoint button")
                 action(value, item_list)
@@ -87,18 +87,18 @@ def waypoint_button(screen, msg, x, y, w, h, ic, ac, value, item_list, ui_info, 
 
     small_text = pygame.font.SysFont("comicsansms", 14)
     text_surface, text_rect = UI.text_objects(msg, small_text)
-    text_rect.center = ((x+int(w/2)), (y+int(h/2)))
+    text_rect.center = ((x + int(w / 2)), (y + int(h / 2)))
     screen.blit(text_surface, text_rect)
 
 
 def trigger_button(screen, msg, x, y, w, h, ic, ac, ui_info, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
-    if x+w > mouse[0] > x and y+h > mouse[1] > y:
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
         pygame.draw.rect(screen, ac, (x, y, w, h))
 
-        if click[0] == 1 and action != None:
-            if (ui_info.can_click()):
+        if click[0] == 1 and action is not None:
+            if ui_info.can_click():
                 print("clicked action button")
                 action()
                 ui_info.clicked()
@@ -108,32 +108,31 @@ def trigger_button(screen, msg, x, y, w, h, ic, ac, ui_info, action=None):
 
     small_text = pygame.font.SysFont("comicsansms", 14)
     text_surface, text_rect = UI.text_objects(msg, small_text)
-    text_rect.center = ((x+(w/2)), (y+(h/2)))
+    text_rect.center = ((x + (w / 2)), (y + (h / 2)))
     screen.blit(text_surface, text_rect)
 
 
-
-
-
 def set_feed_rate(feedval):
-    if (CONTROL_TOGGLE == GIMBAL_CONTROL):
+    if CONTROL_TOGGLE == GIMBAL_CONTROL:
         print("updating feeddefault from {} to {}".format(
             feedval, gimbal_inst.get_feed_speed()))
         gimbal_inst.set_feed_speed(feedval)
-    if (CONTROL_TOGGLE == CRANE_CONTROL):
+    if CONTROL_TOGGLE == CRANE_CONTROL:
         print("updating crane feeddefault from {} to {}".format(
             feedval, crane_inst.get_feed_speed()))
         crane_inst.set_feed_speed(feedval)
-        
+
+
 def set_move_time(seconds):
-    if (CONTROL_TOGGLE == GIMBAL_CONTROL):
+    if CONTROL_TOGGLE == GIMBAL_CONTROL:
         print("updating gimbal move time from {} to {}".format(
             seconds, gimbal_inst.get_move_duration()))
         gimbal_inst.set_move_duration(seconds)
-    if (CONTROL_TOGGLE == CRANE_CONTROL):
+    if CONTROL_TOGGLE == CRANE_CONTROL:
         print("updating crane move time from {} to {}".format(
             seconds, crane_inst.get_move_duration()))
         crane_inst.set_move_duration(seconds)
+
 
 def add_waypoint(dwell_input_text, sequence_steps):
     print("add waypoint")  # (x, y, z,focus, feed), dwell time
@@ -146,37 +145,39 @@ def add_waypoint(dwell_input_text, sequence_steps):
 
 
 def delete_waypoint(item, sequence_steps):
+    # todo allow for deleting specific waypoint item
     sequence_steps.delete_waypoint()
+
 
 def start_sequence(sequence_steps):
     print("starting sequence")
-    if (len(sequence_steps.waypoints) > 0):
+    if len(sequence_steps.waypoints) > 0:
         sequence_steps.start()
         trigger_sequence_step(sequence_steps)
 
-def trigger_sequence_step(sequence_steps):
 
-    print("sequence step triiger")
+def trigger_sequence_step(sequence_steps):
+    # TODO this needs to support move base on time
+    print("sequence step triger")
     wp = sequence_steps.get_next_step()
-    crane_inst.move_to_position(
+    crane_inst.move_to_waypoint(
         wp.get_crane_position(), wp.get_crane_travel_to_feed_rate())
-    gimbal_inst.move_to_position(
+    gimbal_inst.move_to_waypoint(
         wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate())
 
+
 def save_point_move(savepoint):
-    if (MOVE_TOGGLE==FEED_RATE):
+    if MOVE_TOGGLE == FEED_RATE:
         crane_inst.move_to_position_at_rate(savepoint)
         gimbal_inst.move_to_position_at_rate(savepoint)
-    if (MOVE_TOGGLE==MOVE_TIME):
+    if MOVE_TOGGLE == MOVE_TIME:
         crane_inst.move_to_position_in_time(savepoint)
         gimbal_inst.move_to_position_in_time(savepoint)
-        
-
-
 
 
 def main():
     # waypoints is the list of waypoints, and their dwell times
+
     ui_info = UI()
     sequence_steps = sequence()
     countdown = False
@@ -184,7 +185,6 @@ def main():
     movetime_input_text = '5'
     dwell_input_text = '10'
 
-  
     # x= gimble pan, y= gimble tilt, z= camera zoom, t= boom_tilt
     savepos1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
     savepos2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
@@ -200,7 +200,7 @@ def main():
 
     # Loop until the user clicks the close button.
     done = False
-    
+
     # Used to manage how fast the screen updates.
     clock = pygame.time.Clock()
 
@@ -208,7 +208,7 @@ def main():
     pygame.joystick.init()
 
     # Get ready to print.
-    textPrint = TextPrint()
+    text_print = TextPrint()
     waypoint_print = TextPrint()
     waypoint_print.set_location(200, 20)
 
@@ -228,7 +228,7 @@ def main():
     feed_input = pygame.Rect(700, 268, 40, 32)
     dwell_input = pygame.Rect(500, 268, 40, 32)
     countdown_rect = pygame.Rect(300, 200, 100, 100)
-    #hold_time_input = pygame.Rect(580, 128, 25, 32)
+    # hold_time_input = pygame.Rect(580, 128, 25, 32)
 
     # -------- Main Program Loop -----------
     while not done:
@@ -263,8 +263,10 @@ def main():
 
                 else:
                     dwell_input_active = False
-                feed_input_colour = feed_input_colour_feed_input_active if feed_input_active else feed_input_colour_infeed_input_active
-                dwell_input_colour = dwell_input_colour_feed_input_active if dwell_input_active else dwell_input_colour_infeed_input_active
+                feed_input_colour = feed_input_colour_feed_input_active if feed_input_active \
+                    else feed_input_colour_infeed_input_active
+                dwell_input_colour = dwell_input_colour_feed_input_active if dwell_input_active \
+                    else dwell_input_colour_infeed_input_active
             if event.type == pygame.KEYDOWN:
                 if feed_input_active:
                     if event.key == pygame.K_RETURN:
@@ -281,169 +283,169 @@ def main():
                     elif event.key == pygame.K_BACKSPACE:
                         dwell_input_text = dwell_input_text[:-1]
                     else:
-                        dwell_input_text += event.unicode					#
+                        dwell_input_text += event.unicode  #
 
         # DRAWING STEP
         #
         # First, clear the screen to white. Don't put other drawing commands
         # above this, or they will be erased with this command.
         screen.fill(UI.white)
-        textPrint.reset()
+        text_print.reset()
         waypoint_print.set_location(200, 20)
 
         # Get count of joysticks.
         joystick_count = pygame.joystick.get_count()
-        status = "none"
-        textPrint.tprint(
+
+        text_print.tprint(
             screen, "Number of joysticks: {}".format(joystick_count))
-        textPrint.indent()
-        textPrint.tprint(screen, "Gimbal position")
-        textPrint.tprint(screen, "    {}".format(
+        text_print.indent()
+        text_print.tprint(screen, "Gimbal position")
+        text_print.tprint(screen, "    {}".format(
             gimbal_inst.current_location_str()))
-        textPrint.tprint(screen, "Crane position")
-        textPrint.tprint(screen, "    {}".format(
+        text_print.tprint(screen, "Crane position")
+        text_print.tprint(screen, "    {}".format(
             crane_inst.current_location_str()))
-        textPrint.tprint(
+        text_print.tprint(
             screen, "Gimbal feedspeed {}".format(gimbal_inst.get_feed_speed()))
-        textPrint.tprint(
+        text_print.tprint(
             screen, "Gimbal move duration {}".format(gimbal_inst.get_move_duration()))
-                    
-        textPrint.tprint(
+
+        text_print.tprint(
             screen, "Crane feedspeed {}".format(crane_inst.get_feed_speed()))
-        textPrint.tprint(
+        text_print.tprint(
             screen, "Crane move duration {}".format(crane_inst.get_move_duration()))
 
-        textPrint.tprint(screen, "Save pos Y (LB)")
-        textPrint.tprint(screen, "   {}".format(
+        text_print.tprint(screen, "Save pos Y (LB)")
+        text_print.tprint(screen, "   {}".format(
             savepos1.location_str()))
-        textPrint.tprint(screen, "Save pos B (RB)")
-        textPrint.tprint(screen, "   {}".format(
+        text_print.tprint(screen, "Save pos B (RB)")
+        text_print.tprint(screen, "   {}".format(
             savepos2.location_str()))
-        textPrint.tprint(screen, "Save pos A (R1)")
-        textPrint.tprint(screen, "   {}".format(
+        text_print.tprint(screen, "Save pos A (R1)")
+        text_print.tprint(screen, "   {}".format(
             savepos3.location_str()))
-        textPrint.tprint(screen, "Save pos X (L1)")
-        textPrint.tprint(screen, "   {}".format(
+        text_print.tprint(screen, "Save pos X (L1)")
+        text_print.tprint(screen, "   {}".format(
             savepos4.location_str()))
 
         # For each joystick:
-        for i in range(joystick_count):
-            joystick = pygame.joystick.Joystick(i)
+        for joystick_num in range(joystick_count):
+            joystick = pygame.joystick.Joystick(joystick_num)
             joystick.init()
             axes = joystick.get_numaxes()
-            
-            for i in range(axes):
 
-                axis = joystick.get_axis(i)
-                if (CONTROL_TOGGLE == GIMBAL_CONTROL):
-                    if time.time()-gimbal_inst.last_command_sent_at >0.2:
-                        if (i == 0):
-                            if(axis >= 0.99):
+            for axis_num in range(axes):
+
+                axis = joystick.get_axis(axis_num)
+                if CONTROL_TOGGLE == GIMBAL_CONTROL:
+                    if time.time() - gimbal_inst.last_command_sent_at > 0.2:
+                        if axis_num == 0:
+                            if axis >= 0.99:
                                 gimbal_inst.rotate_right_small()
 
-                            if(axis == -1):
+                            if axis == -1:
                                 gimbal_inst.rotate_left_small()
 
-                        if (i == 1):
-                            if(axis >= 0.99):
+                        if axis_num == 1:
+                            if axis >= 0.99:
                                 gimbal_inst.tilt_down_small()
-                            if(axis == -1):
+                            if axis == -1:
                                 gimbal_inst.tilt_up_small()
-                        if (i == 2):
-                            if(axis >= 0.99):
+                        if axis_num == 2:
+                            if axis >= 0.99:
                                 gimbal_inst.rotate_right_large()
-                            if(axis == -1):
+                            if axis == -1:
                                 gimbal_inst.rotate_left_large()
-                        if (i == 3):
-                            if(axis >= 0.99):
+                        if axis_num == 3:
+                            if axis >= 0.99:
                                 gimbal_inst.tilt_down_large()
-                            if(axis == -1):
+                            if axis == -1:
                                 gimbal_inst.tilt_up_large()
 
                 if CONTROL_TOGGLE == CRANE_CONTROL:
-                    if time.time()-crane_inst.last_command_sent_at >0.2:
-                        if i == 0:
+                    if time.time() - crane_inst.last_command_sent_at > 0.2:
+                        if axis_num == 0:
                             if axis >= 0.99:
                                 crane_inst.rotate_left_small()
                             if axis == -1:
                                 crane_inst.rotate_right_small()
-                        if i == 1:
+                        if axis_num == 1:
                             if axis >= 0.99:
                                 crane_inst.rotate_left_large()
                             if axis == -1:
                                 crane_inst.rotate_right_large()
-                        if i == 2:
+                        if axis_num == 2:
                             if axis >= 0.99:
                                 crane_inst.tilt_down_small()
                             if axis == -1:
                                 crane_inst.tilt_up_small()
-                        if i == 3:
+                        if axis_num == 3:
                             if axis >= 0.99:
                                 crane_inst.tilt_down_large()
                             if axis == -1:
                                 crane_inst.tilt_up_large()
-            
-            textPrint.unindent()
+
+            text_print.unindent()
 
             buttons = joystick.get_numbuttons()
-            #textPrint.tprint(screen, "Number of buttons: {}".format(buttons))
-            # textPrint.indent()
+            # text_print.tprint(screen, "Number of buttons: {}".format(buttons))
+            # text_print.indent()
 
-            for i in range(buttons):
-                button = joystick.get_button(i)
-                #textPrint.tprint(screen,"Button {:>2} value: {}".format(i, button))
-                if (i == 0):
+            for button_num in range(buttons):
+                button = joystick.get_button(button_num)
+                # text_print.tprint(screen,"Button {:>2} value: {}".format(i, button))
+                if button_num == 0:
 
-                    if (button == 1):
+                    if button == 1:
                         # save position 1 when prssing
                         savepos1 = waypoint(
                             crane_inst.get_current_location, gimbal_inst.get_current_location)
-                if (i == 1):
-                    if (button == 1):
+                if button_num == 1:
+                    if button == 1:
                         savepos2 = waypoint(
                             crane_inst.get_current_location, gimbal_inst.get_current_location)
-                if (i == 2):
-                    if (button == 1):
+                if button_num == 2:
+                    if button == 1:
                         savepos3 = waypoint(
                             crane_inst.get_current_location, gimbal_inst.get_current_location)
-                if (i == 3):
-                    if (button == 1):
+                if button_num == 3:
+                    if button == 1:
                         savepos4 = waypoint(
                             crane_inst.get_current_location, gimbal_inst.get_current_location)
-                if (i == 4):
-                    if (button == 1):
+                if button_num == 4:
+                    if button == 1:
                         save_point_move(savepos1)
-                if (i == 5):
-                    if (button == 1):
+                if button_num == 5:
+                    if button == 1:
                         save_point_move(savepos2)
-                if (i == 6):
-                    if (button == 1):
+                if button_num == 6:
+                    if button == 1:
                         save_point_move(savepos3)
-                if (i == 7):
-                    if (button == 1):
+                if button_num == 7:
+                    if button == 1:
                         save_point_move(savepos4)
-                if (i == 8):
-                    if (button == 1):
+                if button_num == 8:
+                    if button == 1:
                         crane_inst.reset()
                         gimbal_inst.reset()
                         savepos1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
                         savepos2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
                         savepos3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
                         savepos4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-                if (i == 9):
-                    if (button == 1):
+                if button_num == 9:
+                    if button == 1:
                         start_sequence(sequence_steps)
 
-            textPrint.unindent()
+            text_print.unindent()
 
             hats = joystick.get_numhats()
 
             # Hat position. All or nothing for direction, not a float like
             # get_axis(). Position is a tuple of int values (x, y).
-            if time.time()-gimbal_inst.last_command_sent_at > 0.2:
-                for i in range(hats):
-                    hat = joystick.get_hat(i)
-                    #textPrint.tprint(screen, "Hat {} value: {}".format(i, str(hat)))
+            if time.time() - gimbal_inst.last_command_sent_at > 0.2:
+                for hat_num in range(hats):
+                    hat = joystick.get_hat(hat_num)
+                    # text_print.tprint(screen, "Hat {} value: {}".format(i, str(hat)))
                     # print "Hat {} value: {}".format(i, str(hat))
                     if hat[0] == 1:
                         gimbal_inst.zoom_in_large()
@@ -453,61 +455,60 @@ def main():
                         gimbal_inst.zoom_in_small()
                     if hat[1] == 1:
                         gimbal_inst.zoom_out_small()
-            
 
-            textPrint.unindent()
+            text_print.unindent()
 
-            textPrint.unindent()
+            text_print.unindent()
 
         pygame.draw.rect(screen, UI.black, (690, 5, 105, 370), 2)
         if MOVE_TOGGLE == FEED_RATE:
             UI.render_text(screen, "Feed Rate:", 740, 12)
             value_button(screen, "100", 700, 28, 90, 50, UI.yellow,
-                        UI.bright_green, 100, ui_info, set_feed_rate)
+                         UI.bright_green, 100, ui_info, set_feed_rate)
             value_button(screen, "500", 700, 88, 90, 50, UI.yellow,
-                        UI.bright_green, 500, ui_info, set_feed_rate)
+                         UI.bright_green, 500, ui_info, set_feed_rate)
             value_button(screen, "1000", 700, 148, 90, 50, UI.yellow,
-                        UI.bright_green, 1000, ui_info, set_feed_rate)
+                         UI.bright_green, 1000, ui_info, set_feed_rate)
             value_button(screen, "2000", 700, 208, 90, 50, UI.yellow,
-                        UI.bright_green, 2000, ui_info, set_feed_rate)
-            if (feed_input_text != ''):
+                         UI.bright_green, 2000, ui_info, set_feed_rate)
+            if feed_input_text != '':
                 value_button(screen, "custom", 700, 310, 90, 50, UI.blue, UI.bright_blue,
-                            int(feed_input_text), ui_info, set_feed_rate)
+                             int(feed_input_text), ui_info, set_feed_rate)
         if MOVE_TOGGLE == MOVE_TIME:
             UI.render_text(screen, "move time(sec):", 740, 12)
             value_button(screen, "2", 700, 28, 90, 50, UI.yellow,
-                        UI.bright_green, 100, ui_info, set_move_time)
+                         UI.bright_green, 100, ui_info, set_move_time)
             value_button(screen, "5", 700, 88, 90, 50, UI.yellow,
-                        UI.bright_green, 500, ui_info, set_move_time)
+                         UI.bright_green, 500, ui_info, set_move_time)
             value_button(screen, "10", 700, 148, 90, 50, UI.yellow,
-                        UI.bright_green, 1000, ui_info, set_move_time)
+                         UI.bright_green, 1000, ui_info, set_move_time)
             value_button(screen, "20", 700, 208, 90, 50, UI.yellow,
-                        UI.bright_green, 2000, ui_info, set_move_time)
-            if (movetime_input_text != ''):
+                         UI.bright_green, 2000, ui_info, set_move_time)
+            if movetime_input_text != '':
                 value_button(screen, "custom", 700, 310, 90, 50, UI.blue, UI.bright_blue,
-                            int(movetime_input_text), ui_info, set_move_time)
+                             int(movetime_input_text), ui_info, set_move_time)
         waypoint_button(screen, "Add Way-point", 580, 28, 90, 50,
                         UI.yellow, UI.bright_green, dwell_input_text, sequence_steps, ui_info, add_waypoint)
         waypoint_button(screen, "Delete Way-point", 580, 88, 90, 50,
                         UI.yellow, UI.bright_green, 0, sequence_steps, ui_info, delete_waypoint)
 
-        if (CONTROL_TOGGLE == GIMBAL_CONTROL):
+        if CONTROL_TOGGLE == GIMBAL_CONTROL:
             value_button(screen, "Gimbal", 200, 248, 90, 50, UI.yellow,
                          UI.bright_green, GIMBAL_CONTROL, ui_info, toggle_control)
             value_button(screen, "Crane", 295, 248, 90, 50, UI.grey,
                          UI.bright_green, CRANE_CONTROL, ui_info, toggle_control)
-        if (CONTROL_TOGGLE == CRANE_CONTROL):
+        if CONTROL_TOGGLE == CRANE_CONTROL:
             value_button(screen, "Gimbal", 200, 248, 90, 50, UI.grey,
                          UI.bright_green, GIMBAL_CONTROL, ui_info, toggle_control)
             value_button(screen, "Crane)", 295, 248, 90, 50, UI.yellow,
                          UI.bright_green, CRANE_CONTROL, ui_info, toggle_control)
 
-        if (MOVE_TOGGLE == FEED_RATE):
+        if MOVE_TOGGLE == FEED_RATE:
             value_button(screen, "Move mm/min", 200, 308, 90, 50, UI.yellow,
                          UI.bright_green, FEED_RATE, ui_info, toggle_move_mode)
             value_button(screen, "move sec", 295, 308, 90, 50, UI.grey,
                          UI.bright_green, MOVE_TIME, ui_info, toggle_move_mode)
-        if (MOVE_TOGGLE == MOVE_TIME):
+        if MOVE_TOGGLE == MOVE_TIME:
             value_button(screen, "Move mm/min", 200, 308, 90, 50, UI.grey,
                          UI.bright_green, FEED_RATE, ui_info, toggle_move_mode)
             value_button(screen, "move sec)", 295, 308, 90, 50, UI.yellow,
@@ -519,19 +520,19 @@ def main():
             # Render the current text.
             waypoint_print.tprint(screen, wp.location_str())
             waypoint_print.tprint(screen, wp.get_feed_info())
-            wpitem = wpitem+1
+            wpitem = wpitem + 1
 
         # Render the current text.
-
+        txt_surface = None
         if MOVE_TOGGLE == FEED_RATE:
             txt_surface = font.render(feed_input_text, True, feed_input_colour)
         if MOVE_TOGGLE == MOVE_TIME:
             txt_surface = font.render(movetime_input_text, True, feed_input_colour)
         # Resize the box if the text is too long.
-        width = max(200, txt_surface.get_width()+10)
-        #feed_input.w = width
+        width = max(200, txt_surface.get_width() + 10)
+        feed_input.w = width
         # Blit the text.
-        screen.blit(txt_surface, (feed_input.x+5, feed_input.y+5))
+        screen.blit(txt_surface, (feed_input.x + 5, feed_input.y + 5))
         # Blit the feed_input rect.
         pygame.draw.rect(screen, feed_input_colour, feed_input, 2)
 
@@ -541,21 +542,21 @@ def main():
         dwell_txt_surface = font.render(
             dwell_input_text, True, dwell_input_colour)
         # Resize the box if the text is too long.
-        dwell_width = max(200, dwell_txt_surface.get_width()+10)
-        #dwell_input.w = dwell_width
+        dwell_width = max(200, dwell_txt_surface.get_width() + 10)
+        dwell_input.w = dwell_width
         # Blit the text.
-        screen.blit(dwell_txt_surface, (dwell_input.x+5, dwell_input.y+5))
+        screen.blit(dwell_txt_surface, (dwell_input.x + 5, dwell_input.y + 5))
         # Blit the feed_input rect.
         pygame.draw.rect(screen, dwell_input_colour, dwell_input, 2)
 
         if countdown:
             pygame.draw.rect(screen, (255, 0, 0), countdown_rect, 2)
-            timeleft = step_finished_at - time.time()
-            UI.render_text(screen, "Waypoint :{}".format(current_step), 250, 200)
+            timeleft = sequence_steps.step_finished_at - time.time()
+            UI.render_text(screen, "Waypoint :{}".format(sequence_steps.current_step), 250, 200)
             txt_countdown = font_big.render(
                 "{0:3.2}".format(timeleft), True, (255, 0, 0))
             screen.blit(txt_countdown,
-                        (countdown_rect.x+5, countdown_rect.y+5))
+                        (countdown_rect.x + 5, countdown_rect.y + 5))
 
         #
         # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
