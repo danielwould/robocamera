@@ -168,11 +168,11 @@ def trigger_sequence_step(sequence_steps):
 
 def save_point_move(savepoint):
     if MOVE_TOGGLE == FEED_RATE:
-        crane_inst.move_to_position_at_rate(savepoint)
-        gimbal_inst.move_to_position_at_rate(savepoint)
+        crane_inst.move_to_position_at_rate(savepoint.get_crane_position())
+        gimbal_inst.move_to_position_at_rate(savepoint.get_gimbal_position())
     if MOVE_TOGGLE == MOVE_TIME:
-        crane_inst.move_to_position_in_time(savepoint)
-        gimbal_inst.move_to_position_in_time(savepoint)
+        crane_inst.move_to_position_in_time(savepoint.get_crane_position())
+        gimbal_inst.move_to_position_in_time(savepoint.get_gimbal_position())
 
 
 def tilt_up():
