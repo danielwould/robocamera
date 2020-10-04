@@ -552,17 +552,17 @@ def main():
 
         # controller buttons
         # screen, msg, x, y, w, h, ic, ac, ui_info, action=None):
-        trigger_button(screen, "^", 60, 300, 30, 30,
+        trigger_button(screen, "U", 60, 300, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, tilt_up)
-        trigger_button(screen, "﹀", 60, 350, 30, 30,
+        trigger_button(screen, "D", 60, 350, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, tilt_down)
-        trigger_button(screen, "<", 10, 325, 30, 30,
+        trigger_button(screen, "L", 10, 325, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, rotate_left)
-        trigger_button(screen, ">", 110, 325, 30, 30,
+        trigger_button(screen, "R", 110, 325, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, rotate_right)
-        trigger_button(screen, "Z^", 150, 300, 30, 30,
+        trigger_button(screen, "Zi", 150, 300, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, zoom_in)
-        trigger_button(screen, "Z﹀", 150, 350, 30, 30,
+        trigger_button(screen, "Zo", 150, 350, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, zoom_out)
         pygame.draw.rect(screen, UI.black, (190, 5, 490, 370), 2)
         wpitem = 0
