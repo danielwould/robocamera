@@ -499,7 +499,7 @@ def main():
                                 if CONTROL_TOGGLE == GIMBAL_CONTROL:
                                     toggle_control(CRANE_CONTROL)
                                     control_last_toggled = time.time()
-                                if CONTROL_TOGGLE == CRANE_CONTROL:
+                                elif CONTROL_TOGGLE == CRANE_CONTROL:
                                     toggle_control(GIMBAL_CONTROL)
                                     control_last_toggled = time.time()
 
