@@ -69,25 +69,25 @@ class base_control_object:
         self.controller.relative_move("y-{}".format(
             self.small_step_tilt), self.current_feed_speed)
         self.last_command_sent_at = time.time()
-        self.currentlocation.increment_tilt(self.small_step_tilt)
+        self.currentlocation.decrement_tilt(self.small_step_tilt)
 
     def tilt_down_small(self):
         self.controller.relative_move(
             "y{}".format(self.small_step_tilt), self.current_feed_speed)
         self.last_command_sent_at = time.time()
-        self.currentlocation.decrement_tilt(self.small_step_tilt)
+        self.currentlocation.increment_tilt(self.small_step_tilt)
 
     def tilt_up_large(self):
         self.controller.relative_move("y-{}".format(
             self.big_step_tilt), self.current_feed_speed)
         self.last_command_sent_at = time.time()
-        self.currentlocation.increment_tilt(self.big_step_tilt)
+        self.currentlocation.decrement_tilt(self.big_step_tilt)
 
     def tilt_down_large(self):
         self.controller.relative_move(
             "y{}".format(self.big_step_tilt), self.current_feed_speed)
         self.last_command_sent_at = time.time()
-        self.currentlocation.decrement_tilt(self.big_step_tilt)
+        self.currentlocation.increment_tilt(self.big_step_tilt)
 
     def move_to_position_at_rate(self, position):
         self.controller.absolute_move(position.get_rotation_pos(),position.get_tilt_pos(),0,self.current_feed_speed)
