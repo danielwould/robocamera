@@ -199,7 +199,17 @@ def save_position(savepoint):
     if savepoint == 4:
         save_position_4 = new_waypoint
 
-
+def reset():
+    global save_position_1
+    global save_position_2
+    global save_position_3
+    global save_position_4
+    crane_inst.reset()
+    gimbal_inst.reset()
+    save_position_1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+    save_position_2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+    save_position_3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+    save_position_4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
 
 def tilt_up():
     if CONTROL_TOGGLE == GIMBAL_CONTROL:
@@ -481,12 +491,11 @@ def main():
                         save_point_move(save_position_4)
                 if button_num == 8:
                     if button == 1:
-                        crane_inst.reset()
-                        gimbal_inst.reset()
-                        save_position_1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-                        save_position_2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-                        save_position_3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-                        save_position_4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+                        if CONTROL_TOGGLE == GIMBAL_CONTROL:
+                            toggle_control(CRANE_CONTROL)
+                        if CONTROL_TOGGLE == CRANE_CONTROL:
+                            toggle_control(GIMBAL_CONTROL)
+
                 if button_num == 9:
                     if button == 1:
                         start_sequence(sequence_steps)
@@ -592,6 +601,11 @@ def main():
                        UI.yellow, UI.bright_green, 3, ui_info, save_position)
         value_button(screen, "X", 110, 260, 30, 30,
                        UI.yellow, UI.bright_green, 4, ui_info, save_position)
+
+        # reset button
+        trigger_button(screen, "RESET", 650, 340, 30, 30,
+                       UI.yellow, UI.bright_green, ui_info, reset)
+
         pygame.draw.rect(screen, UI.black, (190, 5, 490, 370), 2)
         wpitem = 0
         for wp in sequence_steps.waypoints:
