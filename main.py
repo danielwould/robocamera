@@ -18,8 +18,10 @@ from helpers.ui import TextPrint
 from helpers.crane import crane
 from helpers.gimbal import gimbal
 
-gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0), 1)
-crane_inst = crane("/dev/ttyACM1", cranepos(0, 0), 1)
+MOCK = 0
+
+gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0), MOCK)
+crane_inst = crane("/dev/ttyACM1", cranepos(0, 0), MOCK)
 
 VALID_CHARS = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./"
 SHIFT_CHARS = '~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
