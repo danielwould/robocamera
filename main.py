@@ -185,18 +185,19 @@ def save_position(savepoint):
     global save_position_2
     global save_position_3
     global save_position_4
+    crane_position = crane_inst.get_current_location()
+    gimbal_position = gimbal_inst.get_current_location()
+    new_waypoint = waypoint(
+        cranepos(crane_position.get_rotation_pos(), crane_position.get_tilt_pos()),
+        gimbalpos(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()))
     if savepoint == 1:
-        save_position_1 = waypoint(
-            crane_inst.get_current_location(), gimbal_inst.get_current_location())
+        save_position_1 = new_waypoint
     if savepoint == 2:
-        save_position_2 = waypoint(
-            crane_inst.get_current_location(), gimbal_inst.get_current_location())
+        save_position_2 = new_waypoint
     if savepoint == 3:
-        save_position_3 = waypoint(
-            crane_inst.get_current_location(), gimbal_inst.get_current_location())
+        save_position_3 = new_waypoint
     if savepoint == 4:
-        save_position_4 = waypoint(
-            crane_inst.get_current_location(), gimbal_inst.get_current_location())
+        save_position_4 = new_waypoint
 
 
 
