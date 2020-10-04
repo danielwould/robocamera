@@ -2,8 +2,8 @@ from helpers.base_control_object import base_control_object
 import time
 
 class gimbal(base_control_object):
-    small_step_zoom = 1
-    big_step_zoom = 5
+    small_step_zoom = 0.2
+    big_step_zoom = 1
 
     def __init__(self, device, position, mode):
         super().__init__(device, position, mode)
