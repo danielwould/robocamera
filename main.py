@@ -400,10 +400,8 @@ def main():
                         if axis_num == 0:
                             if axis >= 0.99:
                                 gimbal_inst.rotate_right_small()
-
                             if axis == -1:
                                 gimbal_inst.rotate_left_small()
-
                         if axis_num == 1:
                             if axis >= 0.99:
                                 gimbal_inst.tilt_down_small()
@@ -424,19 +422,19 @@ def main():
                     if time.time() - crane_inst.last_command_sent_at > 0.2:
                         if axis_num == 0:
                             if axis >= 0.99:
-                                crane_inst.rotate_left_small()
-                            if axis == -1:
                                 crane_inst.rotate_right_small()
-                        if axis_num == 1:
-                            if axis >= 0.99:
-                                crane_inst.rotate_left_large()
                             if axis == -1:
-                                crane_inst.rotate_right_large()
-                        if axis_num == 2:
+                                crane_inst.rotate_left_small()
+                        if axis_num == 1:
                             if axis >= 0.99:
                                 crane_inst.tilt_down_small()
                             if axis == -1:
                                 crane_inst.tilt_up_small()
+                        if axis_num == 2:
+                            if axis >= 0.99:
+                                crane_inst.rotate_right_large()
+                            if axis == -1:
+                                crane_inst.rotate_left_large()
                         if axis_num == 3:
                             if axis >= 0.99:
                                 crane_inst.tilt_down_large()
