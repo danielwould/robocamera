@@ -1,8 +1,13 @@
 from helpers.base_control_object import base_control_object
-import time 
+import time
 
 class gimbal(base_control_object):
-    
+    small_step_zoom = 1
+    big_step_zoom = 5
+
+    def __init__(self, device, position, mode):
+        super().__init__(device, position, mode)
+
     def zoom_in_small(self):
         self.controller.relative_move("z{}".format(
             self.small_step_zoom), self.current_feed_speed)

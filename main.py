@@ -18,8 +18,8 @@ from helpers.ui import TextPrint
 from helpers.crane import crane
 from helpers.gimbal import gimbal
 
-gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0))
-crane_inst = crane("/dev/ttyACM1", cranepos(0, 0))
+gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0), 0)
+crane_inst = crane("/dev/ttyACM1", cranepos(0, 0),0)
 
 VALID_CHARS = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./"
 SHIFT_CHARS = '~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
@@ -108,7 +108,7 @@ def trigger_button(screen, msg, x, y, w, h, ic, ac, ui_info, action=None):
 
     small_text = pygame.font.SysFont("comicsansms", 14)
     text_surface, text_rect = UI.text_objects(msg, small_text)
-    text_rect.center = ((x + (w / 2)), (y + (h / 2)))
+    text_rect.center = ((x + int(w / 2)), (y + int(h / 2)))
     screen.blit(text_surface, text_rect)
 
 
@@ -175,6 +175,42 @@ def save_point_move(savepoint):
         gimbal_inst.move_to_position_in_time(savepoint)
 
 
+def tilt_up():
+    if CONTROL_TOGGLE == GIMBAL_CONTROL:
+        gimbal_inst.tilt_up_small()
+    if CONTROL_TOGGLE == CRANE_CONTROL:
+        crane_inst.tilt_up_small()
+
+
+def tilt_down():
+    if CONTROL_TOGGLE == GIMBAL_CONTROL:
+        gimbal_inst.tilt_down_small()
+    if CONTROL_TOGGLE == CRANE_CONTROL:
+        crane_inst.tilt_down_small()
+
+
+def rotate_left():
+    if CONTROL_TOGGLE == GIMBAL_CONTROL:
+        gimbal_inst.rotate_left_small()
+    if CONTROL_TOGGLE == CRANE_CONTROL:
+        crane_inst.rotate_left_small()
+
+
+def rotate_right():
+    if CONTROL_TOGGLE == GIMBAL_CONTROL:
+        gimbal_inst.rotate_right_small()
+    if CONTROL_TOGGLE == CRANE_CONTROL:
+        crane_inst.rotate_right_small()
+
+
+def zoom_in():
+    gimbal_inst.zoom_in_small()
+
+
+def zoom_out():
+    gimbal_inst.zoom_out_small()
+
+
 def main():
     # waypoints is the list of waypoints, and their dwell times
 
@@ -186,10 +222,10 @@ def main():
     dwell_input_text = '10'
 
     # x= gimble pan, y= gimble tilt, z= camera zoom, t= boom_tilt
-    savepos1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-    savepos2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-    savepos3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-    savepos4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+    save_position_1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+    save_position_2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+    save_position_3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+    save_position_4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
 
     pygame.init()
 
@@ -317,16 +353,16 @@ def main():
 
         text_print.tprint(screen, "Save pos Y (LB)")
         text_print.tprint(screen, "   {}".format(
-            savepos1.location_str()))
+            save_position_1.location_str()))
         text_print.tprint(screen, "Save pos B (RB)")
         text_print.tprint(screen, "   {}".format(
-            savepos2.location_str()))
+            save_position_2.location_str()))
         text_print.tprint(screen, "Save pos A (R1)")
         text_print.tprint(screen, "   {}".format(
-            savepos3.location_str()))
+            save_position_3.location_str()))
         text_print.tprint(screen, "Save pos X (L1)")
         text_print.tprint(screen, "   {}".format(
-            savepos4.location_str()))
+            save_position_4.location_str()))
 
         # For each joystick:
         for joystick_num in range(joystick_count):
@@ -398,40 +434,40 @@ def main():
 
                     if button == 1:
                         # save position 1 when prssing
-                        savepos1 = waypoint(
+                        save_position_1 = waypoint(
                             crane_inst.get_current_location, gimbal_inst.get_current_location)
                 if button_num == 1:
                     if button == 1:
-                        savepos2 = waypoint(
+                        save_position_2 = waypoint(
                             crane_inst.get_current_location, gimbal_inst.get_current_location)
                 if button_num == 2:
                     if button == 1:
-                        savepos3 = waypoint(
+                        save_position_3 = waypoint(
                             crane_inst.get_current_location, gimbal_inst.get_current_location)
                 if button_num == 3:
                     if button == 1:
-                        savepos4 = waypoint(
+                        save_position_4 = waypoint(
                             crane_inst.get_current_location, gimbal_inst.get_current_location)
                 if button_num == 4:
                     if button == 1:
-                        save_point_move(savepos1)
+                        save_point_move(save_position_1)
                 if button_num == 5:
                     if button == 1:
-                        save_point_move(savepos2)
+                        save_point_move(save_position_2)
                 if button_num == 6:
                     if button == 1:
-                        save_point_move(savepos3)
+                        save_point_move(save_position_3)
                 if button_num == 7:
                     if button == 1:
-                        save_point_move(savepos4)
+                        save_point_move(save_position_4)
                 if button_num == 8:
                     if button == 1:
                         crane_inst.reset()
                         gimbal_inst.reset()
-                        savepos1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-                        savepos2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-                        savepos3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-                        savepos4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+                        save_position_1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+                        save_position_2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+                        save_position_3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+                        save_position_4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
                 if button_num == 9:
                     if button == 1:
                         start_sequence(sequence_steps)
@@ -514,6 +550,20 @@ def main():
             value_button(screen, "move sec)", 295, 308, 90, 50, UI.yellow,
                          UI.bright_green, MOVE_TIME, ui_info, toggle_move_mode)
 
+        # controller buttons
+        # screen, msg, x, y, w, h, ic, ac, ui_info, action=None):
+        trigger_button(screen, "^", 60, 300, 30, 30,
+                       UI.yellow, UI.bright_green, ui_info, tilt_up)
+        trigger_button(screen, "﹀", 60, 350, 30, 30,
+                       UI.yellow, UI.bright_green, ui_info, tilt_down)
+        trigger_button(screen, "<", 10, 325, 30, 30,
+                       UI.yellow, UI.bright_green, ui_info, rotate_left)
+        trigger_button(screen, ">", 110, 325, 30, 30,
+                       UI.yellow, UI.bright_green, ui_info, rotate_right)
+        trigger_button(screen, "Z^", 150, 300, 30, 30,
+                       UI.yellow, UI.bright_green, ui_info, zoom_in)
+        trigger_button(screen, "Z﹀", 150, 350, 30, 30,
+                       UI.yellow, UI.bright_green, ui_info, zoom_out)
         pygame.draw.rect(screen, UI.black, (190, 5, 490, 370), 2)
         wpitem = 0
         for wp in sequence_steps.waypoints:
@@ -529,7 +579,8 @@ def main():
         if MOVE_TOGGLE == MOVE_TIME:
             txt_surface = font.render(movetime_input_text, True, feed_input_colour)
         # Resize the box if the text is too long.
-        width = max(200, txt_surface.get_width() + 10)
+
+        width = min(100, txt_surface.get_width() + 10)
         feed_input.w = width
         # Blit the text.
         screen.blit(txt_surface, (feed_input.x + 5, feed_input.y + 5))
@@ -542,7 +593,7 @@ def main():
         dwell_txt_surface = font.render(
             dwell_input_text, True, dwell_input_colour)
         # Resize the box if the text is too long.
-        dwell_width = max(200, dwell_txt_surface.get_width() + 10)
+        dwell_width = min(100, dwell_txt_surface.get_width() + 10)
         dwell_input.w = dwell_width
         # Blit the text.
         screen.blit(dwell_txt_surface, (dwell_input.x + 5, dwell_input.y + 5))

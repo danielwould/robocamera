@@ -11,10 +11,10 @@ class base_control_object:
     last_command_sent_at = time.time()
     currentlocation = None
 
-    def __init__(self, device, position):
+    def __init__(self, device, position, mode):
         self.device = device
         self.currentlocation=position
-        self.controller=grbl_controller()
+        self.controller=grbl_controller(mode)
         self.controller.set_device(self.device)
 
     def reset(self):
