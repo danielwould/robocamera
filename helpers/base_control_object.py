@@ -20,7 +20,6 @@ class base_control_object:
     def reset(self):
         self.currentlocation.reset()
 
-
     def current_location_str(self):
         return self.currentlocation.current_location_str()
     
@@ -93,14 +92,16 @@ class base_control_object:
     def move_to_position_at_rate(self, position):
         self.controller.absolute_move(position.get_rotation_pos(),position.get_tilt_pos(),0,self.current_feed_speed)
         self.last_command_sent_at = time.time()
-        self.currentlocation=position
+        self.currentlocation.set_location(position)
 
     def move_to_position_in_time(self, position):
         self.controller.absolute_move_by_time(position.get_rotation_pos(),position.get_tilt_pos(),0,self.current_move_duration)
         self.last_command_sent_at = time.time()
-        self.currentlocation=position
+        self.currentlocation.set_location(position)
+
 
     def move_to_waypoint(self, position, feed_rate):
         self.controller.absolute_move(position.get_rotation_pos(),position.get_tilt_pos(),0,feed_rate)
         self.last_command_sent_at = time.time()
-        self.currentlocation=position
+        self.currentlocation.set_location(position)
+

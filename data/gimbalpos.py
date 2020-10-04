@@ -12,6 +12,12 @@ class gimbalpos:
     def current_location_str(self):
         return "rot:{},tilt:{},zoom:{}".format(self.rotation_pos, self.tilt_pos, self.zoom_pos)
 
+
+    def set_location(self, position):
+        self.rotation_pos = position.get_rotation_pos()
+        self.tilt_pos = position.get_tilt_pos()
+        self.zoom_pos = position.get_zoom_pos()
+
     def get_rotation_pos(self):
         return self.rotation_pos
 

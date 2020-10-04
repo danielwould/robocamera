@@ -10,6 +10,10 @@ class cranepos:
     def current_location_str(self):
         return "rot:{},tilt:{}".format(self.rotation_pos, self.tilt_pos)
 
+    def set_location(self, position):
+        self.rotation_pos = position.get_rotation_pos()
+        self.tilt_pos = position.get_tilt_pos()
+
     def get_rotation_pos(self):
         return self.rotation_pos
 
