@@ -19,6 +19,7 @@ class base_control_object:
 
     def reset(self):
         self.currentlocation.reset()
+        self.controller.reset()
 
     def current_location_str(self):
         return self.currentlocation.current_location_str()

@@ -17,6 +17,9 @@ class grbl_controller:
         if self.MODE == self.REAL_MODE:
             self.grbl_connection = serial.Serial(device, 115200, timeout=0.2)
 
+    def reset(self):
+        self.write_gcode("G92 X0 Y0 Z0")
+
     def relative_move(self, move_str, feedrate):
         self.write_gcode("g91")
         self.write_gcode("g94")
