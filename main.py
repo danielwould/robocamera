@@ -18,8 +18,8 @@ from helpers.ui import TextPrint
 from helpers.crane import crane
 from helpers.gimbal import gimbal
 
-gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0), 0)
-crane_inst = crane("/dev/ttyACM1", cranepos(0, 0),0)
+gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0), 1)
+crane_inst = crane("/dev/ttyACM1", cranepos(0, 0), 1)
 
 VALID_CHARS = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./"
 SHIFT_CHARS = '~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
@@ -32,9 +32,12 @@ FEED_RATE = 0
 MOVE_TIME = 1
 MOVE_TOGGLE = FEED_RATE
 
+# x= gimble pan, y= gimble tilt, z= camera zoom, t= boom_tilt
+save_position_1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+save_position_2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+save_position_3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+save_position_4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
 
-# waypoints are a tuple of a tuple of x,y,z positions and a time in seconds to hold at location
-# ((0,0,0),10)
 
 
 def toggle_control(value):
@@ -175,6 +178,26 @@ def save_point_move(savepoint):
         gimbal_inst.move_to_position_in_time(savepoint.get_gimbal_position())
 
 
+def save_position(savepoint):
+    global save_position_1
+    global save_position_2
+    global save_position_3
+    global save_position_4
+    if savepoint == 1:
+        save_position_1 = waypoint(
+            crane_inst.get_current_location(), gimbal_inst.get_current_location())
+    if savepoint == 2:
+        save_position_2 = waypoint(
+            crane_inst.get_current_location(), gimbal_inst.get_current_location())
+    if savepoint == 3:
+        save_position_3 = waypoint(
+            crane_inst.get_current_location(), gimbal_inst.get_current_location())
+    if savepoint == 4:
+        save_position_4 = waypoint(
+            crane_inst.get_current_location(), gimbal_inst.get_current_location())
+
+
+
 def tilt_up():
     if CONTROL_TOGGLE == GIMBAL_CONTROL:
         gimbal_inst.tilt_up_small()
@@ -213,7 +236,10 @@ def zoom_out():
 
 def main():
     # waypoints is the list of waypoints, and their dwell times
-
+    global save_position_1
+    global save_position_2
+    global save_position_3
+    global save_position_4
     ui_info = UI()
     sequence_steps = sequence()
     countdown = False
@@ -221,11 +247,7 @@ def main():
     movetime_input_text = '5'
     dwell_input_text = '10'
 
-    # x= gimble pan, y= gimble tilt, z= camera zoom, t= boom_tilt
-    save_position_1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-    save_position_2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-    save_position_3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-    save_position_4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+
 
     pygame.init()
 
@@ -434,20 +456,16 @@ def main():
 
                     if button == 1:
                         # save position 1 when prssing
-                        save_position_1 = waypoint(
-                            crane_inst.get_current_location, gimbal_inst.get_current_location)
+                        save_position(1)
                 if button_num == 1:
                     if button == 1:
-                        save_position_2 = waypoint(
-                            crane_inst.get_current_location, gimbal_inst.get_current_location)
+                        save_position(2)
                 if button_num == 2:
                     if button == 1:
-                        save_position_3 = waypoint(
-                            crane_inst.get_current_location, gimbal_inst.get_current_location)
+                        save_position(3)
                 if button_num == 3:
                     if button == 1:
-                        save_position_4 = waypoint(
-                            crane_inst.get_current_location, gimbal_inst.get_current_location)
+                        save_position(4)
                 if button_num == 4:
                     if button == 1:
                         save_point_move(save_position_1)
@@ -564,6 +582,15 @@ def main():
                        UI.yellow, UI.bright_green, ui_info, zoom_in)
         trigger_button(screen, "Zo", 150, 350, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, zoom_out)
+        #onscreen save position
+        value_button(screen, "Y", 10, 260, 30, 30,
+                       UI.yellow, UI.bright_green, 1, ui_info, save_position)
+        value_button(screen, "B", 40, 260, 30, 30,
+                       UI.yellow, UI.bright_green, 2, ui_info, save_position)
+        value_button(screen, "A", 80, 260, 30, 30,
+                       UI.yellow, UI.bright_green, 3, ui_info, save_position)
+        value_button(screen, "X", 110, 260, 30, 30,
+                       UI.yellow, UI.bright_green, 4, ui_info, save_position)
         pygame.draw.rect(screen, UI.black, (190, 5, 490, 370), 2)
         wpitem = 0
         for wp in sequence_steps.waypoints:
