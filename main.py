@@ -259,6 +259,8 @@ def main():
     feed_input_text = '1750'
     movetime_input_text = '5'
     dwell_input_text = '10'
+    # used to handle button presses registering faster than you can release
+    control_last_toggled = time.time()
 
 
 
@@ -491,10 +493,13 @@ def main():
                         save_point_move(save_position_4)
                 if button_num == 8:
                     if button == 1:
-                        if CONTROL_TOGGLE == GIMBAL_CONTROL:
-                            toggle_control(CRANE_CONTROL)
-                        if CONTROL_TOGGLE == CRANE_CONTROL:
-                            toggle_control(GIMBAL_CONTROL)
+                        if time.time() - control_last_toggled > 0.5:
+                            if CONTROL_TOGGLE == GIMBAL_CONTROL:
+                                toggle_control(CRANE_CONTROL)
+                                control_last_toggled = time.time()
+                            if CONTROL_TOGGLE == CRANE_CONTROL:
+                                toggle_control(GIMBAL_CONTROL)
+                                control_last_toggled = time.time()
 
                 if button_num == 9:
                     if button == 1:
