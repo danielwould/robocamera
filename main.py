@@ -146,7 +146,7 @@ def add_waypoint(dwell_input_text, sequence_steps):
     wp.set_dwell_time(int(dwell_input_text))
     wp.set_gimbal_travel_to_feed_rate(gimbal_inst.get_feed_speed())
     wp.set_crane_travel_to_feed_rate(crane_inst.get_feed_speed())
-    wp.set_gimbal_travel_duration(gimbal_inst.get_move_duration())
+    wp.set_gimbal_travel_to_duration(gimbal_inst.get_move_duration())
     wp.set_crane_travel_to_duration(crane_inst.get_move_duration())
     sequence_steps.add_waypoint(wp)
 
