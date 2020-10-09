@@ -52,3 +52,8 @@ class gimbal(base_control_object):
                                       feed_rate)
         self.last_command_sent_at = time.time()
         self.currentlocation.set_location(position)
+        
+    def move_to_waypoint_by_time(self, position, duration):
+        self.controller.absolute_move_by_time(position.get_rotation_pos(),position.get_tilt_pos(), position.get_zoom_pos(),duration)
+        self.last_command_sent_at = time.time()
+        self.currentlocation.set_location(position)

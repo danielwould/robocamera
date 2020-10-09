@@ -11,7 +11,9 @@ class sequence:
         print ("initalised sequence")
 
     def add_waypoint(self,wp):
+        
         self.waypoints.append(wp)
+
 
     def delete_waypoint(self):
         print ("delete waypoint")
@@ -24,7 +26,7 @@ class sequence:
         self.sequnce_started_at= time.time()
 
     def get_next_step(self):
-        print ("returning step {} of {}".format(self.current_step,len(self.waypoints))) 
+        print ("returning step {} of {}".format(self.current_step+1,len(self.waypoints))) 
         waypoint = self.waypoints[self.current_step]
         self.current_step=self.current_step+1
         if self.current_step==len(self.waypoints):
