@@ -24,6 +24,7 @@ class sequence:
         self.sequnce_started_at= time.time()
 
     def get_next_step(self):
+        print ("returning step {} of {}".format(self.current_step,len(self.waypoints))) 
         waypoint = self.waypoints[self.current_step]
         self.current_step=self.current_step+1
         if self.current_step==len(self.waypoints):
