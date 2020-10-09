@@ -319,9 +319,17 @@ def main():
     # -------- Main Program Loop -----------
     while not done:
         if sequence_steps.sequence_running:
-            current_time = time.time()
-            if current_time > sequence_steps.step_finished_at:
-                trigger_sequence_step(sequence_steps)
+            if MOVE_TOGGLE == MOVE_FEED: 
+                current_time = time.time()
+                if current_time > sequence_steps.step_finished_at:
+                    trigger_sequence_step(sequence_steps)
+            if MOVE_TOGGLE == MOVE_TIME:
+                current_time = time.time()
+                current_gimbal_travel_duration = sequence_steps.waypoints[sequnce_steps.current_step].get_gimbal_travel_to_duration()
+                current_crane_travel_duration = sequence_steps.waypoints[sequnce_steps.current_step].get_crane_travel_to_duration()
+                
+                if current_time > self.last_step_triggered_at+max(current_gimbal_travel_duration,current_crane_travel_duration):
+                    trigger_sequnce_step(sequence_steps)
 
         #
         # EVENT PROCESSING STEP
