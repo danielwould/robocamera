@@ -676,7 +676,7 @@ def main():
             
                 finishtime = sequence_steps.last_step_triggered_at + max(current_gimbal_travel_duration,current_crane_travel_duration)
                 
-            timeleft = time.get_time()-finishtime
+            timeleft = time.time()-finishtime
             UI.render_text(screen, "Waypoint :{}".format(sequence_steps.current_step), 250, 200)
             txt_countdown = font_big.render(
                 "{0:3.2}".format(timeleft), True, (255, 0, 0))
