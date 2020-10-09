@@ -346,7 +346,6 @@ def main():
                 if dwell_input.collidepoint(event.pos):
                     # Toggle the feed_input_active variable.
                     dwell_input_active = not dwell_input_active
-
                 else:
                     dwell_input_active = False
                 feed_input_colour = feed_input_colour_feed_input_active if feed_input_active \
@@ -357,12 +356,21 @@ def main():
                 if feed_input_active:
                     if event.key == pygame.K_RETURN:
                         print(feed_input_text)
-                        feed_input_text = ''
+                        if MOVE_TOGGLE == MOVE_TIME:
+                            move_input_text = ''
+                        if MOVE_TOGGLE == FEED_RATE:
+                            feed_input_text = ''
                     elif event.key == pygame.K_BACKSPACE:
-                        feed_input_text = feed_input_text[:-1]
+                        if MOVE_TOGGLE == MOVE_TIME:
+                            move_input_text = move_input_text[:-1]
+                        if MOVE_TOGGLE == FEED_RATE:
+                            feed_input_text = feed_input_text[:-1]
 
                     else:
-                        feed_input_text += event.unicode
+                        if MOVE_TOGGLE == MOVE_TIME:
+                            move_input_text += event.unicode
+                        if MOVE_TOGGLE == FEED_RATE:
+                            feed_input_text += event.unicode
                 if dwell_input_active:
                     if event.key == pygame.K_RETURN:
                         dwell_input_text = ''
@@ -648,6 +656,7 @@ def main():
         screen.blit(txt_surface, (feed_input.x + 5, feed_input.y + 5))
         # Blit the feed_input rect.
         pygame.draw.rect(screen, feed_input_colour, feed_input, 2)
+        
 
         UI.render_text(screen, "Dwell time at waypoint (s):", 580, 235)
 
