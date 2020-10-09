@@ -328,7 +328,7 @@ def main():
                 current_gimbal_travel_duration = sequence_steps.waypoints[sequence_steps.current_step].get_gimbal_travel_to_duration()
                 current_crane_travel_duration = sequence_steps.waypoints[sequence_steps.current_step].get_crane_travel_to_duration()
                 
-                if current_time > self.last_step_triggered_at+max(current_gimbal_travel_duration,current_crane_travel_duration):
+                if current_time > sequence_steps.last_step_triggered_at+max(current_gimbal_travel_duration,current_crane_travel_duration):
                     trigger_sequence_step(sequence_steps)
 
         #
