@@ -357,18 +357,18 @@ def main():
                     if event.key == pygame.K_RETURN:
                         print(feed_input_text)
                         if MOVE_TOGGLE == MOVE_TIME:
-                            move_input_text = ''
+                            movetime_input_text = ''
                         if MOVE_TOGGLE == FEED_RATE:
                             feed_input_text = ''
                     elif event.key == pygame.K_BACKSPACE:
                         if MOVE_TOGGLE == MOVE_TIME:
-                            move_input_text = move_input_text[:-1]
+                            movetime_input_text = movetime_input_text[:-1]
                         if MOVE_TOGGLE == FEED_RATE:
                             feed_input_text = feed_input_text[:-1]
 
                     else:
                         if MOVE_TOGGLE == MOVE_TIME:
-                            move_input_text += event.unicode
+                            movetime_input_text += event.unicode
                         if MOVE_TOGGLE == FEED_RATE:
                             feed_input_text += event.unicode
                 if dwell_input_active:
