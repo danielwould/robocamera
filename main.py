@@ -548,13 +548,13 @@ def main():
         if MOVE_TOGGLE == MOVE_TIME:
             UI.render_text(screen, "move time(sec):", 740, 12)
             value_button(screen, "2", 700, 28, 90, 50, UI.yellow,
-                         UI.bright_green, 100, ui_info, set_move_time)
+                         UI.bright_green, 2, ui_info, set_move_time)
             value_button(screen, "5", 700, 88, 90, 50, UI.yellow,
-                         UI.bright_green, 500, ui_info, set_move_time)
+                         UI.bright_green, 5, ui_info, set_move_time)
             value_button(screen, "10", 700, 148, 90, 50, UI.yellow,
-                         UI.bright_green, 1000, ui_info, set_move_time)
+                         UI.bright_green, 10, ui_info, set_move_time)
             value_button(screen, "20", 700, 208, 90, 50, UI.yellow,
-                         UI.bright_green, 2000, ui_info, set_move_time)
+                         UI.bright_green, 20, ui_info, set_move_time)
             if movetime_input_text != '':
                 value_button(screen, "custom", 700, 310, 90, 50, UI.blue, UI.bright_blue,
                              int(movetime_input_text), ui_info, set_move_time)
