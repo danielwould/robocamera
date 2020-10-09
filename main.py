@@ -146,6 +146,8 @@ def add_waypoint(dwell_input_text, sequence_steps):
     wp.set_dwell_time(int(dwell_input_text))
     wp.set_gimbal_travel_to_feed_rate(gimbal_inst.get_feed_speed())
     wp.set_crane_travel_to_feed_rate(crane_inst.get_feed_speed())
+    wp.set_gimbal_travel_duration(gimbal_inst.get_move_duration())
+    wp.set_crane_travel_to_duration(crane_inst.get_move_duration())
     sequence_steps.add_waypoint(wp)
 
 
@@ -165,10 +167,21 @@ def trigger_sequence_step(sequence_steps):
     # TODO this needs to support move base on time
     print("sequence step triger")
     wp = sequence_steps.get_next_step()
-    crane_inst.move_to_waypoint(
-        wp.get_crane_position(), wp.get_crane_travel_to_feed_rate())
-    gimbal_inst.move_to_waypoint(
-        wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate())
+    if MOVE_TOGGLE == FEED_RATE:
+        print ("move to waypoint by feed rate")
+        crane_inst.move_to_waypoint(
+            wp.get_crane_position(), wp.get_crane_travel_to_feed_rate())
+        gimbal_inst.move_to_waypoint(
+            wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate())
+    if MOVE_TOGGLE == MOVE_TIME:
+        print ("move to waypoint by travel duration")
+        crane_inst.move_to_waypoint_by_time(
+            wp.get_crane_position(), wp.get_crane_travel_to_duration())
+        gimbal_inst.move_to_waypoint_by_time(
+            wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration())
+
+
+
 
 
 def save_point_move(savepoint):

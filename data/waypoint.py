@@ -4,6 +4,8 @@ class waypoint:
     dwell_time = 10
     gimbal_travel_feed_rate = 250
     crane_travel_feed_rate = 500
+    gimbal_travel_duration = 10
+    crane_travel_duration = 10
 
     def __init__(self, cranepos, gimbalpos):
         self.cranepos = cranepos
@@ -35,7 +37,19 @@ class waypoint:
     def get_gimbal_travel_to_feed_rate(self):
         return self.gimbal_travel_feed_rate
 
+    def set_crane_travel_to_duration(self,seconds):
+        self.crane_travel_duration = seconds
+
+    def get_crane_travel_to_duration(self):
+        return self.crane_travel_duration
+
+    def set_gimbal_travel_to_duration(self,seconds):
+        self.gimbal_travel_duration = seconds
+
+    def get_gimbal_travel_to_duration(self):
+        return self.gimbal_travel_duration
+
     def location_str(self):
         return "gimbal {} crane {}".format(self.gimbalpos.current_location_str(),self.cranepos.current_location_str())
     def get_feed_info(self):
-        return "dwell {} cf:{} gf: {}".format(self.dwell_time,self.crane_travel_feed_rate,self.gimbal_travel_feed_rate)
+        return "dwell {} cf:{} cd:{} gf:{} gd:{}".format(self.dwell_time,self.crane_travel_feed_rate,self.crane_travel_duration,self.gimbal_travel_feed_rate,self.gimbal_travel_duration)
