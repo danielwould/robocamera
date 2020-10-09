@@ -321,18 +321,7 @@ def main():
 
     # -------- Main Program Loop -----------
     while not done:
-        if sequence_steps.sequence_running:
-            if MOVE_TOGGLE == FEED_RATE: 
-                current_time = time.time()
-                if current_time > sequence_steps.step_finished_at:
-                    trigger_sequence_step(sequence_steps)
-            if MOVE_TOGGLE == MOVE_TIME:
-                current_time = time.time()
-                current_gimbal_travel_duration = sequence_steps.waypoints[sequence_steps.current_step].get_gimbal_travel_to_duration()
-                current_crane_travel_duration = sequence_steps.waypoints[sequence_steps.current_step].get_crane_travel_to_duration()
-                
-                if current_time > sequence_steps.last_step_triggered_at+max(current_gimbal_travel_duration,current_crane_travel_duration):
-                    trigger_sequence_step(sequence_steps)
+        
 
         #
         # EVENT PROCESSING STEP
@@ -673,14 +662,28 @@ def main():
         # Blit the feed_input rect.
         pygame.draw.rect(screen, dwell_input_colour, dwell_input, 2)
 
-        if countdown:
+        if sequence_steps.sequence_running:
             pygame.draw.rect(screen, (255, 0, 0), countdown_rect, 2)
-            timeleft = sequence_steps.step_finished_at - time.time()
+            if MOVE_TOGGLE == FEED_RATE: 
+                current_time = time.time()
+                finishtime = sequence_steps.last_step_triggered_at + sequence_steps.waypoints[sequence_steps.current_step].dwell_time
+                
+                
+            if MOVE_TOGGLE == MOVE_TIME:
+                current_time = time.time()
+                current_gimbal_travel_duration = sequence_steps.waypoints[sequence_steps.current_step].get_gimbal_travel_to_duration()
+                current_crane_travel_duration = sequence_steps.waypoints[sequence_steps.current_step].get_crane_travel_to_duration()
+            
+                finishtime = sequence_steps.last_step_triggered_at + max(current_gimbal_travel_duration,current_crane_travel_duration)
+                
+            timeleft = time.get_time()-finishtime
             UI.render_text(screen, "Waypoint :{}".format(sequence_steps.current_step), 250, 200)
             txt_countdown = font_big.render(
                 "{0:3.2}".format(timeleft), True, (255, 0, 0))
             screen.blit(txt_countdown,
                         (countdown_rect.x + 5, countdown_rect.y + 5))
+            if current_time > finishtime:
+                    trigger_sequence_step(sequence_steps)
 
         #
         # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
