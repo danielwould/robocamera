@@ -325,11 +325,11 @@ def main():
                     trigger_sequence_step(sequence_steps)
             if MOVE_TOGGLE == MOVE_TIME:
                 current_time = time.time()
-                current_gimbal_travel_duration = sequence_steps.waypoints[sequnce_steps.current_step].get_gimbal_travel_to_duration()
-                current_crane_travel_duration = sequence_steps.waypoints[sequnce_steps.current_step].get_crane_travel_to_duration()
+                current_gimbal_travel_duration = sequence_steps.waypoints[sequence_steps.current_step].get_gimbal_travel_to_duration()
+                current_crane_travel_duration = sequence_steps.waypoints[sequence_steps.current_step].get_crane_travel_to_duration()
                 
                 if current_time > self.last_step_triggered_at+max(current_gimbal_travel_duration,current_crane_travel_duration):
-                    trigger_sequnce_step(sequence_steps)
+                    trigger_sequence_step(sequence_steps)
 
         #
         # EVENT PROCESSING STEP
