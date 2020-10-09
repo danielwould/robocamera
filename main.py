@@ -319,7 +319,7 @@ def main():
     # -------- Main Program Loop -----------
     while not done:
         if sequence_steps.sequence_running:
-            if MOVE_TOGGLE == MOVE_FEED: 
+            if MOVE_TOGGLE == FEED_RATE: 
                 current_time = time.time()
                 if current_time > sequence_steps.step_finished_at:
                     trigger_sequence_step(sequence_steps)
