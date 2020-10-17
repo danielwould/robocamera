@@ -21,6 +21,8 @@ from helpers.gimbal import gimbal
 MOCK = 0
 
 gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0), MOCK)
+gimbal_inst.set_small_step_rotate(0.5)
+gimbal_inst.set_big_step_rotate(5)
 crane_inst = crane("/dev/ttyACM1", cranepos(0, 0), MOCK)
 
 VALID_CHARS = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./"

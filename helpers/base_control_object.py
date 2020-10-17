@@ -21,6 +21,12 @@ class base_control_object:
         self.currentlocation.reset()
         self.controller.reset()
 
+    def set_small_step_rotate(self, value):
+        small_step_rotate = value
+
+    def set_big_step_rotate(self, value):
+        big_step_rotate = value
+
     def current_location_str(self):
         return self.currentlocation.current_location_str()
     
