@@ -10,7 +10,7 @@ class base_control_object:
     big_step_tilt = 5
     last_command_sent_at = time.time()
     currentlocation = None
-    command_throttle_limit=10
+    command_throttle_limit=0.2
 
     def __init__(self, device, position, mode):
         self.device = device
