@@ -23,16 +23,16 @@ class base_control_object:
         self.controller.reset()
 
     def set_small_step_rotate(self, value):
-        small_step_rotate = value
+        self.small_step_rotate = value
 
     def set_big_step_rotate(self, value):
-        big_step_rotate = value
+        self.big_step_rotate = value
 
     def set_small_step_tilt(self, value):
-        small_step_tilt = value
+        self.small_step_tilt = value
 
     def set_big_step_tilt(self, value):
-        big_step_tilt = value
+        self.big_step_tilt = value
 
     def current_location_str(self):
         return self.currentlocation.current_location_str()
