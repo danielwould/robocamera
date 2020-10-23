@@ -56,56 +56,56 @@ class base_control_object:
         self.controller.set_device(self.device)
 
     def rotate_right_small(self):
-        if time.time()-self.last_command_send_at > self.command_throttle_limit:
+        if time.time()-self.last_command_sent_at > self.command_throttle_limit:
             self.controller.relative_move("x{}".format(
                 self.small_step_rotate), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             self.currentlocation.increment_rotation(self.small_step_rotate)
 
     def rotate_left_small(self):
-        if time.time()-self.last_command_send_at > self.command_throttle_limit:
+        if time.time()-self.last_command_sent_at > self.command_throttle_limit:
             self.controller.relative_move(
                 "x-{}".format(self.small_step_rotate), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             self.currentlocation.decrement_rotation(self.small_step_rotate)
 
     def rotate_right_large(self):
-        if time.time()-self.last_command_send_at > self.command_throttle_limit:
+        if time.time()-self.last_command_sent_at > self.command_throttle_limit:
             self.controller.relative_move("x{}".format(
                 self.big_step_rotate), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             self.currentlocation.increment_rotation(self.big_step_rotate)
 
     def rotate_left_large(self):
-        if time.time()-self.last_command_send_at > self.command_throttle_limit:
+        if time.time()-self.last_command_sent_at > self.command_throttle_limit:
             self.controller.relative_move(
                 "x-{}".format(self.big_step_rotate), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             self.currentlocation.decrement_rotation(self.big_step_rotate)
 
     def tilt_up_small(self):
-        if time.time()-self.last_command_send_at > self.command_throttle_limit:
+        if time.time()-self.last_command_sent_at > self.command_throttle_limit:
             self.controller.relative_move("y-{}".format(
                 self.small_step_tilt), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             self.currentlocation.decrement_tilt(self.small_step_tilt)
 
     def tilt_down_small(self):
-        if time.time()-self.last_command_send_at > self.command_throttle_limit:
+        if time.time()-self.last_command_sent_at > self.command_throttle_limit:
             self.controller.relative_move(
                 "y{}".format(self.small_step_tilt), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             self.currentlocation.increment_tilt(self.small_step_tilt)
 
     def tilt_up_large(self):
-        if time.time()-self.last_command_send_at > self.command_throttle_limit:
+        if time.time()-self.last_command_sent_at > self.command_throttle_limit:
             self.controller.relative_move("y-{}".format(
                 self.big_step_tilt), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             self.currentlocation.decrement_tilt(self.big_step_tilt)
 
     def tilt_down_large(self):
-        if time.time()-self.last_command_send_at > self.command_throttle_limit:
+        if time.time()-self.last_command_sent_at > self.command_throttle_limit:
             self.controller.relative_move(
                 "y{}".format(self.big_step_tilt), self.current_feed_speed)
             self.last_command_sent_at = time.time()
