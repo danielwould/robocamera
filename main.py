@@ -176,16 +176,24 @@ async def trigger_sequence_step(sequence_steps):
     wp = sequence_steps.get_next_step()
     if MOVE_TOGGLE == FEED_RATE:
         print ("move to waypoint by feed rate")
+        task1 = asyncio.create_task(
         crane_inst.move_to_waypoint(
-            wp.get_crane_position(), wp.get_crane_travel_to_feed_rate())
-        gimbal_inst.move_to_waypoint(
+            wp.get_crane_position(), wp.get_crane_travel_to_feed_rate()))
+        task2 = asyncio.create_task(
+        gimbal_inst.move_to_waypoint()
             wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate())
+        await task1
+        await task2
     if MOVE_TOGGLE == MOVE_TIME:
         print ("move to waypoint by travel duration")
+        task1 = asyncio.create_task(
         crane_inst.move_to_waypoint_by_time(
-            wp.get_crane_position(), wp.get_crane_travel_to_duration())
+            wp.get_crane_position(), wp.get_crane_travel_to_duration()))
+        task2 = asyncio.create_task(
         gimbal_inst.move_to_waypoint_by_time(
-            wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration())
+            wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration()))
+        await task1
+        await task2
 
 
 
@@ -193,12 +201,17 @@ async def trigger_sequence_step(sequence_steps):
 
 async def save_point_move(savepoint):
     if MOVE_TOGGLE == FEED_RATE:
-        crane_inst.move_to_position_at_rate(savepoint.get_crane_position())
-        gimbal_inst.move_to_position_at_rate(savepoint.get_gimbal_position())
+        task1 = asyncio.create_task(
+        crane_inst.move_to_position_at_rate(savepoint.get_crane_position()))
+        task2 = asyncio.create_task(
+        gimbal_inst.move_to_position_at_rate(savepoint.get_gimbal_position()))
+        await task1
+        await task2
     if MOVE_TOGGLE == MOVE_TIME:
-        crane_inst.move_to_position_in_time(savepoint.get_crane_position())
-        gimbal_inst.move_to_position_in_time(savepoint.get_gimbal_position())
-
+        task1 = asyncio.create_task(crane_inst.move_to_position_in_time(savepoint.get_crane_position()))
+        task2 = asyncio.create_task(gimbal_inst.move_to_position_in_time(savepoint.get_gimbal_position()))
+        await task1
+        await task2
 
 async def save_position(savepoint):
     global save_position_1
