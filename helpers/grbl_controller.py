@@ -18,7 +18,10 @@ class grbl_controller:
             self.grbl_connection = serial.Serial(device, 115200, timeout=0.2)
 
     def reset(self):
+        self.write_gcode("G10 P0 X0 Y0 Z0")
         self.write_gcode("G92 X0 Y0 Z0")
+        self.write_gcode("$")
+
 
     def relative_move(self, move_str, feedrate):
         self.write_gcode("g91")
