@@ -54,7 +54,8 @@ class grbl_controller:
             while count <20:
                 if status != 'b\'\'':
                     count = count +1
+                    print("grblresponse: {}".format(status))
                 status = self.grbl_connection.readline()
-                print("grblresponse: {}".format(status))
+                
         else:
             print("mocking sending {}".format(gcode_str))
