@@ -47,8 +47,8 @@ class grbl_controller:
             self.grbl_connection.write(gcode_str.encode())
             self.grbl_connection.write('\n'.encode())
             status = self.grbl_connection.readline()
-            while status != "":
+            while status != '':
                 status = self.grbl_connection.readline()
-                print(status)
+                print("grblresponse: {}".format(status))
         else:
             print("mocking sending {}".format(gcode_str))
