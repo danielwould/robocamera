@@ -21,6 +21,9 @@ class grbl_controller:
         self.write_gcode("G10 P0 X0 Y0 Z0")
         self.write_gcode("G92 X0 Y0 Z0")
         self.write_gcode("$#")
+        self.write_gcode("$I")
+        self.write_gcode("$#")
+        self.write_gcode("?")
 
 
     def relative_move(self, move_str, feedrate):
