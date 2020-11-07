@@ -44,8 +44,6 @@ save_position_2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
 save_position_3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
 save_position_4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
 
-#always reset the GRBL workcoordinates on reload
-reset()
 
 def toggle_control(value):
     global CONTROL_TOGGLE
@@ -267,6 +265,10 @@ def zoom_in():
 def zoom_out():
     gimbal_inst.zoom_out_small()
 
+
+
+#always reset the GRBL workcoordinates on reload
+reset()
 
 def main():
     # waypoints is the list of waypoints, and their dwell times
