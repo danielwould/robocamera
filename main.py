@@ -503,28 +503,28 @@ async def main():
 
                     if button == 1:
                         # save position 1 when prssing
-                        save_position(1)
+                        await save_position(1)
                 if button_num == 1:
                     if button == 1:
-                        save_position(2)
+                        await save_position(2)
                 if button_num == 2:
                     if button == 1:
-                        save_position(3)
+                        await save_position(3)
                 if button_num == 3:
                     if button == 1:
-                        save_position(4)
+                        await save_position(4)
                 if button_num == 4:
                     if button == 1:
-                        save_point_move(save_position_1)
+                        await save_point_move(save_position_1)
                 if button_num == 5:
                     if button == 1:
-                        save_point_move(save_position_2)
+                        await save_point_move(save_position_2)
                 if button_num == 6:
                     if button == 1:
-                        save_point_move(save_position_3)
+                        await save_point_move(save_position_3)
                 if button_num == 7:
                     if button == 1:
-                        save_point_move(save_position_4)
+                        await save_point_move(save_position_4)
                 if button_num == 8:
                     if button == 1:
                         # the reset button first for down and up, we only want to register on down
@@ -539,7 +539,7 @@ async def main():
 
                 if button_num == 9:
                     if button == 1:
-                        start_sequence(sequence_steps)
+                        await start_sequence(sequence_steps)
 
             text_print.unindent()
 
