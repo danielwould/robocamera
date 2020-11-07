@@ -179,9 +179,7 @@ async def trigger_sequence_step(sequence_steps):
         task1 = asyncio.create_task(
         crane_inst.move_to_waypoint(
             wp.get_crane_position(), wp.get_crane_travel_to_feed_rate()))
-        task2 = asyncio.create_task(
-        gimbal_inst.move_to_waypoint()
-            wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate())
+        task2 = asyncio.create_task(gimbal_inst.move_to_waypoint(wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate()))
         await task1
         await task2
     if MOVE_TOGGLE == MOVE_TIME:
