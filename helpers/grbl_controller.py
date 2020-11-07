@@ -20,7 +20,7 @@ class grbl_controller:
     def reset(self):
         self.write_gcode("G10 P0 X0 Y0 Z0")
         self.write_gcode("G92 X0 Y0 Z0")
-        self.write_gcode("$")
+        self.write_gcode("$#")
 
 
     def relative_move(self, move_str, feedrate):
@@ -48,7 +48,7 @@ class grbl_controller:
             self.grbl_connection.write('\n'.encode())
             status = self.grbl_connection.readline()
             count=0
-            while count <10:
+            while count <20:
                 if status != 'b\'\'':
                     count = count +1
                 status = self.grbl_connection.readline()
