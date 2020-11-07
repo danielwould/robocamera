@@ -18,32 +18,24 @@ class grbl_controller:
             self.grbl_connection = serial.Serial(device, 115200, timeout=0.2)
 
     def reset(self):
-        self.write_gcode("G10 P0 X0 Y0 Z0")
+        #self.write_gcode("G10 P0 X0 Y0 Z0")
         self.write_gcode("G92 X0 Y0 Z0")
-        self.write_gcode("$#")
-        self.write_gcode("$I")
         self.write_gcode("$#")
         self.write_gcode("?")
 
 
     def relative_move(self, move_str, feedrate):
-        self.write_gcode("g91")
-        self.write_gcode("g94")
-        self.write_gcode("g1 {} f{}".format(move_str, feedrate))
-
+        self.write_gcode("g91\r\ng94\r\ng1 {} f{}".format(move_str, feedrate))
+        
     def absolute_move(self, x, y, z, feedrate):
-        self.write_gcode("g90")
-        self.write_gcode("g94")
-        self.write_gcode("g1 x{} y{} z{} f{}".format(x, y, z, feedrate))
-
+        self.write_gcode("g90\r\ng94\r\ng1 x{} y{} z{} f{}".format(x, y, z, feedrate))
+        
     def absolute_move_by_time(self, x, y, z, seconds):
         # calculate f value from desired
         # f2 = 60/2 = 30s
         feedval = 60 / seconds
-        self.write_gcode("g90")
-        self.write_gcode("g93")  # inverse feed time
-        self.write_gcode("g1 x{} y{} z{} f{}".format(x, y, z, feedval))
-
+        self.write_gcode("g90\r\ng93\r\ng1 x{} y{} z{} f{}".format(x, y, z, feedval))
+        
     def write_gcode(self, gcode_str):
         print("{} : instruction: {}".format(time.ctime(), gcode_str))
         if self.MODE == self.REAL_MODE:
