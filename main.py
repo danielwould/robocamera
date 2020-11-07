@@ -89,7 +89,7 @@ async def waypoint_button(screen, msg, x, y, w, h, ic, ac, value, item_list, ui_
         if click[0] == 1 and action is not None:
             if ui_info.can_click():
                 print("clicked waypoint button")
-                action(value, item_list)
+                await action(value, item_list)
                 ui_info.clicked()
     else:
         pygame.draw.rect(screen, ic, (x, y, w, h))
@@ -109,7 +109,7 @@ async def trigger_button(screen, msg, x, y, w, h, ic, ac, ui_info, action=None):
         if click[0] == 1 and action is not None:
             if ui_info.can_click():
                 print("clicked action button")
-                action()
+                await action()
                 ui_info.clicked()
 
     else:
