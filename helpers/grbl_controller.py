@@ -1,5 +1,5 @@
 import serial
-
+import time
 
 class grbl_controller:
     grbl_connection = None
@@ -39,7 +39,7 @@ class grbl_controller:
         self.write_gcode("g1 x{} y{} z{} f{}".format(x, y, z, feedval))
 
     def write_gcode(self, gcode_str):
-        print(gcode_str)
+        print("{} : instruction: {}".format(time.time(), gcode_str))
         if self.MODE == self.REAL_MODE:
             self.grbl_connection.write(gcode_str.encode())
             self.grbl_connection.write('\n'.encode())
