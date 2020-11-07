@@ -7,10 +7,12 @@ class grbl_controller:
     MOCK_MODE = 1
     REAL_MODE = 0
     MODE = REAL_MODE
+    dwell_delay=0
 
-    def __init__(self, mode):
+    def __init__(self, mode, dwell_delay):
         print("init")
         self.MODE = mode
+        self.dwell_delay = dwell_delay
 
     def set_device(self, device):
         self.serial_device = device
@@ -25,16 +27,17 @@ class grbl_controller:
 
 
     def relative_move(self, move_str, feedrate):
-        self.write_gcode("g91\r\ng94\r\ng1 {} f{}".format(move_str, feedrate))
+
+        self.write_gcode("g4 P{}\r\ng91\r\ng94\r\ng1 {} f{}".format(self.dwell_delay,move_str, feedrate))
         
     def absolute_move(self, x, y, z, feedrate):
-        self.write_gcode("g90\r\ng94\r\ng1 x{} y{} z{} f{}".format(x, y, z, feedrate))
+        self.write_gcode("g4 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}".format(,self.dwell_delay,x, y, z, feedrate))
         
     def absolute_move_by_time(self, x, y, z, seconds):
         # calculate f value from desired
         # f2 = 60/2 = 30s
         feedval = 60 / seconds
-        self.write_gcode("g90\r\ng93\r\ng1 x{} y{} z{} f{}".format(x, y, z, feedval))
+        self.write_gcode("g4 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}".format(,self.dwell_delay,x, y, z, feedval))
         
     def write_gcode(self, gcode_str):
         print("{} : instruction: {}".format(time.ctime(), gcode_str))

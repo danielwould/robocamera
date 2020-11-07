@@ -12,10 +12,10 @@ class base_control_object:
     currentlocation = None
     command_throttle_limit=0.2
 
-    def __init__(self, device, position, mode):
+    def __init__(self, device, position, mode,dwell_delay):
         self.device = device
         self.currentlocation=position
-        self.controller=grbl_controller(mode)
+        self.controller=grbl_controller(mode,dwell_delay)
         self.controller.set_device(self.device)
 
     async def reset(self):
