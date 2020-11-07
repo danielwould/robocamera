@@ -54,7 +54,7 @@ class grbl_controller:
             while count <10:
                 if len(status) >2:
                     
-                    print("grblresponse:len({}) -  {}".format(len(status),status))
+                    print("grbl:{} -  {}".format(time.ctime(),status))
                 if len(status) <2:
                     count = count +1    
                 status = self.grbl_connection.readline()
