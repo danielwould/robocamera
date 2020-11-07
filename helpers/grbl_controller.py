@@ -52,9 +52,10 @@ class grbl_controller:
             status = self.grbl_connection.readline()
             count=0
             while count <20:
-                if status != 'b\'\'':
+                if !status.startsWith('b'):
                     count = count +1
-                    print("grblresponse: {}".format(status))
+                    print("grblresponse:len({}) -  {}".format(len(status),status))
+                    
                 status = self.grbl_connection.readline()
                 
         else:
