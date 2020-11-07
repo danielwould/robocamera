@@ -47,7 +47,10 @@ class grbl_controller:
             self.grbl_connection.write(gcode_str.encode())
             self.grbl_connection.write('\n'.encode())
             status = self.grbl_connection.readline()
-            while status != '':
+            count=0
+            while count <10:
+                if status != 'b\'\'':
+                    count = count +1
                 status = self.grbl_connection.readline()
                 print("grblresponse: {}".format(status))
         else:
