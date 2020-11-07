@@ -18,7 +18,7 @@ class base_control_object:
         self.controller=grbl_controller(mode)
         self.controller.set_device(self.device)
 
-    def reset(self):
+    async def reset(self):
         self.currentlocation.reset()
         self.controller.reset()
 
@@ -111,23 +111,23 @@ class base_control_object:
             self.last_command_sent_at = time.time()
             self.currentlocation.increment_tilt(self.big_step_tilt)
 
-    def move_to_position_at_rate(self, position):
+    async def move_to_position_at_rate(self, position):
         self.controller.absolute_move(position.get_rotation_pos(),position.get_tilt_pos(),0,self.current_feed_speed)
         self.last_command_sent_at = time.time()
         self.currentlocation.set_location(position)
 
-    def move_to_position_in_time(self, position):
+    async def move_to_position_in_time(self, position):
         self.controller.absolute_move_by_time(position.get_rotation_pos(),position.get_tilt_pos(),0,self.current_move_duration)
         self.last_command_sent_at = time.time()
         self.currentlocation.set_location(position)
 
 
-    def move_to_waypoint(self, position, feed_rate):
+    async def move_to_waypoint(self, position, feed_rate):
         self.controller.absolute_move(position.get_rotation_pos(),position.get_tilt_pos(),0,feed_rate)
         self.last_command_sent_at = time.time()
         self.currentlocation.set_location(position)
         
-    def move_to_waypoint_by_time(self, position, duration):
+    async def move_to_waypoint_by_time(self, position, duration):
         self.controller.absolute_move_by_time(position.get_rotation_pos(),position.get_tilt_pos(),0,duration)
         self.last_command_sent_at = time.time()
         self.currentlocation.set_location(position)
