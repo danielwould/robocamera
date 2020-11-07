@@ -51,11 +51,12 @@ class grbl_controller:
             self.grbl_connection.write('\n'.encode())
             status = self.grbl_connection.readline()
             count=0
-            while count <20:
+            while count <10:
                 if len(status) >2:
-                    count = count +1
-                    print("grblresponse:len({}) -  {}".format(len(status),status))
                     
+                    print("grblresponse:len({}) -  {}".format(len(status),status))
+                if len(status <2):
+                    count = count +1    
                 status = self.grbl_connection.readline()
                 
         else:
