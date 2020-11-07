@@ -47,7 +47,7 @@ class grbl_controller:
             self.grbl_connection.write(gcode_str.encode())
             self.grbl_connection.write('\n'.encode())
             status = self.grbl_connection.readline()
-            while status != "ok":
+            while status != "":
                 status = self.grbl_connection.readline()
                 print(status)
         else:
