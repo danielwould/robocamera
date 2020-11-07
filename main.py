@@ -69,7 +69,7 @@ async def value_button(screen, msg, x, y, w, h, ic, ac, value, ui_info, action=N
         if click[0] == 1 and action is not None:
             if ui_info.can_click():
                 print("clicked button")
-                action(value)
+                await action(value)
                 ui_info.clicked()
     else:
         pygame.draw.rect(screen, ic, (x, y, w, h))
@@ -531,10 +531,10 @@ async def main():
                         if event.type == pygame.JOYBUTTONDOWN:
                             if time.time() - control_last_toggled > 0.5:
                                 if CONTROL_TOGGLE == GIMBAL_CONTROL:
-                                    toggle_control(CRANE_CONTROL)
+                                    await toggle_control(CRANE_CONTROL)
                                     control_last_toggled = time.time()
                                 elif CONTROL_TOGGLE == CRANE_CONTROL:
-                                    toggle_control(GIMBAL_CONTROL)
+                                    await toggle_control(GIMBAL_CONTROL)
                                     control_last_toggled = time.time()
 
                 if button_num == 9:
