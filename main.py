@@ -44,7 +44,8 @@ save_position_2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
 save_position_3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
 save_position_4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
 
-
+#always reset the GRBL workcoordinates on reload
+reset()
 
 def toggle_control(value):
     global CONTROL_TOGGLE
