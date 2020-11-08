@@ -202,10 +202,10 @@ def trigger_whole_sequence(sequence_steps):
                 crane_inst.add_waypoint_by_time_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_duration(),wp.get_dwell_time())
                 gimbal_inst.add_waypoint_by_time_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration(),wp.get_dwell_time())
     print("===========")
-    print("built crane sequence"
+    print("built crane sequence")
     crane_inst.get_current_gcode_sequence()
     print("===========")
-    print("built gimbal sequence"
+    print("built gimbal sequence")
     gimbal_inst.get_current_gcode_sequence()
     print("===========")
 
