@@ -60,7 +60,7 @@ class grbl_controller:
             #first statement gets initial delay
             self.gcode_sequence.append("g4 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedrate,dwell))
         else:
-            self.gcode_sequence.append(self.gcode_sequence+"\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(x, y, z, feedrate, dwell))
+            self.gcode_sequence.append("\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(x, y, z, feedrate, dwell))
         
     def run_sequence(self, name):
         for gcode in self.gcode_sequence:
