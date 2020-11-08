@@ -28,19 +28,19 @@ class gimbalpos:
         return self.zoom_pos
 
     def increment_tilt(self, amount):
-        self.tilt_pos = self.tilt_pos + amount
+        self.tilt_pos = round(self.tilt_pos + amount,4)
 
     def decrement_tilt(self, amount):
-        self.tilt_pos = self.tilt_pos - amount
+        self.tilt_pos = round(self.tilt_pos - amount,4)
 
     def increment_rotation(self, amount):
-        self.rotation_pos = self.rotation_pos + amount
+        self.rotation_pos = round(self.rotation_pos + amount,4)
 
     def decrement_rotation(self, amount):
-        self.rotation_pos = self.rotation_pos - amount
+        self.rotation_pos = round(self.rotation_pos - amount,4)
 
     def increment_zoom(self, amount):
-        self.zoom_pos = self.zoom_pos + amount
+        self.zoom_pos = round(self.zoom_pos + amount,4)
 
     def decrement_zoom(self, amount):
-        self.zoom_pos = self.zoom_pos - amount
+        self.zoom_pos = round(self.zoom_pos - amount,4)
