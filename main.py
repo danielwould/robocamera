@@ -192,15 +192,18 @@ def trigger_sequence_step(sequence_steps):
             wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration())
        
 def trigger_whole_sequence(sequence_steps):
-    
+    global crane_inst
+    global gimbal_inst
     if len(sequence_steps.waypoints) > 0:
-        for wp in sequence_steps.waypoints:
+        for i in range(len(sequence_steps.waypoints)): 
+    
+        #for wp in sequence_steps.waypoints:
             if MOVE_TOGGLE == FEED_RATE:
-                crane_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_feed_rate(),wp.get_dwell_time())
-                gimbal_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate(),wp.get_dwell_time())
+                crane_inst.add_waypoint_by_feedrate_to_sequqnce(sequence_steps.waypoints[i].get_crane_position(), sequence_steps.waypoints[i].get_crane_travel_to_feed_rate(),sequence_steps.waypoints[i].get_dwell_time())
+                gimbal_inst.add_waypoint_by_feedrate_to_sequqnce(sequence_steps.waypoints[i].get_gimbal_position(), sequence_steps.waypoints[i].get_gimbal_travel_to_feed_rate(),sequence_steps.waypoints[i].get_dwell_time())
             if MOVE_TOGGLE == MOVE_TIME:
-                crane_inst.add_waypoint_by_time_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_duration(),wp.get_dwell_time())
-                gimbal_inst.add_waypoint_by_time_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration(),wp.get_dwell_time())
+                crane_inst.add_waypoint_by_time_to_sequqnce(sequence_steps.waypoints[i].get_crane_position(),sequence_steps.waypoints[i].get_crane_travel_to_duration(),sequence_steps.waypoints[i].get_dwell_time())
+                gimbal_inst.add_waypoint_by_time_to_sequqnce(sequence_steps.waypoints[i].get_gimbal_position(), sequence_steps.waypoints[i].get_gimbal_travel_to_duration(),sequence_steps.waypoints[i].get_dwell_time())
     print("===========")
     print("built crane sequence")
     crane_inst.get_current_gcode_sequence("crane")
@@ -688,6 +691,7 @@ def main():
         # reset button
         trigger_button(screen, "RESET", 650, 340, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, reset)
+        value_button(screen, "Start", 540, 220, 50, 50, UI.yellow, UI.bright_green,sequence_steps, ui_info, trigger_whole_sequence)
 
         pygame.draw.rect(screen, UI.black, (190, 5, 490, 370), 2)
         wpitem = 0

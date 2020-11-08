@@ -14,6 +14,7 @@ class grbl_controller:
         print("init")
         self.MODE = mode
         self.dwell_delay = dwell_delay
+        self.gcode_sequence =[]
 
     def set_device(self, device):
         self.serial_device = device
