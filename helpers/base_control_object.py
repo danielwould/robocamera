@@ -152,5 +152,5 @@ class base_control_object:
             self.currentlocation.set_location(self.last_position_in_sequence)
         else:
             print("no last position set")
-    def get_current_gcode_sequence(self):
-        self.controller.print_gcode_sequence()
+    def get_current_gcode_sequence(self,name):
+        self.controller.print_gcode_sequence(name)
