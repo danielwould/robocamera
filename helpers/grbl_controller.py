@@ -47,7 +47,7 @@ class grbl_controller:
 
     def add_absolute_move_by_time_to_sequence(self, x,y,z,seconds,dwell):
         feedval = 60 / seconds
-        if len(self.gcode_sequence) == 0:
+        if self.gcode_sequence.count() == 0:
             #first statement gets initial delay
             self.gcode_sequence.append("g4 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedval, dwell))
         else:
@@ -56,7 +56,7 @@ class grbl_controller:
 
     def add_absolute_move_by_feed_to_sequence(self, x,y,z,feedrate,dwell):
         
-        if len(self.gcode_sequence) == 0:
+        if self.gcode_sequence.count() == 0:
             #first statement gets initial delay
             self.gcode_sequence.append("g4 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedrate,dwell))
         else:

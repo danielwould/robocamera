@@ -153,8 +153,8 @@ class base_control_object:
         else:
             print("no last position set")
     def get_current_gcode_sequence(self):
-        gcode =""
+        results =""
         for gcode in self.controller.gcode_sequence:
-            gcode = gcode+"\r\n{}".format(gcode)
-        return gcode
+            results = results+"\r\n{}".format(gcode)
+        return results
 

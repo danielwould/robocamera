@@ -193,7 +193,7 @@ def trigger_sequence_step(sequence_steps):
        
 def trigger_whole_sequence(sequence_steps):
     
-    if len(sequence_steps.waypoints) > 0:
+    if sequence_steps.waypoints.count() > 0:
         for wp in sequence_steps.waypoints:
             if MOVE_TOGGLE == FEED_RATE:
                 crane_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_feed_rate(),wp.get_dwell_time())
