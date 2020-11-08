@@ -81,13 +81,13 @@ class grbl_controller:
             self.grbl_connection.write('\n'.encode())
             status = self.grbl_connection.readline()
             count=0
-            while count <3:
-                if len(status) >2:
-                    
-                    print("grbl:{} -  {}".format(time.ctime(),status))
-                if len(status) <2:
-                    count = count +1    
+            while status != "ok" && status !="error":
+                print("grbl:{} -  {}".format(time.ctime(),status))
+                count = count +1    
                 status = self.grbl_connection.readline()
+                if count >20:
+                    print("waited too long for ok")
+                    break
                 
         else:
             print("mocking sending {}".format(gcode_str))
