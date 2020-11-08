@@ -79,12 +79,12 @@ class grbl_controller:
         if self.MODE == self.REAL_MODE:
             self.grbl_connection.write(gcode_str.encode())
             self.grbl_connection.write('\n'.encode())
-            status = self.grbl_connection.readline()
+            status = self.grbl_connection.readline().decode("utf-8")
             count=0
-            while (str(status) != "ok\r\n") and (str(status) !="error\r\n"):
-                print("grbl:{} -  {}".format(time.ctime(),str(status)))
+            while (status != "ok") and (str(status) !="error"):
+                print("grbl:{} -  {}".format(time.ctime(),status))
                 count = count +1    
-                status = self.grbl_connection.readline()
+                status = self.grbl_connection.readline().decode("utf-8")
                 if count >20:
                     print("waited too long for ok")
                     break
