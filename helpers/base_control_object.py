@@ -19,7 +19,7 @@ class base_control_object:
         self.controller=grbl_controller(mode,dwell_delay)
         self.controller.set_device(self.device)
 
-    async def reset(self):
+    def reset(self):
         self.currentlocation.reset()
         self.controller.reset()
 
@@ -146,7 +146,7 @@ class base_control_object:
         self.last_position_in_sequence = position
         print("{} waypoint added to gcode sequence".format(time.ctime()))
         
-    async def trigger_sequence(self, name):
+    def trigger_sequence(self, name):
         self.controller.run_sequence(name)
         if (self.last_position_in_sequence != None):
             self.currentlocation.set_location(self.last_position_in_sequence)

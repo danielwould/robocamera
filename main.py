@@ -9,7 +9,6 @@
 import pygame
 
 import time
-import asyncio
 from data.waypoint import waypoint
 from data.cranepos import cranepos
 from data.gimbalpos import gimbalpos
@@ -46,21 +45,21 @@ save_position_3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
 save_position_4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
 
 
-async def toggle_control(value):
+def toggle_control(value):
     global CONTROL_TOGGLE
     print("toggle control to")
     print(value)
     CONTROL_TOGGLE = value
 
 
-async def toggle_move_mode(value):
+def toggle_move_mode(value):
     global MOVE_TOGGLE
     print("toggle move mode to")
     print(value)
     MOVE_TOGGLE = value
 
 
-async def value_button(screen, msg, x, y, w, h, ic, ac, value, ui_info, action=None):
+def value_button(screen, msg, x, y, w, h, ic, ac, value, ui_info, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if x + w > mouse[0] > x and y + h > mouse[1] > y:
@@ -69,7 +68,7 @@ async def value_button(screen, msg, x, y, w, h, ic, ac, value, ui_info, action=N
         if click[0] == 1 and action is not None:
             if ui_info.can_click():
                 print("clicked button")
-                await action(value)
+                action(value)
                 ui_info.clicked()
     else:
         pygame.draw.rect(screen, ic, (x, y, w, h))
@@ -80,7 +79,7 @@ async def value_button(screen, msg, x, y, w, h, ic, ac, value, ui_info, action=N
     screen.blit(text_surface, text_rect)
 
 
-async def waypoint_button(screen, msg, x, y, w, h, ic, ac, value, item_list, ui_info, action=None):
+def waypoint_button(screen, msg, x, y, w, h, ic, ac, value, item_list, ui_info, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if x + w > mouse[0] > x and y + h > mouse[1] > y:
@@ -89,7 +88,7 @@ async def waypoint_button(screen, msg, x, y, w, h, ic, ac, value, item_list, ui_
         if click[0] == 1 and action is not None:
             if ui_info.can_click():
                 print("clicked waypoint button")
-                await action(value, item_list)
+                action(value, item_list)
                 ui_info.clicked()
     else:
         pygame.draw.rect(screen, ic, (x, y, w, h))
@@ -100,7 +99,7 @@ async def waypoint_button(screen, msg, x, y, w, h, ic, ac, value, item_list, ui_
     screen.blit(text_surface, text_rect)
 
 
-async def trigger_button(screen, msg, x, y, w, h, ic, ac, ui_info, action=None):
+def trigger_button(screen, msg, x, y, w, h, ic, ac, ui_info, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if x + w > mouse[0] > x and y + h > mouse[1] > y:
@@ -109,7 +108,7 @@ async def trigger_button(screen, msg, x, y, w, h, ic, ac, ui_info, action=None):
         if click[0] == 1 and action is not None:
             if ui_info.can_click():
                 print("clicked action button")
-                await action()
+                action()
                 ui_info.clicked()
 
     else:
@@ -121,7 +120,7 @@ async def trigger_button(screen, msg, x, y, w, h, ic, ac, ui_info, action=None):
     screen.blit(text_surface, text_rect)
 
 
-async def set_feed_rate(feedval):
+def set_feed_rate(feedval):
     if CONTROL_TOGGLE == GIMBAL_CONTROL:
         print("updating feeddefault from {} to {}".format(
             feedval, gimbal_inst.get_feed_speed()))
@@ -131,13 +130,13 @@ async def set_feed_rate(feedval):
             feedval, crane_inst.get_feed_speed()))
         crane_inst.set_feed_speed(feedval)
 
-async def set_delay_rate(val):
+def set_delay_rate(val):
     print("set crane delay to {}".format(val))
     crane_inst.set_command_delay(val)
 
 
 
-async def set_move_time(seconds):
+def set_move_time(seconds):
     if CONTROL_TOGGLE == GIMBAL_CONTROL:
         print("updating gimbal move time from {} to {}".format(
             seconds, gimbal_inst.get_move_duration()))
@@ -148,7 +147,7 @@ async def set_move_time(seconds):
         crane_inst.set_move_duration(seconds)
 
 
-async def add_waypoint(dwell_input_text, sequence_steps):
+def add_waypoint(dwell_input_text, sequence_steps):
     print("add waypoint")  # (x, y, z,focus, feed), dwell time
     crane_position = crane_inst.get_current_location()
     gimbal_position = gimbal_inst.get_current_location()
@@ -163,41 +162,35 @@ async def add_waypoint(dwell_input_text, sequence_steps):
     sequence_steps.add_waypoint(wp)
 
 
-async def delete_waypoint(item, sequence_steps):
+def delete_waypoint(item, sequence_steps):
     # todo allow for deleting specific waypoint item
     sequence_steps.delete_waypoint()
 
 
-async def start_sequence(sequence_steps):
+def start_sequence(sequence_steps):
     print("starting sequence")
     if len(sequence_steps.waypoints) > 0:
         sequence_steps.start()
         trigger_sequence_step(sequence_steps)
 
 
-async def trigger_sequence_step(sequence_steps):
+def trigger_sequence_step(sequence_steps):
     # TODO this needs to support move base on time
     print("sequence step triger")
     wp = sequence_steps.get_next_step()
     if MOVE_TOGGLE == FEED_RATE:
         print ("move to waypoint by feed rate")
-        task1 = asyncio.create_task(
         crane_inst.move_to_waypoint(
-            wp.get_crane_position(), wp.get_crane_travel_to_feed_rate()))
-        task2 = asyncio.create_task(gimbal_inst.move_to_waypoint(wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate()))
-        await task1
-        await task2
+            wp.get_crane_position(), wp.get_crane_travel_to_feed_rate())
+        gimbal_inst.move_to_waypoint(wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate())
+        
     if MOVE_TOGGLE == MOVE_TIME:
         print ("move to waypoint by travel duration")
-        task1 = asyncio.create_task(
         crane_inst.move_to_waypoint_by_time(
-            wp.get_crane_position(), wp.get_crane_travel_to_duration()))
-        task2 = asyncio.create_task(
+            wp.get_crane_position(), wp.get_crane_travel_to_duration())
         gimbal_inst.move_to_waypoint_by_time(
-            wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration()))
-        await task1
-        await task2
-
+            wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration())
+       
 def trigger_whole_sequence(sequence_steps):
     
     if len(sequence_steps.waypoints) > 0:
@@ -228,7 +221,7 @@ def save_point_move(savepoint):
         gimbal_inst.move_to_position_in_time(savepoint.get_gimbal_position())
         
 
-async def save_position(savepoint):
+def save_position(savepoint):
     global save_position_1
     global save_position_2
     global save_position_3
@@ -247,64 +240,61 @@ async def save_position(savepoint):
     if savepoint == 4:
         save_position_4 = new_waypoint
 
-async def reset():
+def reset():
     global save_position_1
     global save_position_2
     global save_position_3
     global save_position_4
     
-    task1 = asyncio.create_task(
-        crane_inst.reset())
-    task2 = asyncio.create_task(
-        gimbal_inst.reset())
-    await task1
-    await task2
+    crane_inst.reset()
+    gimbal_inst.reset()
+
     save_position_1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
     save_position_2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
     save_position_3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
     save_position_4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
 
-async def tilt_up():
+def tilt_up():
     if CONTROL_TOGGLE == GIMBAL_CONTROL:
         gimbal_inst.tilt_up_small()
     if CONTROL_TOGGLE == CRANE_CONTROL:
         crane_inst.tilt_up_small()
 
 
-async def tilt_down():
+def tilt_down():
     if CONTROL_TOGGLE == GIMBAL_CONTROL:
         gimbal_inst.tilt_down_small()
     if CONTROL_TOGGLE == CRANE_CONTROL:
         crane_inst.tilt_down_small()
 
 
-async def rotate_left():
+def rotate_left():
     if CONTROL_TOGGLE == GIMBAL_CONTROL:
         gimbal_inst.rotate_left_small()
     if CONTROL_TOGGLE == CRANE_CONTROL:
         crane_inst.rotate_left_small()
 
 
-async def rotate_right():
+def rotate_right():
     if CONTROL_TOGGLE == GIMBAL_CONTROL:
         gimbal_inst.rotate_right_small()
     if CONTROL_TOGGLE == CRANE_CONTROL:
         crane_inst.rotate_right_small()
 
 
-async def zoom_in():
+def zoom_in():
     gimbal_inst.zoom_in_small()
 
 
-async def zoom_out():
+def zoom_out():
     gimbal_inst.zoom_out_small()
 
 
 
 #always reset the GRBL workcoordinates on reload
-asyncio.run(reset())
+reset()
 
-async def main():
+def main():
     # waypoints is the list of waypoints, and their dwell times
     global save_position_1
     global save_position_2
@@ -551,16 +541,16 @@ async def main():
 
                     if button == 1:
                         # save position 1 when prssing
-                        await save_position(1)
+                        save_position(1)
                 if button_num == 1:
                     if button == 1:
-                        await save_position(2)
+                        save_position(2)
                 if button_num == 2:
                     if button == 1:
-                        await save_position(3)
+                        save_position(3)
                 if button_num == 3:
                     if button == 1:
-                        await save_position(4)
+                        save_position(4)
                 if button_num == 4:
                     if button == 1:
                         save_point_move(save_position_1)
@@ -579,10 +569,10 @@ async def main():
                         if event.type == pygame.JOYBUTTONDOWN:
                             if time.time() - control_last_toggled > 0.5:
                                 if CONTROL_TOGGLE == GIMBAL_CONTROL:
-                                    await toggle_control(CRANE_CONTROL)
+                                    toggle_control(CRANE_CONTROL)
                                     control_last_toggled = time.time()
                                 elif CONTROL_TOGGLE == CRANE_CONTROL:
-                                    await toggle_control(GIMBAL_CONTROL)
+                                    toggle_control(GIMBAL_CONTROL)
                                     control_last_toggled = time.time()
 
                 if button_num == 9:
@@ -616,85 +606,85 @@ async def main():
         pygame.draw.rect(screen, UI.black, (690, 5, 105, 370), 2)
         if MOVE_TOGGLE == FEED_RATE:
             UI.render_text(screen, "Feed Rate:", 740, 12)
-            await value_button(screen, "100", 700, 28, 90, 50, UI.yellow,
+            value_button(screen, "100", 700, 28, 90, 50, UI.yellow,
                          UI.bright_green, 100, ui_info, set_feed_rate)
-            await value_button(screen, "500", 700, 88, 90, 50, UI.yellow,
+            value_button(screen, "500", 700, 88, 90, 50, UI.yellow,
                          UI.bright_green, 500, ui_info, set_feed_rate)
-            await value_button(screen, "1000", 700, 148, 90, 50, UI.yellow,
+            value_button(screen, "1000", 700, 148, 90, 50, UI.yellow,
                          UI.bright_green, 1000, ui_info, set_feed_rate)
-            await value_button(screen, "2000", 700, 208, 90, 50, UI.yellow,
+            value_button(screen, "2000", 700, 208, 90, 50, UI.yellow,
                          UI.bright_green, 2000, ui_info, set_feed_rate)
             if feed_input_text != '':
-                await value_button(screen, "custom", 700, 310, 90, 50, UI.blue, UI.bright_blue,
+                value_button(screen, "custom", 700, 310, 90, 50, UI.blue, UI.bright_blue,
                              int(feed_input_text), ui_info, set_feed_rate)
         if MOVE_TOGGLE == MOVE_TIME:
             UI.render_text(screen, "move time(sec):", 740, 12)
-            await value_button(screen, "2", 700, 28, 90, 50, UI.yellow,
+            value_button(screen, "2", 700, 28, 90, 50, UI.yellow,
                          UI.bright_green, 2, ui_info, set_move_time)
-            await value_button(screen, "5", 700, 88, 90, 50, UI.yellow,
+            value_button(screen, "5", 700, 88, 90, 50, UI.yellow,
                          UI.bright_green, 5, ui_info, set_move_time)
-            await value_button(screen, "10", 700, 148, 90, 50, UI.yellow,
+            value_button(screen, "10", 700, 148, 90, 50, UI.yellow,
                          UI.bright_green, 10, ui_info, set_move_time)
-            await value_button(screen, "20", 700, 208, 90, 50, UI.yellow,
+            value_button(screen, "20", 700, 208, 90, 50, UI.yellow,
                          UI.bright_green, 20, ui_info, set_move_time)
             if movetime_input_text != '':
-                await value_button(screen, "custom", 700, 310, 90, 50, UI.blue, UI.bright_blue,
+                value_button(screen, "custom", 700, 310, 90, 50, UI.blue, UI.bright_blue,
                              int(movetime_input_text), ui_info, set_move_time)
-        await waypoint_button(screen, "Add Way-point", 580, 28, 90, 50,
+        waypoint_button(screen, "Add Way-point", 580, 28, 90, 50,
                         UI.yellow, UI.bright_green, dwell_input_text, sequence_steps, ui_info, add_waypoint)
-        await waypoint_button(screen, "Delete Way-point", 580, 88, 90, 50,
+        waypoint_button(screen, "Delete Way-point", 580, 88, 90, 50,
                         UI.yellow, UI.bright_green, 0, sequence_steps, ui_info, delete_waypoint)
         if delay_input_text != '':
-                await value_button(screen, "delay", 540, 320, 50, 50, UI.yellow, UI.bright_green,
+                value_button(screen, "delay", 540, 320, 50, 50, UI.yellow, UI.bright_green,
                              float(delay_input_text), ui_info, set_delay_rate)
         if CONTROL_TOGGLE == GIMBAL_CONTROL:
-            await value_button(screen, "Gimbal", 200, 248, 90, 50, UI.yellow,
+            value_button(screen, "Gimbal", 200, 248, 90, 50, UI.yellow,
                          UI.bright_green, GIMBAL_CONTROL, ui_info, toggle_control)
-            await value_button(screen, "Crane", 295, 248, 90, 50, UI.grey,
+            value_button(screen, "Crane", 295, 248, 90, 50, UI.grey,
                          UI.bright_green, CRANE_CONTROL, ui_info, toggle_control)
         if CONTROL_TOGGLE == CRANE_CONTROL:
-            await value_button(screen, "Gimbal", 200, 248, 90, 50, UI.grey,
+            value_button(screen, "Gimbal", 200, 248, 90, 50, UI.grey,
                          UI.bright_green, GIMBAL_CONTROL, ui_info, toggle_control)
-            await value_button(screen, "Crane)", 295, 248, 90, 50, UI.yellow,
+            value_button(screen, "Crane)", 295, 248, 90, 50, UI.yellow,
                          UI.bright_green, CRANE_CONTROL, ui_info, toggle_control)
 
         if MOVE_TOGGLE == FEED_RATE:
-            await value_button(screen, "Move mm/min", 200, 308, 90, 50, UI.yellow,
+            value_button(screen, "Move mm/min", 200, 308, 90, 50, UI.yellow,
                          UI.bright_green, FEED_RATE, ui_info, toggle_move_mode)
-            await value_button(screen, "move sec", 295, 308, 90, 50, UI.grey,
+            value_button(screen, "move sec", 295, 308, 90, 50, UI.grey,
                          UI.bright_green, MOVE_TIME, ui_info, toggle_move_mode)
         if MOVE_TOGGLE == MOVE_TIME:
-            await value_button(screen, "Move mm/min", 200, 308, 90, 50, UI.grey,
+            value_button(screen, "Move mm/min", 200, 308, 90, 50, UI.grey,
                          UI.bright_green, FEED_RATE, ui_info, toggle_move_mode)
-            await value_button(screen, "move sec)", 295, 308, 90, 50, UI.yellow,
+            value_button(screen, "move sec)", 295, 308, 90, 50, UI.yellow,
                          UI.bright_green, MOVE_TIME, ui_info, toggle_move_mode)
 
         # controller buttons
         # screen, msg, x, y, w, h, ic, ac, ui_info, action=None):
-        await trigger_button(screen, "U", 60, 300, 30, 30,
+        trigger_button(screen, "U", 60, 300, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, tilt_up)
-        await trigger_button(screen, "D", 60, 350, 30, 30,
+        trigger_button(screen, "D", 60, 350, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, tilt_down)
-        await trigger_button(screen, "L", 10, 325, 30, 30,
+        trigger_button(screen, "L", 10, 325, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, rotate_left)
-        await trigger_button(screen, "R", 110, 325, 30, 30,
+        trigger_button(screen, "R", 110, 325, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, rotate_right)
-        await trigger_button(screen, "Zi", 150, 300, 30, 30,
+        trigger_button(screen, "Zi", 150, 300, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, zoom_in)
-        await trigger_button(screen, "Zo", 150, 350, 30, 30,
+        trigger_button(screen, "Zo", 150, 350, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, zoom_out)
         #onscreen save position
-        await value_button(screen, "Y", 10, 260, 30, 30,
+        value_button(screen, "Y", 10, 260, 30, 30,
                        UI.yellow, UI.bright_green, 1, ui_info, save_position)
-        await value_button(screen, "B", 40, 260, 30, 30,
+        value_button(screen, "B", 40, 260, 30, 30,
                        UI.yellow, UI.bright_green, 2, ui_info, save_position)
-        await value_button(screen, "A", 80, 260, 30, 30,
+        value_button(screen, "A", 80, 260, 30, 30,
                        UI.yellow, UI.bright_green, 3, ui_info, save_position)
-        await value_button(screen, "X", 110, 260, 30, 30,
+        value_button(screen, "X", 110, 260, 30, 30,
                        UI.yellow, UI.bright_green, 4, ui_info, save_position)
 
         # reset button
-        await trigger_button(screen, "RESET", 650, 340, 30, 30,
+        trigger_button(screen, "RESET", 650, 340, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, reset)
 
         pygame.draw.rect(screen, UI.black, (190, 5, 490, 370), 2)
@@ -766,7 +756,7 @@ async def main():
             screen.blit(txt_countdown,
                         (countdown_rect.x + 5, countdown_rect.y + 5))
             if current_time > finishtime:
-                    await trigger_sequence_step(sequence_steps)
+                    trigger_sequence_step(sequence_steps)
 
         #
         # ALL CODE TO DRAW SHOULD GO ABOVE THIS COMMENT
@@ -785,4 +775,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
