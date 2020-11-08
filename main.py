@@ -214,10 +214,8 @@ def trigger_whole_sequence(sequence_steps):
     print("built gimbal sequence {}".format(gimbal_inst.get_current_gcode_sequence()))
     print("===========")
 
-    
-    
-    asyncio.run(crane_inst.trigger_sequence("crane"))
-    asyncio.run(gimbal_inst.trigger_sequence("gimbal"))
+    crane_inst.trigger_sequence("crane")
+    gimbal_inst.trigger_sequence("gimbal")
     #set location to last wp
 
 
@@ -589,7 +587,7 @@ async def main():
 
                 if button_num == 9:
                     if button == 1:
-                        await trigger_whole_sequence(sequence_steps)
+                        trigger_whole_sequence(sequence_steps)
 
             text_print.unindent()
 
