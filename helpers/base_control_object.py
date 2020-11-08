@@ -139,19 +139,19 @@ class base_control_object:
     async def add_waypoint_by_time_to_sequqnce(self, position, duration, dwell):
         self.controller.add_absolute_move_by_time_to_sequence(position.get_rotation_pos(),position.get_tilt_pos(),0,duration, dwell)
         self.last_position_in_sequence = position
-        print "{} waypoint added to gcode sequence".format(time.ctime())
+        print("{} waypoint added to gcode sequence".format(time.ctime()))
 
     async def add_waypoint_by_feedrate_to_sequqnce(self, position, duration, dwell):
         self.controller.add_absolute_move_by_feed_to_sequence(position.get_rotation_pos(),position.get_tilt_pos(),0,duration, dwell)
         self.last_position_in_sequence = position
-        print "{} waypoint added to gcode sequence".format(time.ctime())
+        print("{} waypoint added to gcode sequence".format(time.ctime()))
         
     async def trigger_sequence(self):
         self.controller.run_sequence()
         if (self.last_position_in_sequence != None):
             self.currentlocation.set_location(self.last_position_in_sequence)
         else:
-            print "no last position set"
+            print("no last position set")
 
 
 
