@@ -202,11 +202,11 @@ async def trigger_whole_sequence(sequence_steps):
     if len(sequence_steps.waypoints) > 0:
         for wp in sequence_steps.waypoints:
             if MOVE_TOGGLE == FEED_RATE:
-                crane_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_feed_rate())
-                gimbal_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate())
+                crane_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_feed_rate(),wp.get_dwell_time())
+                gimbal_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate(),wp.get_dwell_time())
             if MOVE_TOGGLE == MOVE_TIME:
-                crane_inst.add_waypoint_by_time_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_duration())
-                gimbal_inst.add_waypoint_by_time_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration())
+                crane_inst.add_waypoint_by_time_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_duration(),wp.get_dwell_time())
+                gimbal_inst.add_waypoint_by_time_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration(),wp.get_dwell_time())
     task1 = asyncio.create_task(crane_inst.trigger_sequence())
     task2 = asyncio.create_task(gimbal_inst.trigger_sequence())
     await task1
