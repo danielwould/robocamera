@@ -27,7 +27,7 @@ class grbl_controller:
         self.write_gcode("?")
 
     def reset_gcode_sequence(self):
-        self.gcode_sequence.clear()
+        self.gcode_sequence = []
 
     def set_command_delay(self,value):
         self.dwell_delay = value
@@ -64,7 +64,7 @@ class grbl_controller:
         
     def run_sequence(self, name):
         for gcode in self.gcode_sequence:
-            print("{}:running gcode:\r\n{}".format(name,gcode))
+            print("{}:running sequence gcode:\r\n{}".format(name,gcode))
             self.write_gcode(gcode)
         self.reset_gcode_sequence()
 

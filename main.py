@@ -199,6 +199,7 @@ async def trigger_sequence_step(sequence_steps):
         await task2
 
 async def trigger_whole_sequence(sequence_steps):
+    
     if len(sequence_steps.waypoints) > 0:
         for wp in sequence_steps.waypoints:
             if MOVE_TOGGLE == FEED_RATE:
