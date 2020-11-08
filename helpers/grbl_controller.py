@@ -50,7 +50,7 @@ class grbl_controller:
         feedval = 60 / seconds
         if len(self.gcode_sequence) == 0:
             #first statement gets initial delay
-            self.gcode_sequence.append("g4 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedval, dwell))
+            self.gcode_sequence.append("g04 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedval, dwell))
         else:
             self.gcode_sequence.append("\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(x, y, z, feedval, dwell))
         
@@ -59,7 +59,7 @@ class grbl_controller:
         
         if len(self.gcode_sequence) == 0:
             #first statement gets initial delay
-            self.gcode_sequence.append("g4 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedrate,dwell))
+            self.gcode_sequence.append("g04 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedrate,dwell))
         else:
             self.gcode_sequence.append("\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(x, y, z, feedrate, dwell))
         
