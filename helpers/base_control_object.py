@@ -22,6 +22,9 @@ class base_control_object:
         self.currentlocation.reset()
         self.controller.reset()
 
+    def set_command_delay(self, value):
+        self.controller.set_command_delay(value)
+
     def set_small_step_rotate(self, value):
         self.small_step_rotate = value
 
@@ -122,13 +125,13 @@ class base_control_object:
         self.currentlocation.set_location(position)
 
 
-    async def move_to_waypoint(self, position, feed_rate):
-        self.controller.absolute_move(position.get_rotation_pos(),position.get_tilt_pos(),0,feed_rate)
+    async def move_to_waypoint(self, position, feed_rate, dwell):
+        self.controller.absolute_move(position.get_rotation_pos(),position.get_tilt_pos(),0,feed_rate, dwell)
         self.last_command_sent_at = time.time()
         self.currentlocation.set_location(position)
         
-    async def move_to_waypoint_by_time(self, position, duration):
-        self.controller.absolute_move_by_time(position.get_rotation_pos(),position.get_tilt_pos(),0,duration)
+    async def move_to_waypoint_by_time(self, position, duration, dwell):
+        self.controller.absolute_move_by_time(position.get_rotation_pos(),position.get_tilt_pos(),0,duration, dwell)
         self.last_command_sent_at = time.time()
         self.currentlocation.set_location(position)
 

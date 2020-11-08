@@ -25,19 +25,21 @@ class grbl_controller:
         self.write_gcode("$#")
         self.write_gcode("?")
 
+    def set_command_delay(self,value):
+        self.dwell_delay = value
 
     def relative_move(self, move_str, feedrate):
 
         self.write_gcode("g4 P{}\r\ng91\r\ng94\r\ng1 {} f{}".format(self.dwell_delay,move_str, feedrate))
         
-    def absolute_move(self, x, y, z, feedrate):
-        self.write_gcode("g4 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}".format(self.dwell_delay,x, y, z, feedrate))
+    def absolute_move(self, x, y, z, feedrate, dwell):
+        self.write_gcode("g4 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedrate,dwell))
         
-    def absolute_move_by_time(self, x, y, z, seconds):
+    def absolute_move_by_time(self, x, y, z, seconds, dwell):
         # calculate f value from desired
         # f2 = 60/2 = 30s
         feedval = 60 / seconds
-        self.write_gcode("g4 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}".format(self.dwell_delay,x, y, z, feedval))
+        self.write_gcode("g4 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedval, dwell))
         
     def write_gcode(self, gcode_str):
         print("{} : instruction: {}".format(time.ctime(), gcode_str))

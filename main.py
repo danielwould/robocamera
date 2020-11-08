@@ -19,7 +19,7 @@ from helpers.ui import TextPrint
 from helpers.crane import crane
 from helpers.gimbal import gimbal
 
-MOCK = 0
+MOCK = 1
 
 gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0), MOCK,0)
 gimbal_inst.set_small_step_rotate(0.2)
@@ -130,6 +130,11 @@ async def set_feed_rate(feedval):
         print("updating crane feeddefault from {} to {}".format(
             feedval, crane_inst.get_feed_speed()))
         crane_inst.set_feed_speed(feedval)
+
+async def set_delay_rate(val):
+    print("set crane delay to {}".format(val))
+    crane_inst.set_command_delay(val)
+
 
 
 async def set_move_time(seconds):
@@ -299,6 +304,7 @@ async def main():
     feed_input_text = '1750'
     movetime_input_text = '5'
     dwell_input_text = '10'
+    delay_input_text = '0.4'
     # used to handle button presses registering faster than you can release
     control_last_toggled = time.time()
 
@@ -333,13 +339,18 @@ async def main():
     dwell_input_colour_infeed_input_active = (0, 0, 200)
     dwell_input_colour_feed_input_active = (0, 200, 0)
 
+    delay_input_colour_infeed_input_active = (0, 0, 200)
+    delay_input_colour_feed_input_active = (0, 200, 0)
+
     feed_input_colour = feed_input_colour_infeed_input_active
     dwell_input_colour = dwell_input_colour_infeed_input_active
-
+    delay_input_colour = delay_input_colour_infeed_input_active
     feed_input_active = False
     dwell_input_active = False
+    delay_input_active = False
     feed_input = pygame.Rect(700, 268, 40, 32)
     dwell_input = pygame.Rect(500, 268, 40, 32)
+    delay_input = pygame.Rect(500,320,40,32)
     countdown_rect = pygame.Rect(300, 200, 100, 100)
     # hold_time_input = pygame.Rect(580, 128, 25, 32)
 
@@ -372,10 +383,17 @@ async def main():
                     dwell_input_active = not dwell_input_active
                 else:
                     dwell_input_active = False
+                if delay_input.collidepoint(event.pos):
+                    # Toggle the feed_input_active variable.
+                    delay_input_active = not delay_input_active
+                else:
+                    delay_input_active = False
                 feed_input_colour = feed_input_colour_feed_input_active if feed_input_active \
                     else feed_input_colour_infeed_input_active
                 dwell_input_colour = dwell_input_colour_feed_input_active if dwell_input_active \
                     else dwell_input_colour_infeed_input_active
+                delay_input_colour = delay_input_colour_feed_input_active if delay_input_active \
+                    else delay_input_colour_infeed_input_active
             if event.type == pygame.KEYDOWN:
                 if feed_input_active:
                     if event.key == pygame.K_RETURN:
@@ -402,6 +420,13 @@ async def main():
                         dwell_input_text = dwell_input_text[:-1]
                     else:
                         dwell_input_text += event.unicode  #
+                if delay_input_active:
+                    if event.key == pygame.K_RETURN:
+                        delay_input_text = ''
+                    elif event.key == pygame.K_BACKSPACE:
+                        delay_input_text = delay_input_text[:-1]
+                    else:
+                        delay_input_text += event.unicode  #
 
         # DRAWING STEP
         #
@@ -607,7 +632,9 @@ async def main():
                         UI.yellow, UI.bright_green, dwell_input_text, sequence_steps, ui_info, add_waypoint)
         await waypoint_button(screen, "Delete Way-point", 580, 88, 90, 50,
                         UI.yellow, UI.bright_green, 0, sequence_steps, ui_info, delete_waypoint)
-
+        if delay_input_text != '':
+                await value_button(screen, "delay", 540, 320, 50, 50, UI.yellow, UI.bright_green,
+                             float(delay_input_text), ui_info, set_delay_rate)
         if CONTROL_TOGGLE == GIMBAL_CONTROL:
             await value_button(screen, "Gimbal", 200, 248, 90, 50, UI.yellow,
                          UI.bright_green, GIMBAL_CONTROL, ui_info, toggle_control)
@@ -694,6 +721,17 @@ async def main():
         screen.blit(dwell_txt_surface, (dwell_input.x + 5, dwell_input.y + 5))
         # Blit the feed_input rect.
         pygame.draw.rect(screen, dwell_input_colour, dwell_input, 2)
+
+        # Render the current text.
+        delay_txt_surface = font.render(
+            delay_input_text, True, delay_input_colour)
+        # Resize the box if the text is too long.
+        delay_width = min(100, delay_txt_surface.get_width() + 10)
+        delay_input.w = delay_width
+        # Blit the text.
+        screen.blit(delay_txt_surface, (delay_input.x + 5, delay_input.y + 5))
+        # Blit the feed_input rect.
+        pygame.draw.rect(screen, delay_input_colour, delay_input, 2)
 
         if sequence_steps.sequence_running:
             pygame.draw.rect(screen, (255, 0, 0), countdown_rect, 2)
