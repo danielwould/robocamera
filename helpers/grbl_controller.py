@@ -81,7 +81,9 @@ class grbl_controller:
             self.grbl_connection.write('\n'.encode())
             status = self.grbl_connection.readline().decode("utf-8")
             count=0
-            while (status.startswith("ok".decode("utf-8")) == False) or (status.startswith("error".decode("utf-8"))==False):
+            ok_u = unicode("ok", "utf-8")
+            error_u = unicode("error", "utf-8")
+            while (status.startswith(ok_u) == False) or (status.startswith(error_u)==False):
                 print("grbl:{} ->{}<-".format(time.ctime(),status))
                 count = count +1    
                 status = self.grbl_connection.readline().decode("utf-8")
