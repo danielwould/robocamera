@@ -62,9 +62,12 @@ class grbl_controller:
         else:
             self.gcode_sequence.append("\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(x, y, z, feedrate, dwell))
         
-    def run_sequence(self, name):
+    def print_gcode_sequence(self,name):
         for gcode in self.gcode_sequence:
             print("{}:running sequence gcode:\r\n{}".format(name,gcode))
+        
+    def run_sequence(self, name):
+        for gcode in self.gcode_sequence:
             self.write_gcode(gcode)
         self.reset_gcode_sequence()
 
