@@ -18,7 +18,7 @@ from helpers.ui import TextPrint
 from helpers.crane import crane
 from helpers.gimbal import gimbal
 
-MOCK = 0
+MOCK = 1
 
 gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0), MOCK,0)
 gimbal_inst.set_small_step_rotate(0.2)
@@ -445,9 +445,9 @@ def main():
 
         # Get count of joysticks.
         joystick_count = pygame.joystick.get_count()
-
-        text_print.tprint(
-            screen, "Number of joysticks: {}".format(joystick_count))
+        text_print.tprint(screen, crane_inst.poll_output())
+        text_print.tprint(screen, gimbal_inst.poll_output())
+        
         text_print.indent()
         text_print.tprint(screen, "Gimbal position")
         text_print.tprint(screen, "    {}".format(
@@ -477,7 +477,8 @@ def main():
         text_print.tprint(screen, "Save pos X (L1)")
         text_print.tprint(screen, "   {}".format(
             save_position_4.location_str()))
-
+        
+        
         # For each joystick:
         for joystick_num in range(joystick_count):
             joystick = pygame.joystick.Joystick(joystick_num)

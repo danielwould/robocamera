@@ -87,9 +87,21 @@ class grbl_controller:
                 print("grbl:{} ->{}<-".format(time.ctime(),status))
                 count = count +1    
                 status = self.grbl_connection.readline()
-                if count >20:
+                if count >200:
                     print("waited too long for ok")
                     break
                 
         else:
             print("mocking sending {}".format(gcode_str))
+
+    def read_output(self):
+        if self.MODE == self.REAL_MODE:
+            status = self.grbl_connection.readline()
+            if status != b'':
+                print(status.decode("utf-8"))
+                return status.decode("utf-8")
+        else:
+            return "pong"
+    
+    def query_position(self):
+        self.write_gcode("?")

@@ -154,3 +154,7 @@ class base_control_object:
             print("no last position set")
     def get_current_gcode_sequence(self,name):
         self.controller.print_gcode_sequence(name)
+
+
+    def poll_output(self):
+        return self.controller.read_output()
