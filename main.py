@@ -198,16 +198,16 @@ async def trigger_sequence_step(sequence_steps):
         await task1
         await task2
 
-async def trigger_whole_sequence(sequence_steps):
+def trigger_whole_sequence(sequence_steps):
     
     if len(sequence_steps.waypoints) > 0:
         for wp in sequence_steps.waypoints:
             if MOVE_TOGGLE == FEED_RATE:
-                await crane_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_feed_rate(),wp.get_dwell_time())
-                await gimbal_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate(),wp.get_dwell_time())
+                crane_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_feed_rate(),wp.get_dwell_time())
+                gimbal_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate(),wp.get_dwell_time())
             if MOVE_TOGGLE == MOVE_TIME:
-                await crane_inst.add_waypoint_by_time_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_duration(),wp.get_dwell_time())
-                await gimbal_inst.add_waypoint_by_time_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration(),wp.get_dwell_time())
+                crane_inst.add_waypoint_by_time_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_duration(),wp.get_dwell_time())
+                gimbal_inst.add_waypoint_by_time_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration(),wp.get_dwell_time())
     print("===========")
     print("built crane sequence {}".format(crane_inst.get_current_gcode_sequence()))
     print("===========")
@@ -216,10 +216,8 @@ async def trigger_whole_sequence(sequence_steps):
 
     
     
-    task1 = asyncio.create_task(crane_inst.trigger_sequence("crane"))
-    task2 = asyncio.create_task(gimbal_inst.trigger_sequence("gimbal"))
-    await task1
-    await task2
+    asyncio.run(crane_inst.trigger_sequence("crane"))
+    asyncio.run(gimbal_inst.trigger_sequence("gimbal"))
     #set location to last wp
 
 
