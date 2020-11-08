@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import serial
 import time
 
@@ -79,14 +80,13 @@ class grbl_controller:
         if self.MODE == self.REAL_MODE:
             self.grbl_connection.write(gcode_str.encode())
             self.grbl_connection.write('\n'.encode())
-            status = self.grbl_connection.readline().decode("utf-8")
+            status = self.grbl_connection.readline()
             count=0
-            ok_u = unicode("ok", "utf-8")
-            error_u = unicode("error", "utf-8")
-            while (status.startswith(ok_u) == False) or (status.startswith(error_u)==False):
+            
+            while (status == b'ok\r\n') or (status == b'error\r\n'):
                 print("grbl:{} ->{}<-".format(time.ctime(),status))
                 count = count +1    
-                status = self.grbl_connection.readline().decode("utf-8")
+                status = self.grbl_connection.readline()
                 if count >20:
                     print("waited too long for ok")
                     break
