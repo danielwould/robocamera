@@ -19,7 +19,7 @@ from helpers.ui import TextPrint
 from helpers.crane import crane
 from helpers.gimbal import gimbal
 
-MOCK = 1
+MOCK = 0
 
 gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0), MOCK,0)
 gimbal_inst.set_small_step_rotate(0.2)
