@@ -691,7 +691,7 @@ def main():
         # reset button
         trigger_button(screen, "RESET", 650, 340, 30, 30,
                        UI.yellow, UI.bright_green, ui_info, reset)
-        value_button(screen, "Start", 540, 220, 50, 50, UI.yellow, UI.bright_green,sequence_steps, ui_info, trigger_whole_sequence)
+        value_button(screen, "Start", 540, 250, 50, 50, UI.yellow, UI.bright_green,sequence_steps, ui_info, trigger_whole_sequence)
 
         pygame.draw.rect(screen, UI.black, (190, 5, 490, 370), 2)
         wpitem = 0
