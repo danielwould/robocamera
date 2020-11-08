@@ -36,14 +36,14 @@ class gimbal(base_control_object):
     # override move commands to include the third axis
     async def move_to_position_at_rate(self, position):
         self.controller.absolute_move(position.get_rotation_pos(), position.get_tilt_pos(), position.get_zoom_pos(),
-                                      self.current_feed_speed)
+                                      self.current_feed_speed,0)
         self.last_command_sent_at = time.time()
         self.currentlocation.set_location(position)
 
     async def move_to_position_in_time(self, position):
         self.controller.absolute_move_by_time(position.get_rotation_pos(), position.get_tilt_pos(),
                                               position.get_zoom_pos(),
-                                              self.current_move_duration)
+                                              self.current_move_duration,0)
         self.last_command_sent_at = time.time()
         self.currentlocation.set_location(position)
 

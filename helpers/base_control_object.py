@@ -115,12 +115,12 @@ class base_control_object:
             self.currentlocation.increment_tilt(self.big_step_tilt)
 
     async def move_to_position_at_rate(self, position):
-        self.controller.absolute_move(position.get_rotation_pos(),position.get_tilt_pos(),0,self.current_feed_speed)
+        self.controller.absolute_move(position.get_rotation_pos(),position.get_tilt_pos(),0,self.current_feed_speed,0)
         self.last_command_sent_at = time.time()
         self.currentlocation.set_location(position)
 
     async def move_to_position_in_time(self, position):
-        self.controller.absolute_move_by_time(position.get_rotation_pos(),position.get_tilt_pos(),0,self.current_move_duration)
+        self.controller.absolute_move_by_time(position.get_rotation_pos(),position.get_tilt_pos(),0,self.current_move_duration,0)
         self.last_command_sent_at = time.time()
         self.currentlocation.set_location(position)
 
