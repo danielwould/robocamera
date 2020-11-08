@@ -34,7 +34,7 @@ class grbl_controller:
 
     def relative_move(self, move_str, feedrate):
 
-        self.write_gcode("g4 P{}\r\ng91\r\ng94\r\ng1 {} f{}".format(self.dwell_delay,move_str, feedrate))
+        self.write_gcode("g91\r\ng94\r\ng1 {} f{}".format(self.dwell_delay,move_str, feedrate))
         
     def absolute_move(self, x, y, z, feedrate, dwell):
         self.write_gcode("g4 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedrate,dwell))
