@@ -8,6 +8,7 @@ class grbl_controller:
     REAL_MODE = 0
     MODE = REAL_MODE
     dwell_delay=0
+    gcode_sequence = ""
 
     def __init__(self, mode, dwell_delay):
         print("init")
@@ -25,6 +26,9 @@ class grbl_controller:
         self.write_gcode("$#")
         self.write_gcode("?")
 
+    def reset_gcode_sequence(self):
+        self.gcode_sequence=""
+
     def set_command_delay(self,value):
         self.dwell_delay = value
 
@@ -40,7 +44,27 @@ class grbl_controller:
         # f2 = 60/2 = 30s
         feedval = 60 / seconds
         self.write_gcode("g4 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedval, dwell))
+
+    def add_absolute_move_by_time_to_sequence(self, x,y,z,seconds,dwell):
+        feedval = 60 / seconds
+        if self.gcode_sequence == "":
+            #first statement gets initial delay
+            self.gcode_sequence="g4 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedval, dwell)
+        else:
+            self.gcode_sequence=self.gcode_sequence+"\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(x, y, z, feedval, dwell)
+
+    def add_absolute_move_by_feed_to_sequence(self, x,y,z,feedrate,dwell):
         
+        if self.gcode_sequence == "":
+            #first statement gets initial delay
+            self.gcode_sequence="g4 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedrate,dwell)
+        else:
+            self.gcode_sequence=self.gcode_sequence+"\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(x, y, z, feedrate, dwell)
+
+    def run_sequence(self):
+        self.write_gcode(self.gcode_sequence)
+        self.reset_gcode_sequence()
+
     def write_gcode(self, gcode_str):
         print("{} : instruction: {}".format(time.ctime(), gcode_str))
         if self.MODE == self.REAL_MODE:

@@ -57,3 +57,10 @@ class gimbal(base_control_object):
         self.controller.absolute_move_by_time(position.get_rotation_pos(),position.get_tilt_pos(), position.get_zoom_pos(),duration)
         self.last_command_sent_at = time.time()
         self.currentlocation.set_location(position)
+
+    async def add_waypoint_by_time_to_sequqnce(self, position, duration, dwell):
+        self.controller.add_absolute_move_by_time_to_sequence(position.get_rotation_pos(),position.get_tilt_pos(),position.get_zoom_pos(),duration, dwell)
+
+    async def add_waypoint_by_feedrate_to_sequqnce(self, position, duration, dwell):
+        self.controller.add_absolute_move_by_feed_to_sequence(position.get_rotation_pos(),position.get_tilt_pos(),position.get_zoom_pos(),duration, dwell)
+     

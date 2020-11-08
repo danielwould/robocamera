@@ -198,8 +198,20 @@ async def trigger_sequence_step(sequence_steps):
         await task1
         await task2
 
-
-
+async def trigger_whole_sequence(sequence_steps):
+    if len(sequence_steps.waypoints) > 0:
+        for wp in sequence_steps.waypoints:
+            if MOVE_TOGGLE == FEED_RATE:
+                crane_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_feed_rate())
+                gimbal_inst.add_waypoint_by_feedrate_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_feed_rate())
+            if MOVE_TOGGLE == MOVE_TIME:
+                crane_inst.add_waypoint_by_time_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_duration())
+                gimbal_inst.add_waypoint_by_time_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration())
+    task1 = asyncio.create_task(crane_inst.trigger_sequence())
+    task2 = asyncio.create_task(gimbal_inst.trigger_sequence())
+    await task1
+    await task2
+    #set location to last wp
 
 
 async def save_point_move(savepoint):
@@ -575,7 +587,7 @@ async def main():
 
                 if button_num == 9:
                     if button == 1:
-                        await start_sequence(sequence_steps)
+                        await trigger_whole_sequence(sequence_steps)
 
             text_print.unindent()
 
