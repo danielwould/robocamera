@@ -81,8 +81,8 @@ class grbl_controller:
             self.grbl_connection.write('\n'.encode())
             status = self.grbl_connection.readline()
             count=0
-            while (status != "ok\r\n") and (status !="error\r\n"):
-                print("grbl:{} -  {}".format(time.ctime(),status))
+            while (str(status) != "ok\r\n") and (str(status) !="error\r\n"):
+                print("grbl:{} -  {}".format(time.ctime(),str(status)))
                 count = count +1    
                 status = self.grbl_connection.readline()
                 if count >20:
