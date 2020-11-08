@@ -221,19 +221,14 @@ def trigger_whole_sequence(sequence_steps):
     #set location to last wp
 
 
-async def save_point_move(savepoint):
+def save_point_move(savepoint):
     if MOVE_TOGGLE == FEED_RATE:
-        task1 = asyncio.create_task(
-        crane_inst.move_to_position_at_rate(savepoint.get_crane_position()))
-        task2 = asyncio.create_task(
-        gimbal_inst.move_to_position_at_rate(savepoint.get_gimbal_position()))
-        await task1
-        await task2
+        crane_inst.move_to_position_at_rate(savepoint.get_crane_position())
+        gimbal_inst.move_to_position_at_rate(savepoint.get_gimbal_position())
     if MOVE_TOGGLE == MOVE_TIME:
-        task1 = asyncio.create_task(crane_inst.move_to_position_in_time(savepoint.get_crane_position()))
-        task2 = asyncio.create_task(gimbal_inst.move_to_position_in_time(savepoint.get_gimbal_position()))
-        await task1
-        await task2
+        crane_inst.move_to_position_in_time(savepoint.get_crane_position())
+        gimbal_inst.move_to_position_in_time(savepoint.get_gimbal_position())
+        
 
 async def save_position(savepoint):
     global save_position_1
@@ -570,16 +565,16 @@ async def main():
                         await save_position(4)
                 if button_num == 4:
                     if button == 1:
-                        await save_point_move(save_position_1)
+                        save_point_move(save_position_1)
                 if button_num == 5:
                     if button == 1:
-                        await save_point_move(save_position_2)
+                        save_point_move(save_position_2)
                 if button_num == 6:
                     if button == 1:
-                        await save_point_move(save_position_3)
+                        save_point_move(save_position_3)
                 if button_num == 7:
                     if button == 1:
-                        await save_point_move(save_position_4)
+                        save_point_move(save_position_4)
                 if button_num == 8:
                     if button == 1:
                         # the reset button first for down and up, we only want to register on down
