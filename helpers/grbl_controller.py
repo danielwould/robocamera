@@ -52,8 +52,7 @@ class grbl_controller:
             self.gcode_sequence="g4 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedval, dwell)
         else:
             self.gcode_sequence=self.gcode_sequence+"\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(x, y, z, feedval, dwell)
-        print(self.gcode_sequence) 
-
+        
 
     def add_absolute_move_by_feed_to_sequence(self, x,y,z,feedrate,dwell):
         
@@ -62,9 +61,9 @@ class grbl_controller:
             self.gcode_sequence="g4 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(self.dwell_delay,x, y, z, feedrate,dwell)
         else:
             self.gcode_sequence=self.gcode_sequence+"\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(x, y, z, feedrate, dwell)
-        print(self.gcode_sequence)
-
-    def run_sequence(self):
+        
+    def run_sequence(self, name):
+        print("{}:running gcode:\r\n{}".format(name,self.gcode_sequence))
         self.write_gcode(self.gcode_sequence)
         self.reset_gcode_sequence()
 

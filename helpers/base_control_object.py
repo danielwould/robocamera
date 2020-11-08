@@ -146,8 +146,8 @@ class base_control_object:
         self.last_position_in_sequence = position
         print("{} waypoint added to gcode sequence".format(time.ctime()))
         
-    async def trigger_sequence(self):
-        self.controller.run_sequence()
+    async def trigger_sequence(self, name):
+        self.controller.run_sequence(name)
         if (self.last_position_in_sequence != None):
             self.currentlocation.set_location(self.last_position_in_sequence)
         else:

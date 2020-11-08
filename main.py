@@ -207,8 +207,8 @@ async def trigger_whole_sequence(sequence_steps):
             if MOVE_TOGGLE == MOVE_TIME:
                 await crane_inst.add_waypoint_by_time_to_sequqnce(wp.get_crane_position(), wp.get_crane_travel_to_duration(),wp.get_dwell_time())
                 await gimbal_inst.add_waypoint_by_time_to_sequqnce(wp.get_gimbal_position(), wp.get_gimbal_travel_to_duration(),wp.get_dwell_time())
-    task1 = asyncio.create_task(crane_inst.trigger_sequence())
-    task2 = asyncio.create_task(gimbal_inst.trigger_sequence())
+    task1 = asyncio.create_task(crane_inst.trigger_sequence("crane"))
+    task2 = asyncio.create_task(gimbal_inst.trigger_sequence("gimbal"))
     await task1
     await task2
     #set location to last wp
