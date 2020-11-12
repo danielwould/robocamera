@@ -20,7 +20,7 @@ from helpers.gimbal import gimbal
 
 MOCK = 1
 
-gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0), MOCK,0)
+gimbal_inst = gimbal("COM5", gimbalpos(0, 0, 0), 0,0)
 gimbal_inst.set_small_step_rotate(0.2)
 gimbal_inst.set_big_step_rotate(2)
 gimbal_inst.set_small_step_tilt(0.2)
