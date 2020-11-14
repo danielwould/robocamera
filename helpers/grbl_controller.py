@@ -1,7 +1,18 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 import serial
 import time
 import threading
+import sys
+import re
+import os
+import glob
+try:
+    from Queue import *
+except ImportError:
+    from queue import *
+
+from helpers.controllers._GenericGRBL import ERROR_CODES
 
 SERIAL_POLL = 0.125
 SERIAL_TIMEOUT = 0.10  # s
@@ -14,94 +25,95 @@ FEEDPAT = re.compile(r"^(.*)[fF](\d+\.?\d+)(.*)$")
 CONNECTED = "Connected"
 NOT_CONNECTED = "Not connected"
 
-IDPAT    = re.compile(r".*\bid:\s*(.*?)\)")
+IDPAT = re.compile(r".*\bid:\s*(.*?)\)")
 PARENPAT = re.compile(r"(\(.*?\))")
-SEMIPAT  = re.compile(r"(;.*)")
-OPPAT    = re.compile(r"(.*)\[(.*)\]")
-CMDPAT   = re.compile(r"([A-Za-z]+)")
+SEMIPAT = re.compile(r"(;.*)")
+OPPAT = re.compile(r"(.*)\[(.*)\]")
+CMDPAT = re.compile(r"([A-Za-z]+)")
 BLOCKPAT = re.compile(r"^\(Block-([A-Za-z]+):\s*(.*)\)")
-AUXPAT   = re.compile(r"^(%[A-Za-z0-9]+)\b *(.*)$")
+AUXPAT = re.compile(r"^(%[A-Za-z0-9]+)\b *(.*)$")
 
-STOP   = 0
-SKIP   = 1
-ASK    = 2
-MSG    = 3
-WAIT   = 4
+STOP = 0
+SKIP = 1
+ASK = 2
+MSG = 3
+WAIT = 4
 UPDATE = 5
 
-XY   = 0
-XZ   = 1
-YZ   = 2
+XY = 0
+XZ = 1
+YZ = 2
 
-CW   = 2
-CCW  = 3
+CW = 2
+CCW = 3
 
-WCS  = ["G54", "G55", "G56", "G57", "G58", "G59"]
+WCS = ["G54", "G55", "G56", "G57", "G58", "G59"]
 
-DISTANCE_MODE = { "G90" : "Absolute",
-		  "G91" : "Incremental" }
-FEED_MODE     = { "G93" : "1/Time",
-		  "G94" : "unit/min",
-		  "G95" : "unit/rev"}
-UNITS         = { "G20" : "inch",
-		  "G21" : "mm" }
-PLANE         = { "G17" : "XY",
-		  "G18" : "XZ",
-		  "G19" : "YZ" }
+DISTANCE_MODE = {"G90": "Absolute",
+                 "G91": "Incremental"}
+FEED_MODE = {"G93": "1/Time",
+             "G94": "unit/min",
+             "G95": "unit/rev"}
+UNITS = {"G20": "inch",
+         "G21": "mm"}
+PLANE = {"G17": "XY",
+         "G18": "XZ",
+         "G19": "YZ"}
 
 # Modal Mode from $G and variable set
 MODAL_MODES = {
-	"G0"	: "motion",
-	"G1"	: "motion",
-	"G2"	: "motion",
-	"G3"	: "motion",
-	"G38.2"	: "motion",
-	"G38.3"	: "motion",
-	"G38.4"	: "motion",
-	"G38.5"	: "motion",
-	"G80"	: "motion",
+    "G0"	: "motion",
+    "G1"	: "motion",
+    "G2"	: "motion",
+    "G3"	: "motion",
+    "G38.2"	: "motion",
+    "G38.3"	: "motion",
+    "G38.4"	: "motion",
+    "G38.5"	: "motion",
+    "G80"	: "motion",
 
-	"G54"   : "WCS",
-	"G55"   : "WCS",
-	"G56"   : "WCS",
-	"G57"   : "WCS",
-	"G58"   : "WCS",
-	"G59"   : "WCS",
+    "G54": "WCS",
+    "G55": "WCS",
+    "G56": "WCS",
+    "G57": "WCS",
+    "G58": "WCS",
+    "G59": "WCS",
 
-	"G17"   : "plane",
-	"G18"   : "plane",
-	"G19"   : "plane",
+    "G17": "plane",
+    "G18": "plane",
+    "G19": "plane",
 
-	"G90"	: "distance",
-	"G91"	: "distance",
+    "G90"	: "distance",
+    "G91"	: "distance",
 
-	"G91.1" : "arc",
+    "G91.1": "arc",
 
-	"G93"   : "feedmode",
-	"G94"   : "feedmode",
-	"G95"   : "feedmode",
+    "G93": "feedmode",
+    "G94": "feedmode",
+    "G95": "feedmode",
 
-	"G20"	: "units",
-	"G21"	: "units",
+    "G20"	: "units",
+    "G21"	: "units",
 
-	"G40"	: "cutter",
+    "G40"	: "cutter",
 
-	"G43.1" : "tlo",
-	"G49"   : "tlo",
+    "G43.1": "tlo",
+    "G49": "tlo",
 
-	"M0"	: "program",
-	"M1"	: "program",
-	"M2"	: "program",
-	"M30"	: "program",
+    "M0"	: "program",
+    "M1"	: "program",
+    "M2"	: "program",
+    "M30"	: "program",
 
-	"M3"    : "spindle",
-	"M4"    : "spindle",
-	"M5"    : "spindle",
+    "M3": "spindle",
+    "M4": "spindle",
+    "M5": "spindle",
 
-	"M7"    : "coolant",
-	"M8"    : "coolant",
-	"M9"    : "coolant",
+    "M7": "coolant",
+    "M8": "coolant",
+    "M9": "coolant",
 }
+prgpath = os.path.abspath(os.path.dirname(__file__))
 
 
 class grbl_controller:
@@ -116,6 +128,9 @@ class grbl_controller:
 
     def __init__(self, mode, dwell_delay):
         print("init")
+        self.controllers = {}
+        self.controllerLoad()
+        self.controllerSet("GRBL1")
         self.MODE = mode
         self.dwell_delay = dwell_delay
         self.gcode_sequence = []
@@ -146,19 +161,76 @@ class grbl_controller:
         self._onStart = ""
         self._onStop = ""
 
-    def set_device(self, device):
+    def set_device(self, device, baudrate, name):
         self.serial_device = device
         if self.MODE == self.REAL_MODE:
-            self.serial = serial.Serial(device, 115200, timeout=0.2)
-        x = threading.Thread(target=self.control_thread,
-                             args=(self.serial_device,))
-        x.start()
+            #self.serial = serial.Serial(device, 115200, timeout=0.2)
+            self.serial = serial.serial_for_url(
+                device.replace('\\', '\\\\'),  # Escape for windows
+                baudrate,
+                bytesize=serial.EIGHTBITS,
+                parity=serial.PARITY_NONE,
+                stopbits=serial.STOPBITS_ONE,
+                timeout=SERIAL_TIMEOUT,
+                xonxoff=False,
+                rtscts=False)
+            # Toggle DTR to reset Arduino
+            try:
+                self.serial.setDTR(0)
+            except IOError:
+                pass
+            time.sleep(1)
+
+            self.serial.flushInput()
+            try:
+                self.serial.setDTR(1)
+            except IOError:
+                pass
+            time.sleep(1)
+            self.serial_write(b"\n\n")
+        self._gcount = 0
+        self._alarm = True
+        self.thread = threading.Thread(
+            target=self.control_thread, args=(name,))
+        self.thread.start()
+
+    def controllerLoad(self):
+        # Find plugins in the controllers directory and load them
+        for f in glob.glob("%s/controllers/*.py" % (prgpath)):
+            name, ext = os.path.splitext(os.path.basename(f))
+            if name[0] == '_':
+                continue
+            #print("Loaded motion controller plugin: %s"%(name))
+            try:
+                exec("import %s" % (name))
+                self.controllers[name] = eval("%s.Controller(self)" % (name))
+            except (ImportError, AttributeError):
+                typ, val, tb = sys.exc_info()
+                print("Error loading controller logic {},{},{}".format(typ, val, tb))
+    # ----------------------------------------------------------------------
+
+    def controllerSet(self, ctl):
+        #print("Activating motion controller plugin: %s"%(ctl))
+        if ctl in self.controllers.keys():
+            self.controller = ctl
+            self.mcontrol = self.controllers[ctl]
 
     def reset(self):
         #self.write_gcode("G10 P0 X0 Y0 Z0")
-        self.write_gcode("G92 X0 Y0 Z0")
-        self.write_gcode("$#")
-        self.write_gcode("?")
+        # Toggle DTR to reset Arduino
+        try:
+            self.serial.setDTR(0)
+        except IOError:
+            pass
+        time.sleep(1)
+
+        self.serial.flushInput()
+        try:
+            self.serial.setDTR(1)
+        except IOError:
+            pass
+        time.sleep(1)
+        self.serial_write(b"\n\n")
 
     def reset_gcode_sequence(self):
         self.gcode_sequence = []
@@ -168,17 +240,17 @@ class grbl_controller:
 
     def relative_move(self, move_str, feedrate):
 
-        self.write_gcode("g91\r\ng94\r\ng1 {} f{}".format(move_str, feedrate))
+        self.sendGCode("g91\r\ng94\r\ng1 {} f{}".format(move_str, feedrate))
 
     def absolute_move(self, x, y, z, feedrate, dwell):
-        self.write_gcode("g4 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(
+        self.sendGCode("g4 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(
             self.dwell_delay, x, y, z, feedrate, dwell))
 
     def absolute_move_by_time(self, x, y, z, seconds, dwell):
         # calculate f value from desired
         # f2 = 60/2 = 30s
         feedval = 60 / seconds
-        self.write_gcode("g4 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(
+        self.sendGCode("g4 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(
             self.dwell_delay, x, y, z, feedval, dwell))
 
     def add_absolute_move_by_time_to_sequence(self, x, y, z, seconds, dwell):
@@ -209,129 +281,127 @@ class grbl_controller:
 
     def run_sequence(self, name):
         for gcode in self.gcode_sequence:
-            self.write_gcode(gcode)
+            self.sendGCode(gcode)
         self.reset_gcode_sequence()
 
-    def write_gcode(self, gcode_str):
-        print("{} : instruction: {}".format(time.ctime(), gcode_str))
+    def sendGCode(self, cmd):
+        print("{} : instruction: {}".format(time.ctime(), cmd))
+        if self.serial and not self.running:
+            if isinstance(cmd, tuple):
+                self.queue.put(cmd)
+            else:
+                self.queue.put(cmd+"\n")
+
+    # ----------------------------------------------------------------------
+    # Serial write
+    # ----------------------------------------------------------------------
+
+    def serial_write(self, data):
+        #print("W "+str(type(data))+" : "+str(data))
+
+        # if sys.version_info[0] == 2:
+        #	ret = self.serial.write(str(data))
         if self.MODE == self.REAL_MODE:
-            self.serial.write(gcode_str.encode())
-            self.serial.write('\n'.encode())
-            status = self.serial.readline()
-            count = 0
+            if isinstance(data, bytes):
+                ret = self.serial.write(data)
+            else:
+                ret = self.serial.write(data.encode())
 
-            while (status == b'ok\r\n') or (status == b'error\r\n'):
-                print("grbl:{} ->{}<-".format(time.ctime(), status))
-                count = count + 1
-                status = self.serial.readline()
-                if count > 200:
-                    print("waited too long for ok")
-                    break
+            return ret
 
-        else:
-            print("mocking sending {}".format(gcode_str))
+    def emptyQueue(self):
+        while self.queue.qsize() > 0:
+            try:
+                self.queue.get_nowait()
+            except:
+                break
 
-    def read_output(self):
-        if self.MODE == self.REAL_MODE:
-            status = self.serial.readline()
-            if status != b'':
-                print(status.decode("utf-8"))
-                return status.decode("utf-8")
-        else:
-            return "pong"
+    def status(self):
+        self.mcontrol.viewStatusReport()
+
+    def controllerStateChange(self, state):
+        print("Controller state changed to: %s (Running: %s)" %
+              (state, self.running))
+        if state in ("Idle"):
+            self.mcontrol.viewParameters()
+            self.mcontrol.viewState()
+
+        if self.cleanAfter == True and self.running == False and state in ("Idle"):
+            self.cleanAfter = False
+            
 
     def control_thread(self, name):
         print("Thread start for grbl on :{}".format(name))
-        self.sio_wait   = False		# wait for commands to complete (status change to Idle)
-		self.sio_status = False		# waiting for status <...> report
+        # wait for commands to complete (status change to Idle)
+        self.sio_wait = False
+        self.sio_status = False		# waiting for status <...> report
         cline = []		# length of pipeline commands
         sline = []			# pipeline commands
-        tosend = None			# next string to send
-        tr = time.time()
+        gcodeToSend = None			# next string to send
+        lastWriteAt = tg = time.time()
         while self.thread:
             time.sleep(0.01)
             t = time.time()
             # refresh machine position?
-            if t-tr > SERIAL_POLL:
-                self.write_gcode("?")
-                tr = t
+            if t-lastWriteAt > SERIAL_POLL:
+                self.serial_write(b"?")
+                lastWriteAt = t
 
                 # Fetch new command to send if...
-            if tosend is None and not self.sio_wait and not self._pause and self.queue.qsize() > 0:
+            if gcodeToSend is None and not self.sio_wait and not self._pause and self.queue.qsize() > 0:
                 try:
-                    tosend = self.queue.get_nowait()
+                    gcodeToSend = self.queue.get_nowait()
                     # print "+++",repr(tosend)
-                    if isinstance(tosend, tuple):
+                    if isinstance(gcodeToSend, tuple):
                         # print "gcount tuple=",self._gcount
                         # wait to empty the grbl buffer and status is Idle
-                        if tosend[0] == WAIT:
+                        if gcodeToSend[0] == WAIT:
                             # Don't count WAIT until we are idle!
                             self.sio_wait = True
                             # print "+++ WAIT ON"
                             # print "gcount=",self._gcount, self._runLines
-                        elif tosend[0] == MSG:
+                        elif gcodeToSend[0] == MSG:
                             # Count executed commands as well
                             self._gcount += 1
-                            if tosend[1] is not None:
+                            if gcodeToSend[1] is not None:
                                 # show our message on machine status
-                                self._msg = tosend[1]
-                        elif tosend[0] == UPDATE:
+                                self._msg = gcodeToSend[1]
+                        elif gcodeToSend[0] == UPDATE:
                             # Count executed commands as well
                             self._gcount += 1
-                            self._update = tosend[1]
+                            self._update = gcodeToSend[1]
                         else:
                             # Count executed commands as well
                             self._gcount += 1
-                        tosend = None
-
-                    elif not isinstance(tosend, str):
-                        try:
-                            tosend = self.gcode.evaluate(tosend, self)
-#							if isinstance(tosend, list):
-#								cline.append(len(tosend[0]))
-#								sline.append(tosend[0])
-                            if isinstance(tosend, str):
-                                tosend += "\n"
-                            else:
-                                # Count executed commands as well
-                                self._gcount += 1
-                                # print "gcount str=",self._gcount
-                            # print "+++ eval=",repr(tosend),type(tosend)
-                        except:
-                            for s in str(sys.exc_info()[1]).splitlines():
-                                self.log.put((Sender.MSG_ERROR, s))
-                            self._gcount += 1
-                            tosend = None
-                except Empty:
+                        gcodeToSend = None
+                except:
                     break
 
-                
-
                     # Bookkeeping of the buffers
-                    sline.append(tosend)
-                    cline.append(len(tosend))
+                    sline.append(gcodeToSend)
+                    cline.append(len(gcodeToSend))
 
             # Anything to receive?
-            if self.serial.inWaiting() or tosend is None:
-                try:
-                    line = str(self.serial.readline().decode()).strip()
-                except:
-                    self.emptyQueue()
-                    self.close()
-                    return
+            if self.MODE == self.REAL_MODE:
+                if self.serial.inWaiting() or gcodeToSend is None:
+                    try:
+                        line = str(self.serial.readline().decode()).strip()
+                    except:
+                        self.emptyQueue()
+                        return
 
-                # print "<R<",repr(line)
-                # print "*-* stack=",sline,"sum=",sum(cline),"wait=",wait,"pause=",self._pause
-                if not line:
-                    pass
-                elif self.mcontrol.parseLine(line, cline, sline):
-                    pass
+                    # print "<R<",repr(line)
+                    # print "*-* stack=",sline,"sum=",sum(cline),"wait=",wait,"pause=",self._pause
+                    if not line:
+                        pass
+                    elif self.mcontrol.parseLine(line, cline, sline):
+                        pass
 
             # Received external message to stop
             if self._stop:
                 self.emptyQueue()
-                tosend = None
-                
+                gcodeToSend = None
+
                 # WARNING if runLines==maxint then it means we are
                 # still preparing/sending lines from from bCNC.run(),
                 # so don't stop
@@ -340,7 +410,7 @@ class grbl_controller:
 
             # print "tosend='%s'"%(repr(tosend)),"stack=",sline,
             #	"sum=",sum(cline),"wait=",wait,"pause=",self._pause
-            if tosend is not None and sum(cline) < RX_BUFFER_SIZE:
+            if gcodeToSend is not None and sum(cline) < RX_BUFFER_SIZE:
                 self._sumcline = sum(cline)
 #				if isinstance(tosend, list):
 #					self.serial_write(str(tosend.pop(0)))
@@ -348,15 +418,15 @@ class grbl_controller:
 
                 # print ">S>",repr(tosend),"stack=",sline,"sum=",sum(cline)
                 if self.mcontrol.gcode_case > 0:
-                    tosend = tosend.upper()
+                    gcodeToSend = gcodeToSend.upper()
                 if self.mcontrol.gcode_case < 0:
-                    tosend = tosend.lower()
+                    gcodeToSend = gcodeToSend.lower()
 
-                self.serial_write(tosend)
+                self.serial_write(gcodeToSend)
 
-                tosend = None
+                gcodeToSend = None
                 if not self.running and t-tg > G_POLL:
-                    tosend = b"$G\n"  # FIXME: move to controller specific class
-                    sline.append(tosend)
-                    cline.append(len(tosend))
+                    gcodeToSend = b"$G\n"  # FIXME: move to controller specific class
+                    sline.append(gcodeToSend)
+                    cline.append(len(gcodeToSend))
                     tg = t

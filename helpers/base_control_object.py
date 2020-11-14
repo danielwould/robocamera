@@ -13,11 +13,11 @@ class base_control_object:
     command_throttle_limit=0.2
     last_position_in_sequence=None
 
-    def __init__(self, device, position, mode,dwell_delay):
+    def __init__(self, device, position, mode,dwell_delay,name):
         self.device = device
         self.currentlocation=position
         self.controller=grbl_controller(mode,dwell_delay)
-        self.controller.set_device(self.device)
+        self.controller.set_device(self.device, 115200,name)
 
     def reset(self):
         self.currentlocation.reset()
@@ -155,6 +155,5 @@ class base_control_object:
     def get_current_gcode_sequence(self,name):
         self.controller.print_gcode_sequence(name)
 
-
-    def poll_output(self):
-        return self.controller.read_output()
+    def status(self):
+        self.controller.status()

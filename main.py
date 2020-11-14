@@ -17,15 +17,24 @@ from helpers.ui import UI
 from helpers.ui import TextPrint
 from helpers.crane import crane
 from helpers.gimbal import gimbal
+from helpers.CNC import CNC
+import os
+import sys
 
 MOCK = 1
 
-gimbal_inst = gimbal("COM5", gimbalpos(0, 0, 0), 0,0)
+PRGPATH=os.path.abspath(os.path.dirname(__file__))
+sys.path.append(PRGPATH)
+sys.path.append(os.path.join(PRGPATH, 'helpers'))
+sys.path.append(os.path.join(PRGPATH, 'data'))
+sys.path.append(os.path.join(PRGPATH, 'helpers/controllers'))
+
+gimbal_inst = gimbal("COM5", gimbalpos(0, 0, 0), 0,0,"Gimbal")
 gimbal_inst.set_small_step_rotate(0.2)
 gimbal_inst.set_big_step_rotate(2)
 gimbal_inst.set_small_step_tilt(0.2)
 gimbal_inst.set_big_step_tilt(2)
-crane_inst = crane("/dev/ttyACM1", cranepos(0, 0), MOCK,0.4)
+crane_inst = crane("/dev/ttyACM1", cranepos(0, 0), MOCK,0.4,"Crane")
 
 VALID_CHARS = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./"
 SHIFT_CHARS = '~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
@@ -295,10 +304,6 @@ def zoom_out():
     gimbal_inst.zoom_out_small()
 
 
-
-#always reset the GRBL workcoordinates on reload
-reset()
-
 def main():
     # waypoints is the list of waypoints, and their dwell times
     global save_position_1
@@ -445,13 +450,14 @@ def main():
 
         # Get count of joysticks.
         joystick_count = pygame.joystick.get_count()
-        text_print.tprint(screen, crane_inst.poll_output())
-        text_print.tprint(screen, gimbal_inst.poll_output())
+        gimbal_inst.status()
+        crane_inst.status()
         
         text_print.indent()
         text_print.tprint(screen, "Gimbal position")
         text_print.tprint(screen, "    {}".format(
             gimbal_inst.current_location_str()))
+        text_print.tprint(screen,"wx:{},wy:{},wz:{},mx:{},my:{},mz:{}".format(CNC.vars["wx"],CNC.vars["wy"],CNC.vars["wz"],CNC.vars["mx"],CNC.vars["my"],CNC.vars["mz"]))
         text_print.tprint(screen, "Crane position")
         text_print.tprint(screen, "    {}".format(
             crane_inst.current_location_str()))
