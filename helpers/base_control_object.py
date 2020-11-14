@@ -18,7 +18,6 @@ class base_control_object:
         self.controller.set_device(self.device, 115200,name)
 
     def reset(self):
-        self.currentlocation.reset()
         self.controller.reset()
 
     def stop(self):

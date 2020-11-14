@@ -147,11 +147,9 @@ class _GenericController:
         cmd += pos
         self.master.sendGCode(cmd)
         self.viewParameters()
-        self.master.event_generate("<<Status>>",
-                                   data=(_("Set workspace %s to %s") % (WCS[p], pos)))
+        print("<<Status>> Set workspace {} to {}".format(WCS[p], pos))
         # data=(_("Set workspace %s to %s")%(WCS[p],pos)))
-        self.master.event_generate("<<CanvasFocus>>")
-
+        
     # ----------------------------------------------------------------------
     def feedHold(self, event=None):
         if event is not None and not self.master.acceptKey(True):

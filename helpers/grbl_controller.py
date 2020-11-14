@@ -233,21 +233,10 @@ class grbl_controller:
             self.mcontrol = self.controllers[ctl]
 
     def reset(self):
+        self.mcontrol._wcsSet(0,0,0)
         #self.write_gcode("G10 P0 X0 Y0 Z0")
         # Toggle DTR to reset Arduino
-        try:
-            self.serial.setDTR(0)
-        except IOError:
-            pass
-        time.sleep(1)
-
-        self.serial.flushInput()
-        try:
-            self.serial.setDTR(1)
-        except IOError:
-            pass
-        time.sleep(1)
-        self.serial_write(b"\n\n")
+        
 
     def reset_gcode_sequence(self):
         self.gcode_sequence = []
