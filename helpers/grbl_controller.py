@@ -342,8 +342,8 @@ class grbl_controller:
     def status(self):
         self.mcontrol.viewStatusReport()
 
-    def tick(self):
-        self.control_thread()
+    def tick(self,name):
+        self.control_thread(name)
 
 
     def controllerStateChange(self, state):

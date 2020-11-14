@@ -452,8 +452,8 @@ def main():
         gimbal_inst.tick()
         crane_inst.tick()
         if time.time()-lastStatus >0.5:
-            gimbal_inst.status()
-            crane_inst.status()
+            gimbal_inst.status("Gimbal")
+            crane_inst.status("Crane")
             lastStatus=time.time()
 
         text_print.indent()
