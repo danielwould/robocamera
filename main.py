@@ -449,11 +449,11 @@ def main():
 
         # Get count of joysticks.
         joystick_count = pygame.joystick.get_count()
-        gimbal_inst.tick()
-        crane_inst.tick()
+        gimbal_inst.tick("Gimbal")
+        crane_inst.tick("Crane")
         if time.time()-lastStatus >0.5:
-            gimbal_inst.status("Gimbal")
-            crane_inst.status("Crane")
+            gimbal_inst.status()
+            crane_inst.status()
             lastStatus=time.time()
 
         text_print.indent()
