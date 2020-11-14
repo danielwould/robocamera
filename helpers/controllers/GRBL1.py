@@ -36,7 +36,7 @@ class Controller(_GenericGRBL):
         self.has_override = True
         self.master = master
         self.cnc_obj = CNC()
-        self.thread_id = self.master.name
+        
         #print("grbl1 loaded")
 
     def jog(self, dir):
