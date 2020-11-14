@@ -396,7 +396,7 @@ class grbl_controller:
                         self._gcount += 1
                     gcodeToSend = None
             except:
-                break
+                return
 
                 # Bookkeeping of the buffers
                 sline.append(gcodeToSend)
