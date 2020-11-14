@@ -168,7 +168,7 @@ class grbl_controller:
         self.cline = []		# length of pipeline commands
         self.sline = []			# pipeline commands
         self.gcodeToSend = None			# next string to send
-        self.lastWriteAt = tg = time.time()
+        self.lastWriteAt = self.tg = time.time()
         
 
     def set_device(self, device, baudrate, name):
