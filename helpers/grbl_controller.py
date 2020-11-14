@@ -198,12 +198,15 @@ class grbl_controller:
                 pass
             time.sleep(1)
             self.serial_write(b"\n\n")
+            #soft reset grbl
+            self.serial_write(b"\030")
         self._gcount = 0
         self._alarm = True
         self.name=name
 #        self.thread = threading.Thread(
 #            target=self.control_thread, args=(name,))
 #        self.thread.start()
+
 
     def stop(self):
         self.stop_signal=True
