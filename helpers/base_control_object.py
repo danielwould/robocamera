@@ -139,12 +139,10 @@ class base_control_object:
 
     def add_waypoint_by_time_to_sequqnce(self, position, duration, dwell):
         self.controller.add_absolute_move_by_time_to_sequence(position.get_rotation_pos(),position.get_tilt_pos(),0,duration, dwell)
-        self.last_position_in_sequence = position
         print("{} time waypoint added to gcode sequence".format(time.ctime()))
 
     def add_waypoint_by_feedrate_to_sequqnce(self, position, duration, dwell):
         self.controller.add_absolute_move_by_feed_to_sequence(position.get_rotation_pos(),position.get_tilt_pos(),0,duration, dwell)
-        self.last_position_in_sequence = position
         print("{} feedraet waypoint added to gcode sequence".format(time.ctime()))
         
     def trigger_sequence(self, name):
