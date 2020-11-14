@@ -192,6 +192,7 @@ class grbl_controller:
             self.serial_write(b"\n\n")
         self._gcount = 0
         self._alarm = True
+        self.name=name
         self.thread = threading.Thread(
             target=self.control_thread, args=(name,))
         self.thread.start()

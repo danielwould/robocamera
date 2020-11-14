@@ -33,7 +33,7 @@ gimbal_inst.set_small_step_rotate(0.2)
 gimbal_inst.set_big_step_rotate(2)
 gimbal_inst.set_small_step_tilt(0.2)
 gimbal_inst.set_big_step_tilt(2)
-crane_inst = crane("/dev/ttyACM1", 1,0.4,"Crane")
+crane_inst = crane("/dev/ttyACM1", MOCK,0.4,"Crane")
 
 VALID_CHARS = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./"
 SHIFT_CHARS = '~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'

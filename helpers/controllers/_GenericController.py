@@ -210,12 +210,12 @@ class _GenericController:
 
         elif line[0] == "<":
             if not self.master.sio_status:
-                print(line)
+                print("{}:{}".format(self.master.thread_id,line))
             else:
                 self.parseBracketAngle(line, cline)
 
         elif line[0] == "[":
-            print(line)
+            print("{}:{}".format(self.master.thread_id,line))
             self.parseBracketSquare(line)
 
         elif "error:" in line or "ALARM:" in line:
