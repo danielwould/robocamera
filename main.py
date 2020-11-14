@@ -365,6 +365,8 @@ def main():
     countdown_rect = pygame.Rect(300, 200, 100, 100)
     # hold_time_input = pygame.Rect(580, 128, 25, 32)
     lastStatus=time.time()
+
+    lastTick=time.time()
     # -------- Main Program Loop -----------
     while not done:
         
@@ -449,10 +451,10 @@ def main():
 
         # Get count of joysticks.
         joystick_count = pygame.joystick.get_count()
-        if time.time()-lastStatus > 0.2:
+        if time.time()-lastTick > 0.2:
             gimbal_inst.tick("Gimbal")
             crane_inst.tick("Crane")
-        
+            lastTick = time.time()
         
         if time.time()-lastStatus >1:
             gimbal_inst.status()
