@@ -129,6 +129,7 @@ class grbl_controller:
 
     def __init__(self, mode, dwell_delay):
         print("init")
+        self.name="init"
         self.controllers = {}
         self.controllerLoad()
         self.controllerSet("GRBL1")
