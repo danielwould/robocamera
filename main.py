@@ -160,8 +160,8 @@ def add_waypoint(dwell_input_text, sequence_steps):
     crane_position = crane_inst.get_current_location()
     gimbal_position = gimbal_inst.get_current_location()
     wp = waypoint(
-        cranepos(crane_position.get_rotation_pos(), crane_position.get_tilt_pos()),
-        gimbalpos(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()))
+        location(crane_position.get_rotation_pos(), crane_position.get_tilt_pos(),crane_pos.get_zoom_pos()),
+        location(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()))
     wp.set_dwell_time(int(dwell_input_text))
     wp.set_gimbal_travel_to_feed_rate(gimbal_inst.get_feed_speed())
     wp.set_crane_travel_to_feed_rate(crane_inst.get_feed_speed())
