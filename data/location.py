@@ -13,4 +13,7 @@ class location:
     def get_zoom_pos(self):
         return self.zoom_pos
 
+    def location_str(self):
+        return "R:{},T:{},Z:{}".format(self.rotation_pos,self.tilt_pos,self.zoom_pos)
+
    

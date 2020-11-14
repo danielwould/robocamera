@@ -50,6 +50,6 @@ class waypoint:
         return self.gimbal_travel_duration
 
     def location_str(self):
-        return "gimbal {} crane {}".format(self.gimbalpos.current_location_str(),self.cranepos.current_location_str())
+        return "gimbal {} crane {}".format(self.gimbalpos.location_str(),self.cranepos.location_str())
     def get_feed_info(self):
         return "dwell {} cf:{} cd:{} gf:{} gd:{}".format(self.dwell_time,self.crane_travel_feed_rate,self.crane_travel_duration,self.gimbal_travel_feed_rate,self.gimbal_travel_duration)
