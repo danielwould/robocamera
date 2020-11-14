@@ -145,85 +145,6 @@ class CNC:
     comment = ""  # last parsed comment
     developer = False
     drozeropad = 0
-    vars = {
-        "prbx": 0.0,
-        "prby": 0.0,
-        "prbz": 0.0,
-        "prbcmd": "G38.2",
-        "prbfeed": 10.,
-        "errline": "",
-        "wx": 0.0,
-        "wy": 0.0,
-        "wz": 0.0,
-        "mx": 0.0,
-        "my": 0.0,
-        "mz": 0.0,
-        "wa": 0.0,
-        "wb": 0.0,
-        "wc": 0.0,
-        "ma": 0.0,
-        "mb": 0.0,
-        "mc": 0.0,
-        "wcox": 0.0,
-        "wcoy": 0.0,
-        "wcoz": 0.0,
-        "wcoa": 0.0,
-        "wcob": 0.0,
-        "wcoc": 0.0,
-        "curfeed": 0.0,
-        "curspindle": 0.0,
-        "_camwx": 0.0,
-        "_camwy": 0.0,
-        "G": [],
-        "TLO": 0.0,
-        "motion": "G0",
-        "WCS": "G54",
-        "plane": "G17",
-        "feedmode": "G94",
-                    "distance": "G90",
-                    "arc": "G91.1",
-                    "units": "G20",
-                    "cutter": "",
-                    "tlo": "",
-                    "program": "M0",
-                    "spindle": "M5",
-                    "coolant": "M9",
-
-                    "tool": 0,
-                    "feed": 0.0,
-                    "rpm": 0.0,
-
-                    "planner": 0,
-                    "rxbytes": 0,
-
-                    "OvFeed": 100,  # Override status
-                    "OvRapid": 100,
-                    "OvSpindle": 100,
-                    "_OvChanged": False,
-                    "_OvFeed": 100,  # Override target values
-                    "_OvRapid": 100,
-                    "_OvSpindle": 100,
-
-                    "diameter": 3.175,  # Tool diameter
-                    "cutfeed": 1000.,  # Material feed for cutting
-                    "cutfeedz": 500.,  # Material feed for cutting
-                    "safe": 3.,
-                    "state": "",
-                    "pins": "",
-                    "msg": "",
-                    "stepz": 1.,
-                    "surface": 0.,
-                    "thickness": 5.,
-                    "stepover": 40.,
-
-                    "PRB": None,
-                    "TLO": 0.,
-
-                    "version": "",
-                    "controller": "",
-                    "running": False,
-                    # "enable6axisopt" : 0,
-    }
 
     drillPolicy = 1		# Expand Canned cycles
     toolPolicy = 1		# Should be in sync with ProbePage
@@ -236,64 +157,139 @@ class CNC:
     toolWaitAfterProbe = True  # wait at tool change position after probing
     appendFeed = False  # append feed on every G1/G2/G3 commands to be used
     # for feed override testing
-    # FIXME will not be needed after Grbl v1.0
 
     # ----------------------------------------------------------------------
+
     def __init__(self):
+        self.vars = {
+            "prbx": 0.0,
+            "prby": 0.0,
+            "prbz": 0.0,
+            "prbcmd": "G38.2",
+            "prbfeed": 10.,
+            "errline": "",
+            "wx": 0.0,
+            "wy": 0.0,
+            "wz": 0.0,
+            "mx": 0.0,
+            "my": 0.0,
+            "mz": 0.0,
+            "wa": 0.0,
+            "wb": 0.0,
+            "wc": 0.0,
+            "ma": 0.0,
+            "mb": 0.0,
+            "mc": 0.0,
+            "wcox": 0.0,
+            "wcoy": 0.0,
+            "wcoz": 0.0,
+            "wcoa": 0.0,
+            "wcob": 0.0,
+            "wcoc": 0.0,
+            "curfeed": 0.0,
+            "curspindle": 0.0,
+            "_camwx": 0.0,
+            "_camwy": 0.0,
+            "G": [],
+            "TLO": 0.0,
+            "motion": "G0",
+            "WCS": "G54",
+            "plane": "G17",
+            "feedmode": "G94",
+            "distance": "G90",
+            "arc": "G91.1",
+            "units": "G20",
+            "cutter": "",
+            "program": "M0",
+            "spindle": "M5",
+            "coolant": "M9",
+
+            "tool": 0,
+            "feed": 0.0,
+            "rpm": 0.0,
+
+            "planner": 0,
+            "rxbytes": 0,
+
+            "OvFeed": 100,  # Override status
+            "OvRapid": 100,
+            "OvSpindle": 100,
+            "_OvChanged": False,
+            "_OvFeed": 100,  # Override target values
+            "_OvRapid": 100,
+            "_OvSpindle": 100,
+
+            "diameter": 3.175,  # Tool diameter
+            "cutfeed": 1000.,  # Material feed for cutting
+            "cutfeedz": 500.,  # Material feed for cutting
+            "safe": 3.,
+            "state": "",
+            "pins": "",
+            "msg": "",
+            "stepz": 1.,
+            "surface": 0.,
+            "thickness": 5.,
+            "stepover": 40.,
+
+            "PRB": None,
+
+            "version": "",
+            "controller": "",
+            "running": False,
+            # "enable6axisopt" : 0,
+        }
         self.initPath()
-        
 
     # ----------------------------------------------------------------------
     # Update G variables from "G" string
     # ----------------------------------------------------------------------
-    
+
     def updateG(self):
         for g in self.vars["G"]:
             if g[0] == "F":
-                CNC.vars["feed"] = float(g[1:])
+                self.vars["feed"] = float(g[1:])
             elif g[0] == "S":
-                CNC.vars["rpm"] = float(g[1:])
+                self.vars["rpm"] = float(g[1:])
             elif g[0] == "T":
-                CNC.vars["tool"] = int(g[1:])
+                self.vars["tool"] = int(g[1:])
             else:
                 var = MODAL_MODES.get(g)
                 if var is not None:
-                    CNC.vars[var] = g
+                    self.vars[var] = g
 
     # ----------------------------------------------------------------------
     def __getitem__(self, name):
-        return CNC.vars[name]
+        return self.vars[name]
 
     # ----------------------------------------------------------------------
     def __setitem__(self, name, value):
-        CNC.vars[name] = value
+        self.vars[name] = value
 
-    
     # ----------------------------------------------------------------------
 
     def initPath(self, x=None, y=None, z=None, a=None, b=None, c=None):
         if x is None:
-            self.x = self.xval = CNC.vars['wx'] or 0
+            self.x = self.xval = self.vars['wx'] or 0
         else:
             self.x = self.xval = x
         if y is None:
-            self.y = self.yval = CNC.vars['wy'] or 0
+            self.y = self.yval = self.vars['wy'] or 0
         else:
             self.y = self.yval = y
         if z is None:
-            self.z = self.zval = CNC.vars['wz'] or 0
+            self.z = self.zval = self.vars['wz'] or 0
         else:
             self.z = self.zval = z
         if a is None:
-            self.a = self.aval = CNC.vars['wa'] or 0
+            self.a = self.aval = self.vars['wa'] or 0
         else:
             self.a = self.aval = a
         if b is None:
-            self.b = self.bval = CNC.vars['wb'] or 0
+            self.b = self.bval = self.vars['wb'] or 0
         else:
             self.b = self.bval = b
         if c is None:
-            self.c = self.cval = CNC.vars['wc'] or 0
+            self.c = self.cval = self.vars['wc'] or 0
         else:
             self.c = self.cval = c
 
@@ -440,10 +436,10 @@ class CNC:
         else:
             return "g0 %s" % (CNC.fmt("z", z, d))
 
-   
     # ----------------------------------------------------------------------
     # @return line in broken a list of commands, None if empty or comment
     # ----------------------------------------------------------------------
+
     @staticmethod
     def parseLine(line):
         # skip empty lines
@@ -498,7 +494,7 @@ class CNC:
                 return (MSG, args)
             elif cmd == "%update":
                 return (UPDATE, args)
-            elif line.startswith("%if running") and not CNC.vars["running"]:
+            elif line.startswith("%if running") and not self.vars["running"]:
                 # ignore if running lines when not running
                 return None
             else:

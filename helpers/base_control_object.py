@@ -23,6 +23,9 @@ class base_control_object:
         self.currentlocation.reset()
         self.controller.reset()
 
+    def stop(self):
+        self.controller.stop()
+        
     def set_command_delay(self, value):
         self.controller.set_command_delay(value)
 
@@ -39,7 +42,7 @@ class base_control_object:
         self.big_step_tilt = value
 
     def current_location_str(self):
-        return self.currentlocation.current_location_str()
+        return self.controller.position_str()
     
     def get_current_location(self):
         return self.currentlocation

@@ -21,7 +21,7 @@ from helpers.CNC import CNC
 import os
 import sys
 
-MOCK = 1
+MOCK = 0
 
 PRGPATH=os.path.abspath(os.path.dirname(__file__))
 sys.path.append(PRGPATH)
@@ -29,7 +29,7 @@ sys.path.append(os.path.join(PRGPATH, 'helpers'))
 sys.path.append(os.path.join(PRGPATH, 'data'))
 sys.path.append(os.path.join(PRGPATH, 'helpers/controllers'))
 
-gimbal_inst = gimbal("COM5", gimbalpos(0, 0, 0), 0,0,"Gimbal")
+gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0), MOCK,0,"Gimbal")
 gimbal_inst.set_small_step_rotate(0.2)
 gimbal_inst.set_big_step_rotate(2)
 gimbal_inst.set_small_step_tilt(0.2)
@@ -457,7 +457,7 @@ def main():
         text_print.tprint(screen, "Gimbal position")
         text_print.tprint(screen, "    {}".format(
             gimbal_inst.current_location_str()))
-        text_print.tprint(screen,"wx:{},wy:{},wz:{},mx:{},my:{},mz:{}".format(CNC.vars["wx"],CNC.vars["wy"],CNC.vars["wz"],CNC.vars["mx"],CNC.vars["my"],CNC.vars["mz"]))
+        #text_print.tprint(screen,"wx:{},wy:{},wz:{},mx:{},my:{},mz:{}".format(CNC.vars["wx"],CNC.vars["wy"],CNC.vars["wz"],CNC.vars["mx"],CNC.vars["my"],CNC.vars["mz"]))
         text_print.tprint(screen, "Crane position")
         text_print.tprint(screen, "    {}".format(
             crane_inst.current_location_str()))
@@ -784,6 +784,8 @@ def main():
     # Close the window and quit.
     # If you forget this line, the program will 'hang'
     # on exit if running from IDLE.
+    gimbal_inst.stop()
+    crane_inst.stop()
     pygame.quit()
 
 

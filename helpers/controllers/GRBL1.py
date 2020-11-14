@@ -35,7 +35,7 @@ class Controller(_GenericGRBL):
         self.gcode_case = 0
         self.has_override = True
         self.master = master
-        self.cnc = CNC()
+        self.cnc_obj = CNC()
         #print("grbl1 loaded")
 
     def jog(self, dir):
@@ -43,28 +43,28 @@ class Controller(_GenericGRBL):
                               (dir))  # XXX is F100000 correct?
 
     def overrideSet(self):
-        self.self.cnc.vars["_OvChanged"] = False  # Temporary
+        self.self.cnc_obj.vars["_OvChanged"] = False  # Temporary
         # Check feed
-        diff = self.cnc.vars["_OvFeed"] - self.cnc.vars["OvFeed"]
+        diff = self.cnc_obj.vars["_OvFeed"] - self.cnc_obj.vars["OvFeed"]
         if diff == 0:
             pass
-        elif self.cnc.vars["_OvFeed"] == 100:
+        elif self.cnc_obj.vars["_OvFeed"] == 100:
             self.master.serial_write(OV_FEED_100)
         elif diff >= 10:
             self.master.serial_write(OV_FEED_i10)
-            self.cnc.vars["_OvChanged"] = diff > 10
+            self.cnc_obj.vars["_OvChanged"] = diff > 10
         elif diff <= -10:
             self.master.serial_write(OV_FEED_d10)
-            self.cnc.vars["_OvChanged"] = diff < -10
+            self.cnc_obj.vars["_OvChanged"] = diff < -10
         elif diff >= 1:
             self.master.serial_write(OV_FEED_i1)
-            self.cnc.vars["_OvChanged"] = diff > 1
+            self.cnc_obj.vars["_OvChanged"] = diff > 1
         elif diff <= -1:
             self.master.serial_write(OV_FEED_d1)
-            self.cnc.vars["_OvChanged"] = diff < -1
+            self.cnc_obj.vars["_OvChanged"] = diff < -1
         # Check rapid
-        target = self.cnc.vars["_OvRapid"]
-        current = self.cnc.vars["OvRapid"]
+        target = self.cnc_obj.vars["_OvRapid"]
+        current = self.cnc_obj.vars["OvRapid"]
         if target == current:
             pass
         elif target == 100:
@@ -77,130 +77,130 @@ class Controller(_GenericGRBL):
         elif target == 25:
             self.master.serial_write(OV_RAPID_25)
         # Check Spindle
-        diff = self.cnc.vars["_OvSpindle"] - self.cnc.vars["OvSpindle"]
+        diff = self.cnc_obj.vars["_OvSpindle"] - self.cnc_obj.vars["OvSpindle"]
         if diff == 0:
             pass
-        elif self.cnc.vars["_OvSpindle"] == 100:
+        elif self.cnc_obj.vars["_OvSpindle"] == 100:
             self.master.serial_write(OV_SPINDLE_100)
         elif diff >= 10:
             self.master.serial_write(OV_SPINDLE_i10)
-            self.cnc.vars["_OvChanged"] = diff > 10
+            self.cnc_obj.vars["_OvChanged"] = diff > 10
         elif diff <= -10:
             self.master.serial_write(OV_SPINDLE_d10)
-            self.cnc.vars["_OvChanged"] = diff < -10
+            self.cnc_obj.vars["_OvChanged"] = diff < -10
         elif diff >= 1:
             self.master.serial_write(OV_SPINDLE_i1)
-            self.cnc.vars["_OvChanged"] = diff > 1
+            self.cnc_obj.vars["_OvChanged"] = diff > 1
         elif diff <= -1:
             self.master.serial_write(OV_SPINDLE_d1)
-            self.cnc.vars["_OvChanged"] = diff < -1
+            self.cnc_obj.vars["_OvChanged"] = diff < -1
 
     def parseBracketAngle(self, line, cline):
         self.master.sio_status = False
         fields = line[1:-1].split("|")
-        self.cnc.vars["pins"] = ""
+        self.cnc_obj.vars["pins"] = ""
 
         # Report if state has changed
-        if self.cnc.vars["state"] != fields[0] or self.master.runningPrev != self.master.running:
+        if self.cnc_obj.vars["state"] != fields[0] or self.master.runningPrev != self.master.running:
             self.master.controllerStateChange(fields[0])
         self.master.runningPrev = self.master.running
-        self.cnc.vars["state"] = fields[0]
+        self.cnc_obj.vars["state"] = fields[0]
 
         for field in fields[1:]:
             word = SPLITPAT.split(field)
             if word[0] == "MPos":
                 try:
-                    self.cnc.vars["mx"] = float(word[1])
-                    self.cnc.vars["my"] = float(word[2])
-                    self.cnc.vars["mz"] = float(word[3])
-                    self.cnc.vars["wx"] = round(
-                        self.cnc.vars["mx"]-self.cnc.vars["wcox"], CNC.digits)
-                    self.cnc.vars["wy"] = round(
-                        self.cnc.vars["my"]-self.cnc.vars["wcoy"], CNC.digits)
-                    self.cnc.vars["wz"] = round(
-                        self.cnc.vars["mz"]-self.cnc.vars["wcoz"], CNC.digits)
+                    self.cnc_obj.vars["mx"] = float(word[1])
+                    self.cnc_obj.vars["my"] = float(word[2])
+                    self.cnc_obj.vars["mz"] = float(word[3])
+                    self.cnc_obj.vars["wx"] = round(
+                        self.cnc_obj.vars["mx"]-self.cnc_obj.vars["wcox"], CNC.digits)
+                    self.cnc_obj.vars["wy"] = round(
+                        self.cnc_obj.vars["my"]-self.cnc_obj.vars["wcoy"], CNC.digits)
+                    self.cnc_obj.vars["wz"] = round(
+                        self.cnc_obj.vars["mz"]-self.cnc_obj.vars["wcoz"], CNC.digits)
                     # if Utils.config.get("bCNC","enable6axis") == "true":
                     if len(word) > 4:
-                        self.cnc.vars["ma"] = float(word[4])
-                        self.cnc.vars["wa"] = round(
-                            self.cnc.vars["ma"]-self.cnc.vars["wcoa"], CNC.digits)
+                        self.cnc_obj.vars["ma"] = float(word[4])
+                        self.cnc_obj.vars["wa"] = round(
+                            self.cnc_obj.vars["ma"]-self.cnc_obj.vars["wcoa"], CNC.digits)
                     if len(word) > 5:
-                        self.cnc.vars["mb"] = float(word[5])
-                        self.cnc.vars["wb"] = round(
-                            self.cnc.vars["mb"]-self.cnc.vars["wcob"], CNC.digits)
+                        self.cnc_obj.vars["mb"] = float(word[5])
+                        self.cnc_obj.vars["wb"] = round(
+                            self.cnc_obj.vars["mb"]-self.cnc_obj.vars["wcob"], CNC.digits)
                     if len(word) > 6:
-                        self.cnc.vars["mc"] = float(word[6])
-                        self.cnc.vars["wc"] = round(
-                            self.cnc.vars["mc"]-self.cnc.vars["wcoc"], CNC.digits)
+                        self.cnc_obj.vars["mc"] = float(word[6])
+                        self.cnc_obj.vars["wc"] = round(
+                            self.cnc_obj.vars["mc"]-self.cnc_obj.vars["wcoc"], CNC.digits)
                     self.master._posUpdate = True
                 except (ValueError, IndexError):
-                    self.cnc.vars["state"] = "Garbage receive %s: %s" % (
+                    self.cnc_obj.vars["state"] = "Garbage receive %s: %s" % (
                         word[0], line)
-                    print("error: {}".format(self.cnc.vars["state"]))
+                    print("error: {}".format(self.cnc_obj.vars["state"]))
                     break
             elif word[0] == "F":
                 try:
-                    self.cnc.vars["curfeed"] = float(word[1])
+                    self.cnc_obj.vars["curfeed"] = float(word[1])
                 except (ValueError, IndexError):
-                    self.cnc.vars["state"] = "Garbage receive %s: %s" % (
+                    self.cnc_obj.vars["state"] = "Garbage receive %s: %s" % (
                         word[0], line)
-                    print("error: {}".format(self.cnc.vars["state"]))
+                    print("error: {}".format(self.cnc_obj.vars["state"]))
                     break
             elif word[0] == "FS":
                 try:
-                    self.cnc.vars["curfeed"] = float(word[1])
-                    self.cnc.vars["curspindle"] = float(word[2])
+                    self.cnc_obj.vars["curfeed"] = float(word[1])
+                    self.cnc_obj.vars["curspindle"] = float(word[2])
                 except (ValueError, IndexError):
-                    self.cnc.vars["state"] = "Garbage receive %s: %s" % (
+                    self.cnc_obj.vars["state"] = "Garbage receive %s: %s" % (
                         word[0], line)
-                    print("error: {}".format(self.cnc.vars["state"]))
+                    print("error: {}".format(self.cnc_obj.vars["state"]))
                     break
             elif word[0] == "Bf":
                 try:
-                    self.cnc.vars["planner"] = int(word[1])
-                    self.cnc.vars["rxbytes"] = int(word[2])
+                    self.cnc_obj.vars["planner"] = int(word[1])
+                    self.cnc_obj.vars["rxbytes"] = int(word[2])
                 except (ValueError, IndexError):
-                    self.cnc.vars["state"] = "Garbage receive %s: %s" % (
+                    self.cnc_obj.vars["state"] = "Garbage receive %s: %s" % (
                         word[0], line)
-                    print("error: {}".format(self.cnc.vars["state"]))
+                    print("error: {}".format(self.cnc_obj.vars["state"]))
                     break
             elif word[0] == "Ov":
                 try:
-                    self.cnc.vars["OvFeed"] = int(word[1])
-                    self.cnc.vars["OvRapid"] = int(word[2])
-                    self.cnc.vars["OvSpindle"] = int(word[3])
+                    self.cnc_obj.vars["OvFeed"] = int(word[1])
+                    self.cnc_obj.vars["OvRapid"] = int(word[2])
+                    self.cnc_obj.vars["OvSpindle"] = int(word[3])
                 except (ValueError, IndexError):
-                    self.cnc.vars["state"] = "Garbage receive %s: %s" % (
+                    self.cnc_obj.vars["state"] = "Garbage receive %s: %s" % (
                         word[0], line)
-                    print("error: {}".format(self.cnc.vars["state"]))
+                    print("error: {}".format(self.cnc_obj.vars["state"]))
                     break
             elif word[0] == "WCO":
                 try:
-                    self.cnc.vars["wcox"] = float(word[1])
-                    self.cnc.vars["wcoy"] = float(word[2])
-                    self.cnc.vars["wcoz"] = float(word[3])
+                    self.cnc_obj.vars["wcox"] = float(word[1])
+                    self.cnc_obj.vars["wcoy"] = float(word[2])
+                    self.cnc_obj.vars["wcoz"] = float(word[3])
                     # if Utils.config.get("bCNC","enable6axis") == "true":
                     if len(word) > 4:
-                        self.cnc.vars["wcoa"] = float(word[4])
+                        self.cnc_obj.vars["wcoa"] = float(word[4])
                     if len(word) > 5:
-                        self.cnc.vars["wcob"] = float(word[5])
+                        self.cnc_obj.vars["wcob"] = float(word[5])
                     if len(word) > 6:
-                        self.cnc.vars["wcoc"] = float(word[6])
+                        self.cnc_obj.vars["wcoc"] = float(word[6])
                 except (ValueError, IndexError):
-                    self.cnc.vars["state"] = "Garbage receive %s: %s" % (
+                    self.cnc_obj.vars["state"] = "Garbage receive %s: %s" % (
                         word[0], line)
-                    print("error: {}".format(self.cnc.vars["state"]))
+                    print("error: {}".format(self.cnc_obj.vars["state"]))
                     break
             elif word[0] == "Pn":
                 try:
-                    self.cnc.vars["pins"] = word[1]
+                    self.cnc_obj.vars["pins"] = word[1]
                     if 'S' in word[1]:
-                        if self.cnc.vars["state"] == 'Idle' and not self.master.running:
+                        if self.cnc_obj.vars["state"] == 'Idle' and not self.master.running:
                             print("Stream requested by CYCLE START machine button")
                             self.master.event_generate("<<Run>>", when='tail')
                         else:
                             print("Ignoring machine stream request, because of state: ",
-                                  self.cnc.vars["state"], self.master.running)
+                                  self.cnc_obj.vars["state"], self.master.running)
                 except (ValueError, IndexError):
                     break
 
@@ -214,44 +214,44 @@ class Controller(_GenericGRBL):
         word = SPLITPAT.split(line[1:-1])
         # print word
         if word[0] == "PRB":
-            self.cnc.vars["prbx"] = float(word[1])
-            self.cnc.vars["prby"] = float(word[2])
-            self.cnc.vars["prbz"] = float(word[3])
+            self.cnc_obj.vars["prbx"] = float(word[1])
+            self.cnc_obj.vars["prby"] = float(word[2])
+            self.cnc_obj.vars["prbz"] = float(word[3])
             # if self.running:
             
-            self.cnc.vars[word[0]] = word[1:]
+            self.cnc_obj.vars[word[0]] = word[1:]
         if word[0] == "G92":
-            self.cnc.vars["G92X"] = float(word[1])
-            self.cnc.vars["G92Y"] = float(word[2])
-            self.cnc.vars["G92Z"] = float(word[3])
+            self.cnc_obj.vars["G92X"] = float(word[1])
+            self.cnc_obj.vars["G92Y"] = float(word[2])
+            self.cnc_obj.vars["G92Z"] = float(word[3])
             # if Utils.config.get("bCNC","enable6axis") == "true":
             if len(word) > 4:
-                self.cnc.vars["G92A"] = float(word[4])
+                self.cnc_obj.vars["G92A"] = float(word[4])
             if len(word) > 5:
-                self.cnc.vars["G92B"] = float(word[5])
+                self.cnc_obj.vars["G92B"] = float(word[5])
             if len(word) > 6:
-                self.cnc.vars["G92C"] = float(word[6])
-            self.cnc.vars[word[0]] = word[1:]
+                self.cnc_obj.vars["G92C"] = float(word[6])
+            self.cnc_obj.vars[word[0]] = word[1:]
             self.master._gUpdate = True
         if word[0] == "G28":
-            self.cnc.vars["G28X"] = float(word[1])
-            self.cnc.vars["G28Y"] = float(word[2])
-            self.cnc.vars["G28Z"] = float(word[3])
-            self.cnc.vars[word[0]] = word[1:]
+            self.cnc_obj.vars["G28X"] = float(word[1])
+            self.cnc_obj.vars["G28Y"] = float(word[2])
+            self.cnc_obj.vars["G28Z"] = float(word[3])
+            self.cnc_obj.vars[word[0]] = word[1:]
             self.master._gUpdate = True
         if word[0] == "G30":
-            self.cnc.vars["G30X"] = float(word[1])
-            self.cnc.vars["G30Y"] = float(word[2])
-            self.cnc.vars["G30Z"] = float(word[3])
-            self.cnc.vars[word[0]] = word[1:]
+            self.cnc_obj.vars["G30X"] = float(word[1])
+            self.cnc_obj.vars["G30Y"] = float(word[2])
+            self.cnc_obj.vars["G30Z"] = float(word[3])
+            self.cnc_obj.vars[word[0]] = word[1:]
             self.master._gUpdate = True
         elif word[0] == "GC":
-            self.cnc.vars["G"] = word[1].split()
-            self.cnc.updateG()
+            self.cnc_obj.vars["G"] = word[1].split()
+            self.cnc_obj.updateG()
             self.master._gUpdate = True
         elif word[0] == "TLO":
-            self.cnc.vars[word[0]] = word[1]
+            self.cnc_obj.vars[word[0]] = word[1]
             self.master._probeUpdate = True
             self.master._gUpdate = True
         else:
-            self.cnc.vars[word[0]] = word[1:]
+            self.cnc_obj.vars[word[0]] = word[1:]

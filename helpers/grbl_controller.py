@@ -139,6 +139,7 @@ class grbl_controller:
         self.pendant = Queue()  # Command queue to be executed from Pendant
         self.serial = None
         self.thread = None
+        self.stop_signal = False
 
         self._posUpdate = False  # Update position
         self._probeUpdate = False  # Update probe
@@ -193,6 +194,11 @@ class grbl_controller:
         self.thread = threading.Thread(
             target=self.control_thread, args=(name,))
         self.thread.start()
+
+    def stop(self):
+        self.stop_signal=True
+        
+
 
     def controllerLoad(self):
         # Find plugins in the controllers directory and load them
@@ -292,6 +298,8 @@ class grbl_controller:
             else:
                 self.queue.put(cmd+"\n")
 
+    def position_str(self):
+        return "wx:{},wy:{},wz:{},mx:{},my:{},mz:{}".format(self.mcontrol.cnc_obj.vars["wx"], self.mcontrol.cnc_obj.vars["wy"], self.mcontrol.cnc_obj.vars["wz"], self.mcontrol.cnc_obj.vars["mx"], self.mcontrol.cnc_obj.vars["my"], self.mcontrol.cnc_obj.vars["mz"])
     # ----------------------------------------------------------------------
     # Serial write
     # ----------------------------------------------------------------------
@@ -328,7 +336,6 @@ class grbl_controller:
 
         if self.cleanAfter == True and self.running == False and state in ("Idle"):
             self.cleanAfter = False
-            
 
     def control_thread(self, name):
         print("Thread start for grbl on :{}".format(name))
@@ -339,7 +346,7 @@ class grbl_controller:
         sline = []			# pipeline commands
         gcodeToSend = None			# next string to send
         lastWriteAt = tg = time.time()
-        while self.thread:
+        while self.stop_signal != True:
             time.sleep(0.01)
             t = time.time()
             # refresh machine position?

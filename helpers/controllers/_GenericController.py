@@ -61,7 +61,7 @@ class _GenericController:
         self.master.openClose()
         self.master.stopProbe()
         self.master._alarm = False
-        self.cnc.vars["_OvChanged"] = True  # force a feed change if any
+        self.cnc_obj.vars["_OvChanged"] = True  # force a feed change if any
         self.master.notBusy()
 
     # ----------------------------------------------------------------------
@@ -71,7 +71,7 @@ class _GenericController:
         self.master.stopProbe()
         if clearAlarm:
             self.master._alarm = False
-        self.master.cnc.vars["_OvChanged"] = True  # force a feed change if any
+        self.master.cnc_obj.vars["_OvChanged"] = True  # force a feed change if any
 
     # ----------------------------------------------------------------------
     def unlock(self, clearAlarm=True):
@@ -121,7 +121,7 @@ class _GenericController:
     def _wcsSet(self, x, y, z, a=None, b=None, c=None):
         #global wcsvar
         #p = wcsvar.get()
-        p = WCS.index(self.cnc.vars["WCS"])
+        p = WCS.index(self.cnc_obj.vars["WCS"])
         if p < 6:
             cmd = "G10L20P%d" % (p+1)
         elif p == 6:
@@ -192,8 +192,8 @@ class _GenericController:
         self.master.serial.flush()
         time.sleep(1)
         # remember and send all G commands
-        G = " ".join([x for x in self.cnc.vars["G"] if x[0] == "G"])  # remember $G
-        TLO = self.cnc.vars["TLO"]
+        G = " ".join([x for x in self.cnc_obj.vars["G"] if x[0] == "G"])  # remember $G
+        TLO = self.cnc_obj.vars["TLO"]
         self.softReset(False)			# reset controller
         self.purgeControllerExtra()
         self.master.runEnded()
@@ -225,11 +225,11 @@ class _GenericController:
             if cline:
                 del cline[0]
             if sline:
-                self.cnc.vars["errline"] = sline.pop(0)
+                self.cnc_obj.vars["errline"] = sline.pop(0)
             if not self.master._alarm:
                 self.master._posUpdate = True
             self.master._alarm = True
-            self.cnc.vars["state"] = line
+            self.cnc_obj.vars["state"] = line
             if self.master.running:
                 self.master._stop = True
 
@@ -250,7 +250,7 @@ class _GenericController:
             print(line)
             pat = VARPAT.match(line)
             if pat:
-                self.cnc.vars["grbl_%s" % (pat.group(1))] = pat.group(2)
+                self.cnc_obj.vars["grbl_%s" % (pat.group(1))] = pat.group(2)
 
         # and self.running:
         elif line[:4] == "Grbl" or line[:13] == "CarbideMotion":
@@ -259,11 +259,11 @@ class _GenericController:
             self.master._stop = True
             del cline[:]  # After reset clear the buffer counters
             del sline[:]
-            self.cnc.vars["version"] = line.split()[1]
+            self.cnc_obj.vars["version"] = line.split()[1]
             # Detect controller
             if self.master.controller in ("GRBL0", "GRBL1"):
                 self.master.controllerSet(
-                    "GRBL%d" % (int(self.cnc.vars["version"][0])))
+                    "GRBL%d" % (int(self.cnc_obj.vars["version"][0])))
 
         else:
             # We return false in order to tell that we can't parse this line
