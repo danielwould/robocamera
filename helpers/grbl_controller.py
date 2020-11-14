@@ -369,42 +369,42 @@ class grbl_controller:
             self.lastWriteAt = t
 
             # Fetch new command to send if...
-        if gcodeToSend is None and not self.sio_wait and not self._pause and self.queue.qsize() > 0:
+        if self.gcodeToSend is None and not self.sio_wait and not self._pause and self.queue.qsize() > 0:
             try:
-                gcodeToSend = self.queue.get_nowait()
+                self.gcodeToSend = self.queue.get_nowait()
                 # print "+++",repr(tosend)
-                if isinstance(gcodeToSend, tuple):
+                if isinstance(self.gcodeToSend, tuple):
                     # print "gcount tuple=",self._gcount
                     # wait to empty the grbl buffer and status is Idle
-                    if gcodeToSend[0] == WAIT:
+                    if self.gcodeToSend[0] == WAIT:
                         # Don't count WAIT until we are idle!
                         self.sio_wait = True
                         # print "+++ WAIT ON"
                         # print "gcount=",self._gcount, self._runLines
-                    elif gcodeToSend[0] == MSG:
+                    elif self.gcodeToSend[0] == MSG:
                         # Count executed commands as well
                         self._gcount += 1
-                        if gcodeToSend[1] is not None:
+                        if self.gcodeToSend[1] is not None:
                             # show our message on machine status
-                            self._msg = gcodeToSend[1]
-                    elif gcodeToSend[0] == UPDATE:
+                            self._msg = self.gcodeToSend[1]
+                    elif self.gcodeToSend[0] == UPDATE:
                         # Count executed commands as well
                         self._gcount += 1
-                        self._update = gcodeToSend[1]
+                        self._update = self.gcodeToSend[1]
                     else:
                         # Count executed commands as well
                         self._gcount += 1
-                    gcodeToSend = None
+                    self.gcodeToSend = None
             except:
                 return
 
                 # Bookkeeping of the buffers
-                sline.append(gcodeToSend)
-                cline.append(len(gcodeToSend))
+                self.sline.append(self.gcodeToSend)
+                self.cline.append(len(self.gcodeToSend))
 
         # Anything to receive?
         if self.MODE == self.REAL_MODE:
-            if self.serial.inWaiting() or gcodeToSend is None:
+            if self.serial.inWaiting() or self.gcodeToSend is None:
                 try:
                     line = str(self.serial.readline().decode()).strip()
                 except:
@@ -415,7 +415,7 @@ class grbl_controller:
                 # print "*-* stack=",sline,"sum=",sum(cline),"wait=",wait,"pause=",self._pause
                 if not line:
                     pass
-                elif self.mcontrol.parseLine(line, cline, sline):
+                elif self.mcontrol.parseLine(line, self.cline, self.sline):
                     pass
 
         # Received external message to stop
@@ -431,8 +431,8 @@ class grbl_controller:
 
         # print "tosend='%s'"%(repr(tosend)),"stack=",sline,
         #	"sum=",sum(cline),"wait=",wait,"pause=",self._pause
-        if self.gcodeToSend is not None and sum(cline) < RX_BUFFER_SIZE:
-            self._sumcline = sum(cline)
+        if self.gcodeToSend is not None and sum(self.cline) < RX_BUFFER_SIZE:
+            self._sumcline = sum(self.cline)
 #				if isinstance(tosend, list):
 #					self.serial_write(str(tosend.pop(0)))
 #					if not tosend: tosend = None
@@ -447,7 +447,7 @@ class grbl_controller:
 
             self.gcodeToSend = None
             if not self.running and t-self.tg > G_POLL:
-                gcodeToSend = b"$G\n"  # FIXME: move to controller specific class
-                sline.append(self.gcodeToSend)
-                cline.append(len(self.gcodeToSend))
+                self.gcodeToSend = b"$G\n"  # FIXME: move to controller specific class
+                self.sline.append(self.gcodeToSend)
+                self.cline.append(len(self.gcodeToSend))
                 self.tg = t
