@@ -348,6 +348,7 @@ class grbl_controller:
     def control_thread(self, name):
         print("Thread start for grbl on :{}".format(name))
         # wait for commands to complete (status change to Idle)
+        self.sleep_event    = threading.Event()
         self.sio_wait = False
         self.sio_status = False		# waiting for status <...> report
         cline = []		# length of pipeline commands
@@ -355,7 +356,8 @@ class grbl_controller:
         gcodeToSend = None			# next string to send
         lastWriteAt = tg = time.time()
         while self.stop_signal != True:
-            time.sleep(0.2)
+            if ( True == self.sleep_event.wait( timeout=0.2 ) ):
+                break
             t = time.time()
             # refresh machine position?
             if t-lastWriteAt > SERIAL_POLL:
