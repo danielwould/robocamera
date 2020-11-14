@@ -353,7 +353,7 @@ class grbl_controller:
         gcodeToSend = None			# next string to send
         lastWriteAt = tg = time.time()
         while self.stop_signal != True:
-            time.sleep(0.1)
+            time.sleep(0.2)
             t = time.time()
             # refresh machine position?
             if t-lastWriteAt > SERIAL_POLL:
