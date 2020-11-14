@@ -10,8 +10,7 @@ import pygame
 
 import time
 from data.waypoint import waypoint
-from data.cranepos import cranepos
-from data.gimbalpos import gimbalpos
+from data.location import location
 from data.sequence import sequence
 from helpers.ui import UI
 from helpers.ui import TextPrint
@@ -29,12 +28,12 @@ sys.path.append(os.path.join(PRGPATH, 'helpers'))
 sys.path.append(os.path.join(PRGPATH, 'data'))
 sys.path.append(os.path.join(PRGPATH, 'helpers/controllers'))
 
-gimbal_inst = gimbal("/dev/ttyACM0", gimbalpos(0, 0, 0), MOCK,0,"Gimbal")
+gimbal_inst = gimbal("/dev/ttyACM0", MOCK,0,"Gimbal")
 gimbal_inst.set_small_step_rotate(0.2)
 gimbal_inst.set_big_step_rotate(2)
 gimbal_inst.set_small_step_tilt(0.2)
 gimbal_inst.set_big_step_tilt(2)
-crane_inst = crane("/dev/ttyACM1", cranepos(0, 0), MOCK,0.4,"Crane")
+crane_inst = crane("/dev/ttyACM1", MOCK,0.4,"Crane")
 
 VALID_CHARS = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./"
 SHIFT_CHARS = '~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
@@ -48,10 +47,10 @@ MOVE_TIME = 1
 MOVE_TOGGLE = FEED_RATE
 
 # x= gimble pan, y= gimble tilt, z= camera zoom, t= boom_tilt
-save_position_1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-save_position_2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-save_position_3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-save_position_4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+save_position_1 = waypoint(location(0, 0, 0), location(0, 0, 0))
+save_position_2 = waypoint(location(0, 0, 0), location(0, 0, 0))
+save_position_3 = waypoint(location(0, 0, 0), location(0, 0, 0))
+save_position_4 = waypoint(location(0, 0, 0), location(0, 0, 0))
 
 
 def toggle_control(value):

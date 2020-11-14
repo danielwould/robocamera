@@ -13,6 +13,7 @@ except ImportError:
     from queue import *
 
 from helpers.controllers._GenericGRBL import ERROR_CODES
+from data.location import location
 
 SERIAL_POLL = 0.125
 SERIAL_TIMEOUT = 0.10  # s
@@ -197,9 +198,7 @@ class grbl_controller:
 
     def stop(self):
         self.stop_signal=True
-        
-
-
+   
     def controllerLoad(self):
         # Find plugins in the controllers directory and load them
         for f in glob.glob("%s/controllers/*.py" % (prgpath)):
@@ -300,6 +299,13 @@ class grbl_controller:
 
     def position_str(self):
         return "wx:{},wy:{},wz:{},mx:{},my:{},mz:{}".format(self.mcontrol.cnc_obj.vars["wx"], self.mcontrol.cnc_obj.vars["wy"], self.mcontrol.cnc_obj.vars["wz"], self.mcontrol.cnc_obj.vars["mx"], self.mcontrol.cnc_obj.vars["my"], self.mcontrol.cnc_obj.vars["mz"])
+    
+    
+         
+    def currentlocation(self):
+        loc = location(self.mcontrol.cnc_obj.vars["wx"],self.mcontrol.cnc_obj.vars["wy"],self.mcontrol.cnc_obj.vars["wz"])
+        return loc
+
     # ----------------------------------------------------------------------
     # Serial write
     # ----------------------------------------------------------------------

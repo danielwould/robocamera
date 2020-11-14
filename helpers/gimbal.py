@@ -6,8 +6,8 @@ class gimbal(base_control_object):
     small_step_zoom = 0.2
     big_step_zoom = 1
 
-    def __init__(self, device, position, mode, dwell_delay,name):
-        super().__init__(device, position, mode, dwell_delay,name)
+    def __init__(self, device, mode, dwell_delay,name):
+        super().__init__(device, mode, dwell_delay,name)
 
     def zoom_in_small(self):
         self.controller.relative_move("z-{}".format(
