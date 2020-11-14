@@ -262,10 +262,10 @@ def reset():
     crane_inst.reset()
     gimbal_inst.reset()
 
-    save_position_1 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-    save_position_2 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-    save_position_3 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
-    save_position_4 = waypoint(cranepos(0, 0), gimbalpos(0, 0, 0))
+    save_position_1 = waypoint(location(0, 0,0), location(0, 0, 0))
+    save_position_2 = waypoint(location(0, 0,0), location(0, 0, 0))
+    save_position_3 = waypoint(location(0, 0,0), location(0, 0, 0))
+    save_position_4 = waypoint(location(0, 0,0), location(0, 0, 0))
 
 def tilt_up():
     if CONTROL_TOGGLE == GIMBAL_CONTROL:
