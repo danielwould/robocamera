@@ -79,7 +79,7 @@ class RobotCamera(tk.Frame):
         self.gimbal_inst.set_big_step_rotate(2)
         self.gimbal_inst.set_small_step_tilt(0.2)
         self.gimbal_inst.set_big_step_tilt(2)
-        self.crane_inst = crane("/dev/ttyACM1", MOCK,0.4,"Crane")
+        self.crane_inst = crane("/dev/ttyACM1", MOCK,1,"Crane")
 
     def init_joysticks(self):
         self.joy = Joystick(self, self.gimbal_inst, self.crane_inst)
