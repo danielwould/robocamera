@@ -68,8 +68,8 @@ class RobotCamera(tk.Frame):
         self.create_widgets()
 
     def init_controllers(self):
-        MOCK = 1
-        self.gimbal_inst = gimbal("COM5", 0,0,"Gimbal")
+        MOCK = 0
+        self.gimbal_inst = gimbal("/dev/ttyACM1", MOCK,0,"Gimbal")
         self.gimbal_inst.set_small_step_rotate(0.2)
         self.gimbal_inst.set_big_step_rotate(2)
         self.gimbal_inst.set_small_step_tilt(0.2)
