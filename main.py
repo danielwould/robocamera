@@ -320,16 +320,16 @@ class RobotCamera(tk.Frame):
             location(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()))
         if savepoint == 1:
             self.save_position_1 = new_waypoint
-            sp1_pos_text['text'] = "Y/LB : {}".format(new_waypoint.location_str)
+            self.sp1_pos_text['text'] = "Y/LB : {}".format(new_waypoint.location_str)
         if savepoint == 2:
             self.ave_position_2 = new_waypoint
-            sp2_pos_text['text'] = "B/RB : {}".format(new_waypoint.location_str)
+            self.sp2_pos_text['text'] = "B/RB : {}".format(new_waypoint.location_str)
         if savepoint == 3:
             self.save_position_3 = new_waypoint
-            sp3_pos_text['text'] = "X/L1 : {}".format(new_waypoint.location_str)
+            self.sp3_pos_text['text'] = "X/L1 : {}".format(new_waypoint.location_str)
         if savepoint == 4:
             self.save_position_4 = new_waypoint
-            sp4_pos_text['text'] = "A/R1 : {}".format(new_waypoint.location_str)
+            self.sp4_pos_text['text'] = "A/R1 : {}".format(new_waypoint.location_str)
 
     def reset():
         
