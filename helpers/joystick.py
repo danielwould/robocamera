@@ -145,7 +145,7 @@ class Joystick():
 
                         if button_num == 9:
                             if button == 1:
-                                self.parent.trigger_whole_sequence(self.parent.sequence_steps)
+                                self.parent.trigger_whole_sequence()
                                 last_command_sent_at=time.time()
 
                 hats = joystick.get_numhats()
