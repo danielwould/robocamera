@@ -97,7 +97,7 @@ class Joystick():
 
  
                 buttons = joystick.get_numbuttons()
-                if time.time() - self.last_command_sent_at > 0.2:
+                if time.time() - last_command_sent_at > 0.2:
                             
                     for button_num in range(buttons):
                         button = joystick.get_button(button_num)
