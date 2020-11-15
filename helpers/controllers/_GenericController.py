@@ -71,7 +71,8 @@ class _GenericController:
         self.master.stopProbe()
         if clearAlarm:
             self.master._alarm = False
-        self.master.cnc_obj.vars["_OvChanged"] = True  # force a feed change if any
+        # force a feed change if any
+        self.master.cnc_obj.vars["_OvChanged"] = True
 
     # ----------------------------------------------------------------------
     def unlock(self, clearAlarm=True):
@@ -149,7 +150,7 @@ class _GenericController:
         self.viewParameters()
         print("<<Status>> Set workspace {} to {}".format(WCS[p], pos))
         # data=(_("Set workspace %s to %s")%(WCS[p],pos)))
-        
+
     # ----------------------------------------------------------------------
     def feedHold(self, event=None):
         if event is not None and not self.master.acceptKey(True):
@@ -190,7 +191,8 @@ class _GenericController:
         self.master.serial.flush()
         time.sleep(1)
         # remember and send all G commands
-        G = " ".join([x for x in self.cnc_obj.vars["G"] if x[0] == "G"])  # remember $G
+        G = " ".join([x for x in self.cnc_obj.vars["G"]
+                      if x[0] == "G"])  # remember $G
         TLO = self.cnc_obj.vars["TLO"]
         self.softReset(False)			# reset controller
         self.purgeControllerExtra()
@@ -207,13 +209,11 @@ class _GenericController:
             return True
 
         elif line[0] == "<":
-            if not self.master.sio_status:
-                print("{}:{}".format(self.master.name,line))
-            else:
-                self.parseBracketAngle(line, cline)
+            print("{}:{}".format(self.master.name, line))
+            self.parseBracketAngle(line, cline)
 
         elif line[0] == "[":
-            print("{}:{}".format(self.master.name,line))
+            print("{}:{}".format(self.master.name, line))
             self.parseBracketSquare(line)
 
         elif "error:" in line or "ALARM:" in line:

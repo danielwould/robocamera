@@ -15,9 +15,9 @@ except ImportError:
 from helpers.controllers._GenericGRBL import ERROR_CODES
 from data.location import location
 
-SERIAL_POLL = 0.125
+SERIAL_POLL = 1
 SERIAL_TIMEOUT = 0.10  # s
-G_POLL = 10  # s
+G_POLL = 20  # s
 RX_BUFFER_SIZE = 128
 
 GPAT = re.compile(r"[A-Za-z]\s*[-+]?\d+.*")
@@ -163,12 +163,7 @@ class grbl_controller:
 
         self._onStart = ""
         self._onStop = ""
-        self.sio_wait = False
-        self.sio_status = False		# waiting for status <...> report
-        self.cline = []		# length of pipeline commands
-        self.sline = []			# pipeline commands
-        self.gcodeToSend = None			# next string to send
-        self.lastWriteAt = self.tg = time.time()
+        
         
 
     def set_device(self, device, baudrate, name):
@@ -203,9 +198,9 @@ class grbl_controller:
         self._gcount = 0
         self._alarm = True
         self.name=name
-#        self.thread = threading.Thread(
-#            target=self.control_thread, args=(name,))
-#        self.thread.start()
+        self.thread = threading.Thread(
+            target=self.control_thread, args=(name,))
+        self.thread.start()
 
 
     def stop(self):
@@ -299,7 +294,10 @@ class grbl_controller:
                 self.queue.put(cmd+"\n")
 
     def position_str(self):
-        return "wx:{},wy:{},wz:{},mx:{},my:{},mz:{}".format(self.mcontrol.cnc_obj.vars["wx"], self.mcontrol.cnc_obj.vars["wy"], self.mcontrol.cnc_obj.vars["wz"], self.mcontrol.cnc_obj.vars["mx"], self.mcontrol.cnc_obj.vars["my"], self.mcontrol.cnc_obj.vars["mz"])
+        pos_str =  "wx:{},wy:{},wz:{},mx:{},my:{},mz:{}".format(self.mcontrol.cnc_obj.vars["wx"], self.mcontrol.cnc_obj.vars["wy"], self.mcontrol.cnc_obj.vars["wz"], self.mcontrol.cnc_obj.vars["mx"], self.mcontrol.cnc_obj.vars["my"], self.mcontrol.cnc_obj.vars["mz"])
+        #print("returning position: {}".format(pos_str))
+        return pos_str
+        
     
     
          
@@ -332,114 +330,84 @@ class grbl_controller:
                 break
 
     def status(self):
-        self.mcontrol.viewStatusReport()
+        self.sio_status=True
 
-    def tick(self,name):
-        self.control_thread(name)
-
-
+   
     def controllerStateChange(self, state):
         print("Controller state changed to: %s (Running: %s)" %
               (state, self.running))
-        if state in ("Idle"):
-            self.mcontrol.viewParameters()
-            self.mcontrol.viewState()
+        #if state in ("Idle"):
+        #    self.mcontrol.viewParameters()
+        #    self.mcontrol.viewState()
 
-        if self.cleanAfter == True and self.running == False and state in ("Idle"):
-            self.cleanAfter = False
 
     def control_thread(self, name):
         print("Thread start for grbl on :{}".format(name))
         # wait for commands to complete (status change to Idle)
-        #while self.stop_signal != True:
-        #    if ( True == self.sleep_event.wait( timeout=0.2 ) ):
-        #        break
-        t = time.time()
-        # refresh machine position?
-        if t-self.lastWriteAt > SERIAL_POLL:
-            self.serial_write(b"?")
-            self.lastWriteAt = t
+        self.sleep_event    = threading.Event()
+        self.sio_wait = False
+        self.sio_status = False		# waiting for status <...> report
+        cline = []		# length of pipeline commands
+        sline = []			# pipeline commands
+        gcodeToSend = None			# next string to send
+        lastWriteAt = tg = time.time()
+        while self.stop_signal != True:
+            time.sleep(0.2)
+            #print ("gcode queue length {}".format(self.queue.qsize()))
 
-            # Fetch new command to send if...
-        if self.gcodeToSend is None and not self.sio_wait and not self._pause and self.queue.qsize() > 0:
+            t = time.time()
+
+            # Anything to receive?
+            if self.MODE == self.REAL_MODE:
+                if self.serial.inWaiting():
+                    try:
+                        line = str(self.serial.readline().decode()).strip()
+                    except:
+                        self.emptyQueue()
+                        return
+
+                    # print "<R<",repr(line)
+                    # print "*-* stack=",sline,"sum=",sum(cline),"wait=",wait,"pause=",self._pause
+                    if not line:
+                        pass
+                    elif self.mcontrol.parseLine(line, cline, sline):
+                        pass
+
+
+            # refresh machine position?
+
             try:
-                self.gcodeToSend = self.queue.get_nowait()
-                # print "+++",repr(tosend)
-                if isinstance(self.gcodeToSend, tuple):
-                    # print "gcount tuple=",self._gcount
-                    # wait to empty the grbl buffer and status is Idle
-                    if self.gcodeToSend[0] == WAIT:
-                        # Don't count WAIT until we are idle!
-                        self.sio_wait = True
-                        # print "+++ WAIT ON"
-                        # print "gcount=",self._gcount, self._runLines
-                    elif self.gcodeToSend[0] == MSG:
-                        # Count executed commands as well
-                        self._gcount += 1
-                        if self.gcodeToSend[1] is not None:
-                            # show our message on machine status
-                            self._msg = self.gcodeToSend[1]
-                    elif self.gcodeToSend[0] == UPDATE:
-                        # Count executed commands as well
-                        self._gcount += 1
-                        self._update = self.gcodeToSend[1]
-                    else:
-                        # Count executed commands as well
-                        self._gcount += 1
-                    self.gcodeToSend = None
-            except:
-                return
+                gcodeToSend = self.queue.get_nowait()
+            except Empty:
+                #nothing to send
+                gcodeToSend = None   
+            
+            if gcodeToSend is not None:
+                sline.append(gcodeToSend)
+                cline.append(len(gcodeToSend))
 
+            if gcodeToSend is not None and sum(cline) < RX_BUFFER_SIZE:
                 # Bookkeeping of the buffers
-                self.sline.append(self.gcodeToSend)
-                self.cline.append(len(self.gcodeToSend))
+               
+                self._sumcline = sum(cline)
+    #				if isinstance(tosend, list):
+    #					self.serial_write(str(tosend.pop(0)))
+    #					if not tosend: tosend = None
 
-        # Anything to receive?
-        if self.MODE == self.REAL_MODE:
-            if self.serial.inWaiting() or self.gcodeToSend is None:
-                try:
-                    line = str(self.serial.readline().decode()).strip()
-                except:
-                    self.emptyQueue()
-                    return
+                # print ">S>",repr(tosend),"stack=",sline,"sum=",sum(cline)
+                if self.mcontrol.gcode_case > 0:
+                    gcodeToSend = gcodeToSend.upper()
+                if self.mcontrol.gcode_case < 0:
+                    gcodeToSend = gcodeToSend.lower()
+                print("writing queued instruction {}".format(gcodeToSend))
+                self.serial_write(gcodeToSend.encode())
 
-                # print "<R<",repr(line)
-                # print "*-* stack=",sline,"sum=",sum(cline),"wait=",wait,"pause=",self._pause
-                if not line:
-                    pass
-                elif self.mcontrol.parseLine(line, self.cline, self.sline):
-                    pass
-
-        # Received external message to stop
-        if self._stop:
-            self.emptyQueue()
-            self.gcodeToSend = None
-
-            # WARNING if runLines==maxint then it means we are
-            # still preparing/sending lines from from bCNC.run(),
-            # so don't stop
-            if self._runLines != sys.maxsize:
-                self._stop = False
-
-        # print "tosend='%s'"%(repr(tosend)),"stack=",sline,
-        #	"sum=",sum(cline),"wait=",wait,"pause=",self._pause
-        if self.gcodeToSend is not None and sum(self.cline) < RX_BUFFER_SIZE:
-            self._sumcline = sum(self.cline)
-#				if isinstance(tosend, list):
-#					self.serial_write(str(tosend.pop(0)))
-#					if not tosend: tosend = None
-
-            # print ">S>",repr(tosend),"stack=",sline,"sum=",sum(cline)
-            if self.mcontrol.gcode_case > 0:
-                self.gcodeToSend = self.gcodeToSend.upper()
-            if self.mcontrol.gcode_case < 0:
-                self.gcodeToSend = self.gcodeToSend.lower()
-
-            self.serial_write(self.gcodeToSend)
-
-            self.gcodeToSend = None
-            if not self.running and t-self.tg > G_POLL:
-                self.gcodeToSend = b"$G\n"  # FIXME: move to controller specific class
-                self.sline.append(self.gcodeToSend)
-                self.cline.append(len(self.gcodeToSend))
-                self.tg = t
+                gcodeToSend = None
+            else:
+                if t-lastWriteAt > SERIAL_POLL:
+                    self.serial_write(b"?")
+                    lastWriteAt = t
+                else:
+                    if t-tg > G_POLL:
+                        self.serial_write(b"$G\n")
+                        tg = t   

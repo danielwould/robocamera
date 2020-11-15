@@ -152,6 +152,3 @@ class base_control_object:
 
     def status(self):
         self.controller.status()
-
-    def tick(self, name):
-        self.controller.tick(name)
