@@ -14,6 +14,8 @@ except ImportError:
 
 from helpers.controllers._GenericGRBL import ERROR_CODES
 from data.location import location
+import logging
+
 
 SERIAL_POLL = 1
 SERIAL_TIMEOUT = 0.10  # s
@@ -128,7 +130,7 @@ class grbl_controller:
     thread = True
 
     def __init__(self, mode, dwell_delay):
-        print("init")
+        
         self.name="init"
         self.controllers = {}
         self.controllerLoad()
@@ -167,6 +169,12 @@ class grbl_controller:
         
 
     def set_device(self, device, baudrate, name):
+        self.logger = logging.getLogger(name)
+        hdlr = logging.FileHandler('./{}.log'.format(name))
+        formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+        hdlr.setFormatter(formatter)
+        self.logger.addHandler(hdlr) 
+        self.logger.setLevel(logging.INFO)
         self.serial_device = device
         if self.MODE == self.REAL_MODE:
             #self.serial = serial.Serial(device, 115200, timeout=0.2)
@@ -212,17 +220,17 @@ class grbl_controller:
             name, ext = os.path.splitext(os.path.basename(f))
             if name[0] == '_':
                 continue
-            #print("Loaded motion controller plugin: %s"%(name))
+            #self.logger.info("Loaded motion controller plugin: %s"%(name))
             try:
                 exec("import %s" % (name))
                 self.controllers[name] = eval("%s.Controller(self)" % (name))
             except (ImportError, AttributeError):
                 typ, val, tb = sys.exc_info()
-                print("Error loading controller logic {},{},{}".format(typ, val, tb))
+                self.logger.info("Error loading controller logic {},{},{}".format(typ, val, tb))
     # ----------------------------------------------------------------------
 
     def controllerSet(self, ctl):
-        #print("Activating motion controller plugin: %s"%(ctl))
+        #self.logger.info("Activating motion controller plugin: %s"%(ctl))
         if ctl in self.controllers.keys():
             self.controller = ctl
             self.mcontrol = self.controllers[ctl]
@@ -277,7 +285,7 @@ class grbl_controller:
     def print_gcode_sequence(self, name):
         seq_num = 0
         for gcode in self.gcode_sequence:
-            print("{}:{}:{}".format(name, seq_num, gcode))
+            self.logger.info("{}:{}:{}".format(name, seq_num, gcode))
             seq_num = seq_num+1
 
     def run_sequence(self, name):
@@ -286,7 +294,7 @@ class grbl_controller:
         self.reset_gcode_sequence()
 
     def sendGCode(self, cmd):
-        print("{} : instruction: {}".format(time.ctime(), cmd))
+        self.logger.info("{} : instruction: {}".format(time.ctime(), cmd))
         if self.serial and not self.running:
             if isinstance(cmd, tuple):
                 self.queue.put(cmd)
@@ -295,7 +303,7 @@ class grbl_controller:
 
     def position_str(self):
         pos_str =  "wx:{},wy:{},wz:{},mx:{},my:{},mz:{}".format(self.mcontrol.cnc_obj.vars["wx"], self.mcontrol.cnc_obj.vars["wy"], self.mcontrol.cnc_obj.vars["wz"], self.mcontrol.cnc_obj.vars["mx"], self.mcontrol.cnc_obj.vars["my"], self.mcontrol.cnc_obj.vars["mz"])
-        #print("returning position: {}".format(pos_str))
+        #self.logger.info("returning position: {}".format(pos_str))
         return pos_str
         
     
@@ -310,7 +318,7 @@ class grbl_controller:
     # ----------------------------------------------------------------------
 
     def serial_write(self, data):
-        #print("W "+str(type(data))+" : "+str(data))
+        #self.logger.info("W "+str(type(data))+" : "+str(data))
 
         # if sys.version_info[0] == 2:
         #	ret = self.serial.write(str(data))
@@ -334,7 +342,7 @@ class grbl_controller:
 
    
     def controllerStateChange(self, state):
-        print("Controller state changed to: %s (Running: %s)" %
+        self.logger.info("Controller state changed to: %s (Running: %s)" %
               (state, self.running))
         #if state in ("Idle"):
         #    self.mcontrol.viewParameters()
@@ -342,7 +350,9 @@ class grbl_controller:
 
 
     def control_thread(self, name):
-        print("Thread start for grbl on :{}".format(name))
+        self.logger.info("########################################")
+        self.logger.info("Thread start for grbl on :{}".format(name))
+        self.logger.info("########################################")
         # wait for commands to complete (status change to Idle)
         self.sleep_event    = threading.Event()
         self.sio_wait = False
@@ -399,7 +409,7 @@ class grbl_controller:
                     gcodeToSend = gcodeToSend.upper()
                 if self.mcontrol.gcode_case < 0:
                     gcodeToSend = gcodeToSend.lower()
-                print("writing queued instruction {}".format(gcodeToSend))
+                self.logger.info("writing queued instruction {}".format(gcodeToSend))
                 self.serial_write(gcodeToSend.encode())
 
                 gcodeToSend = None

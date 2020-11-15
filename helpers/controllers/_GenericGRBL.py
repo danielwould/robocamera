@@ -124,7 +124,7 @@ for e1, e0 in (	("error: Expected command letter", "error:1"),
 
 class _GenericGRBL(_GenericController):
     def test(self):
-        print("test supergen grbl")
+        self.master.logger.info("test supergen grbl")
 
     def viewSettings(self):
         self.master.sendGCode("$$")

@@ -97,7 +97,7 @@ class _GenericController:
 
     # ----------------------------------------------------------------------
     def jog(self, dir):
-        # print("jog",dir)
+        # self.master.logger.info("jog",dir)
         self.master.sendGCode("G91G0%s" % (dir))
         self.master.sendGCode("G90")
 
@@ -148,7 +148,7 @@ class _GenericController:
         cmd += pos
         self.master.sendGCode(cmd)
         self.viewParameters()
-        print("<<Status>> Set workspace {} to {}".format(WCS[p], pos))
+        self.master.logger.info("<<Status>> Set workspace {} to {}".format(WCS[p], pos))
         # data=(_("Set workspace %s to %s")%(WCS[p],pos)))
 
     # ----------------------------------------------------------------------
@@ -209,15 +209,15 @@ class _GenericController:
             return True
 
         elif line[0] == "<":
-            print("{}:{}".format(self.master.name, line))
+            self.master.logger.info("{}:{}".format(self.master.name, line))
             self.parseBracketAngle(line, cline)
 
         elif line[0] == "[":
-            print("{}:{}".format(self.master.name, line))
+            self.master.logger.info("{}:{}".format(self.master.name, line))
             self.parseBracketSquare(line)
 
         elif "error:" in line or "ALARM:" in line:
-            print("error: {}".format(line))
+            self.master.logger.info("error: {}".format(line))
             self.master._gcount += 1
             # print "gcount ERROR=",self._gcount
             if cline:
@@ -232,7 +232,7 @@ class _GenericController:
                 self.master._stop = True
 
         elif line.find("ok") >= 0:
-            print(line)
+            self.master.logger.info(line)
             self.master._gcount += 1
             if cline:
                 del cline[0]
@@ -245,7 +245,7 @@ class _GenericController:
 #				self._alarm = False
 
         elif line[0] == "$":
-            print(line)
+            self.master.logger.info(line)
             pat = VARPAT.match(line)
             if pat:
                 self.cnc_obj.vars["grbl_%s" % (pat.group(1))] = pat.group(2)
@@ -253,7 +253,7 @@ class _GenericController:
         # and self.running:
         elif line[:4] == "Grbl" or line[:13] == "CarbideMotion":
             #tg = time.time()
-            print(line)
+            self.master.logger.info(line)
             self.master._stop = True
             del cline[:]  # After reset clear the buffer counters
             del sline[:]
