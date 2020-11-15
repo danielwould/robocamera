@@ -73,8 +73,8 @@ class RobotCamera(tk.Frame):
         self.create_widgets()
 
     def init_controllers(self):
-        MOCK = 0
-        self.gimbal_inst = gimbal("/dev/ttyACM0", MOCK,0,"Gimbal")
+        MOCK = 1
+        self.gimbal_inst = gimbal("COM5", 0,0,"Gimbal")
         self.gimbal_inst.set_small_step_rotate(0.2)
         self.gimbal_inst.set_big_step_rotate(2)
         self.gimbal_inst.set_small_step_tilt(0.2)
@@ -93,24 +93,26 @@ class RobotCamera(tk.Frame):
         #
         #controller location display
         #
-        info = Frame(self,relief=tk.SUNKEN)
-        info.pack(side="left")
-        location_info = Frame(info,relief=tk.RIDGE)
+        left = Frame(self,relief=tk.SUNKEN)
+        left.pack(side="left")
+        
+        location_info = Frame(left,relief=tk.RIDGE)
         location_info.pack(side="top") 
 
         self.gimbal_pos_text = tk.Label(location_info,text="GimbalPos", relief=tk.RIDGE)
-        self.gimbal_pos_text.config(font=("Courier", 22))
-        self.gimbal_pos_text.pack()
+        self.gimbal_pos_text.config(font=("Courier", 16))
+        self.gimbal_pos_text.pack(side="top")
         self.crane_pos_text = tk.Label(location_info,text="CranePos", relief=tk.RIDGE)
-        self.crane_pos_text.config(font=("Courier", 20))
-        self.crane_pos_text.pack()
+        self.crane_pos_text.config(font=("Courier", 16))
+        self.crane_pos_text.pack(side="top")
 
-
+        info = Frame(left,relief=tk.SUNKEN)
+        info.pack(side="left")
         #
         #savepoints
         #
         savepoint_info = Frame(info,relief=tk.RIDGE)
-        savepoint_info.pack(side="left") 
+        savepoint_info.pack(side="top") 
         self.sp1_pos_text = tk.Label(savepoint_info,text="Y/LB", relief=tk.RIDGE)
         self.sp1_pos_text.config(font=("Courier", 12))
         self.sp1_pos_text.pack()
@@ -128,58 +130,65 @@ class RobotCamera(tk.Frame):
         
         self.waypoint_listbox = Listbox(info, width=60)
         self.waypoint_listbox.pack(side="bottom")
+
+        right_side = Frame(self,relief=tk.RIDGE)
+        right_side.pack(side="right")
         #
         #on screen move controls
         #
-        Motion_controls = Frame(self,relief=tk.RIDGE)
-        Motion_controls.pack()
+        Motion_controls = Frame(right_side,relief=tk.RIDGE)
+        Motion_controls.pack(side="top")
         self.up = tk.Button(Motion_controls, text="U", fg="yellow",bg="grey", command=self.tilt_up)
         self.up.config(font=("Courier", 22))
-        self.up.pack(side="top")
+        self.up.pack(side="top", padx=2,pady=2)
         self.left = tk.Button(Motion_controls, text="L", fg="yellow",bg="grey", command=self.rotate_left)
         self.left.config(font=("Courier", 22))
-        self.left.pack(side="left")
+        self.left.pack(side="left", padx=2,pady=2)
         self.right = tk.Button(Motion_controls, text="R", fg="yellow",bg="grey", command=self.rotate_right)
         self.right.config(font=("Courier", 22))
-        self.right.pack(side="right")
+        self.right.pack(side="right", padx=2,pady=2)
         self.down = tk.Button(Motion_controls, text="D", fg="yellow",bg="grey", command=self.tilt_down)
         self.down.config(font=("Courier", 22))
-        self.down.pack(side="bottom")
+        self.down.pack(side="bottom", padx=2,pady=2)
 
         #
         #controls that toggle behaviour
         #
-        Toggle_controls = Frame(self,relief=tk.GROOVE)
-        Toggle_controls.pack()
+        Toggle_controls = Frame(right_side,relief=tk.GROOVE)
+        Toggle_controls.pack(side="top")
+
         controller_select = Frame(Toggle_controls,relief=tk.GROOVE)
-        controller_select.pack(side="left")
-        self.gimbalToggle = tk.Button(controller_select, text="Gimbal", fg="yellow",bg="black", command=lambda: self.toggle_control(self.GIMBAL_CONTROL))
-        self.gimbalToggle.pack(side="top")
-        self.craneToggle = tk.Button(controller_select, text="Crane", fg="yellow",bg="black", command=lambda: self.toggle_control(self.CRANE_CONTROL))
-        self.craneToggle.pack(side="bottom")
-        move_select = Frame(Toggle_controls,relief=tk.GROOVE)
+        controller_select.pack(side="top")
+        button_pairs = Frame(controller_select,relief=tk.GROOVE)
+        button_pairs.pack(side="left")
+        self.gimbalToggle = tk.Button(button_pairs, text="Gimbal", fg="yellow",bg="black", command=lambda: self.toggle_control(self.GIMBAL_CONTROL))
+        self.gimbalToggle.pack(side="top", padx=2,pady=2)
+        self.craneToggle = tk.Button(button_pairs, text="Crane", fg="yellow",bg="black", command=lambda: self.toggle_control(self.CRANE_CONTROL))
+        self.craneToggle.pack(side="bottom", padx=2,pady=2)
+        move_select = Frame(controller_select,relief=tk.GROOVE)
         move_select.pack(side="right")
         self.moveFeedToggle = tk.Button(move_select, text="Feed mm/s", fg="yellow",bg="black", command=lambda: self.toggle_move_mode(self.FEED_RATE))
-        self.moveFeedToggle.pack(side="top")
+        self.moveFeedToggle.pack(side="top", padx=2,pady=2)
         self.moveTimeToggle = tk.Button(move_select, text="Move Time", fg="yellow",bg="black", command=lambda: self.toggle_move_mode(self.MOVE_TIME))
-        self.moveTimeToggle.pack(side="bottom")
+        self.moveTimeToggle.pack(side="bottom", padx=2,pady=2)
 
         #
         #manipulate waypoints
         #
-        wayPoint_controls = Frame(self,relief=tk.RIDGE)
-        wayPoint_controls.pack()
+        wayPoint_controls = Frame(Toggle_controls,relief=tk.RIDGE)
+        wayPoint_controls.pack(side="top")
         self.addWaypoint = tk.Button(wayPoint_controls, text="Add Waypoint", fg="black",
                               command=lambda: self.add_waypoint(self.dwell_time.get()))
-        self.addWaypoint.pack()
+        self.addWaypoint.pack(padx=2,pady=2)
         self.deleteWaypoint = tk.Button(wayPoint_controls, text="Del Waypoint", fg="black",
                               command=self.delete_waypoint)
-        self.deleteWaypoint.pack()
+        self.deleteWaypoint.pack(padx=2,pady=2)
 
-        options_controls = Frame(self,relief=tk.GROOVE)
+        options_controls = Frame(left,relief=tk.GROOVE)
         options_controls.pack(side="right")
+
         dwell = Frame(options_controls)
-        dwell.pack(side="right")
+        dwell.pack(side="top")
         self.dwell_label = tk.Label(dwell,text="DwellTime", relief=tk.RIDGE)
         self.dwell_label.config(font=("Courier", 12))
         self.dwell_label.pack(side="top")
@@ -189,7 +198,7 @@ class RobotCamera(tk.Frame):
         self.dwell_select.pack(side="bottom")
 
         feed = Frame(options_controls)
-        feed.pack(side="right")
+        feed.pack(side="top")
         self.feedrate_label = tk.Label(feed,text="FeedRate", relief=tk.RIDGE)
         self.feedrate_label.config(font=("Courier", 12))
         self.feedrate_label.pack(side="top")
@@ -199,7 +208,7 @@ class RobotCamera(tk.Frame):
         self.feed_rate.pack(side="bottom")
 
         move = Frame(options_controls)
-        move.pack(side="right")
+        move.pack(side="top")
         self.movetime_label = tk.Label(move,text="MoveDuration", relief=tk.RIDGE)
         self.movetime_label.config(font=("Courier", 12))
         self.movetime_label.pack(side="top")
@@ -208,11 +217,13 @@ class RobotCamera(tk.Frame):
         self.move_duration = OptionMenu(move, self.move_duration, 2, 5,10,20,30,60,120)
         self.move_duration.pack(side="bottom")
         
-
+        self.crane_delay = Scale(options_controls, from_=0, to=2000, tickinterval=100)
+        self.crane_delay.set(500)
+        self.crane_delay.pack()
         #exit application
         self.quit = tk.Button(wayPoint_controls, text="QUIT", fg="red",
                               command=self.quit)
-        self.quit.pack(side="bottom")
+        self.quit.pack(side="bottom", pady=50)
 
     def say_hi(self):
         print("hi there, everyone!")
@@ -279,6 +290,7 @@ class RobotCamera(tk.Frame):
             
         
     def trigger_whole_sequence(self):
+        self.crane_inst.set_command_delay(self.crane_delay.get())
         if len(self.sequence_steps.waypoints) > 0:
             for i in range(len(self.sequence_steps.waypoints)): 
         
@@ -303,6 +315,7 @@ class RobotCamera(tk.Frame):
 
 
     def save_point_move(self,savepoint):
+        self.crane_inst.set_command_delay(self.crane_delay.get())
         if self.MOVE_TOGGLE == self.FEED_RATE:
             self.crane_inst.move_to_position_at_rate(savepoint.get_crane_position())
             self.gimbal_inst.move_to_position_at_rate(savepoint.get_gimbal_position())
@@ -393,5 +406,6 @@ class RobotCamera(tk.Frame):
 if __name__ == "__main__":
     #main()
     root = tk.Tk()
+    root.geometry("800x400")
     app = RobotCamera(master=root)
     app.mainloop()

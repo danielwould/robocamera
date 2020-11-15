@@ -19,8 +19,8 @@ class info():
             time.sleep(0.5)
             #self.gimbal_inst.status()
             #self.crane_inst.status()
-            self.parent.gimbal_pos_text['text']="GimbalPos:{}".format(self.gimbal_inst.current_location_str())
-            self.parent.crane_pos_text['text']="CranePos:{}".format(self.crane_inst.current_location_str())
+            self.parent.gimbal_pos_text['text']="GimbalPos:\n{}".format(self.gimbal_inst.current_location_str())
+            self.parent.crane_pos_text['text']="CranePos:\n{}".format(self.crane_inst.current_location_str())
             if self.parent.CONTROL_TOGGLE == self.parent.GIMBAL_CONTROL:
                 self.parent.gimbalToggle["bg"]="green"
                 self.parent.craneToggle["bg"]="grey"
