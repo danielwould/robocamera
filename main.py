@@ -322,7 +322,7 @@ class RobotCamera(tk.Frame):
             self.save_position_1 = new_waypoint
             self.sp1_pos_text['text'] = "Y/LB : {}".format(new_waypoint.location_str())
         if savepoint == 2:
-            self.ave_position_2 = new_waypoint
+            self.save_position_2 = new_waypoint
             self.sp2_pos_text['text'] = "B/RB : {}".format(new_waypoint.location_str())
         if savepoint == 3:
             self.save_position_3 = new_waypoint
