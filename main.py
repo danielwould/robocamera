@@ -316,8 +316,8 @@ class RobotCamera(tk.Frame):
         crane_position = self.crane_inst.get_current_location()
         gimbal_position = self.gimbal_inst.get_current_location()
         new_waypoint = waypoint(
-            cranepos(crane_position.get_rotation_pos(), crane_position.get_tilt_pos()),
-            gimbalpos(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()))
+            location(crane_position.get_rotation_pos(), crane_position.get_tilt_pos(),0),
+            location(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()))
         if savepoint == 1:
             self.save_position_1 = new_waypoint
             sp1_pos_text['text'] = "Y/LB : {}".format(new_waypoint.location_str)
