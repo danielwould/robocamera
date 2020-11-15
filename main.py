@@ -284,11 +284,11 @@ class RobotCamera(tk.Frame):
         
             #for wp in sequence_steps.waypoints:
                 if self.MOVE_TOGGLE == self.FEED_RATE:
-                    self.crane_inst.add_waypoint_by_feedrate_to_sequqnce(sequence_steps.waypoints[i].get_crane_position(), sequence_steps.waypoints[i].get_crane_travel_to_feed_rate(),sequence_steps.waypoints[i].get_dwell_time())
-                    self.gimbal_inst.add_waypoint_by_feedrate_to_sequqnce(sequence_steps.waypoints[i].get_gimbal_position(), sequence_steps.waypoints[i].get_gimbal_travel_to_feed_rate(),sequence_steps.waypoints[i].get_dwell_time())
+                    self.crane_inst.add_waypoint_by_feedrate_to_sequqnce(self.sequence_steps.waypoints[i].get_crane_position(), self.sequence_steps.waypoints[i].get_crane_travel_to_feed_rate(),self.sequence_steps.waypoints[i].get_dwell_time())
+                    self.gimbal_inst.add_waypoint_by_feedrate_to_sequqnce(self.sequence_steps.waypoints[i].get_gimbal_position(), self.sequence_steps.waypoints[i].get_gimbal_travel_to_feed_rate(),self.sequence_steps.waypoints[i].get_dwell_time())
                 if self.MOVE_TOGGLE == self.MOVE_TIME:
-                    self.crane_inst.add_waypoint_by_time_to_sequqnce(sequence_steps.waypoints[i].get_crane_position(),sequence_steps.waypoints[i].get_crane_travel_to_duration(),sequence_steps.waypoints[i].get_dwell_time())
-                    self.gimbal_inst.add_waypoint_by_time_to_sequqnce(sequence_steps.waypoints[i].get_gimbal_position(), sequence_steps.waypoints[i].get_gimbal_travel_to_duration(),sequence_steps.waypoints[i].get_dwell_time())
+                    self.crane_inst.add_waypoint_by_time_to_sequqnce(self.sequence_steps.waypoints[i].get_crane_position(),self.sequence_steps.waypoints[i].get_crane_travel_to_duration(),self.sequence_steps.waypoints[i].get_dwell_time())
+                    self.gimbal_inst.add_waypoint_by_time_to_sequqnce(self.sequence_steps.waypoints[i].get_gimbal_position(), self.sequence_steps.waypoints[i].get_gimbal_travel_to_duration(),self.sequence_steps.waypoints[i].get_dwell_time())
         print("===========")
         print("built crane sequence")
         self.crane_inst.get_current_gcode_sequence("crane")
