@@ -19,6 +19,7 @@ class Joystick():
     def main(self):
        
         control_last_toggled = time.time()
+        last_command_sent_at = time.time()
         # Loop until the user clicks the close button.
         
         # Initialize the joysticks.
@@ -96,50 +97,56 @@ class Joystick():
 
  
                 buttons = joystick.get_numbuttons()
- 
-                for button_num in range(buttons):
-                    button = joystick.get_button(button_num)
-                    if button_num == 0:
+                if time.time() - self.last_command_sent_at > 0.2:
+                            
+                    for button_num in range(buttons):
+                        button = joystick.get_button(button_num)
+                        if button_num == 0:
 
-                        if button == 1:
-                            # save position 1 when prssing
-                            self.parent.save_position(1)
-                    if button_num == 1:
-                        if button == 1:
-                            self.parent.save_position(2)
-                    if button_num == 2:
-                        if button == 1:
-                            self.parent.save_position(3)
-                    if button_num == 3:
-                        if button == 1:
-                            self.parent.save_position(4)
-                    if button_num == 4:
-                        if button == 1:
-                            self.parent.save_point_move(self.parent.save_position_1)
-                    if button_num == 5:
-                        if button == 1:
-                            self.parent.save_point_move(self.parent.save_position_2)
-                    if button_num == 6:
-                        if button == 1:
-                            self.parent.save_point_move(self.parent.save_position_3)
-                    if button_num == 7:
-                        if button == 1:
-                            self.parent.save_point_move(self.parent.save_position_4)
-                    if button_num == 8:
-                        if button == 1:
-                            # the reset button first for down and up, we only want to register on down
-                            if event.type == pygame.JOYBUTTONDOWN:
-                                if time.time() - control_last_toggled > 0.5:
-                                    if self.parent.CONTROL_TOGGLE == self.parent.GIMBAL_CONTROL:
-                                        self.parent.toggle_control(self.parent.CRANE_CONTROL)
-                                        control_last_toggled = time.time()
-                                    elif self.parent.CONTROL_TOGGLE == self.parent.CRANE_CONTROL:
-                                        self.parent.toggle_control(self.parent.GIMBAL_CONTROL)
-                                        control_last_toggled = time.time()
+                            if button == 1:
+                                # save position 1 when prssing
+                                self.parent.save_position(1)
+                        if button_num == 1:
+                            if button == 1:
+                                self.parent.save_position(2)
+                        if button_num == 2:
+                            if button == 1:
+                                self.parent.save_position(3)
+                        if button_num == 3:
+                            if button == 1:
+                                self.parent.save_position(4)
+                        if button_num == 4:
+                            if button == 1:
+                                self.parent.save_point_move(self.parent.save_position_1)
+                                last_command_sent_at=time.time()                        
+                        if button_num == 5:
+                            if button == 1:
+                                self.parent.save_point_move(self.parent.save_position_2)
+                                last_command_sent_at=time.time()
+                        if button_num == 6:
+                            if button == 1:
+                                self.parent.save_point_move(self.parent.save_position_3)
+                                last_command_sent_at=time.time()
+                        if button_num == 7:
+                            if button == 1:
+                                self.parent.save_point_move(self.parent.save_position_4)
+                                last_command_sent_at=time.time()
+                        if button_num == 8:
+                            if button == 1:
+                                # the reset button first for down and up, we only want to register on down
+                                if event.type == pygame.JOYBUTTONDOWN:
+                                    if time.time() - control_last_toggled > 0.5:
+                                        if self.parent.CONTROL_TOGGLE == self.parent.GIMBAL_CONTROL:
+                                            self.parent.toggle_control(self.parent.CRANE_CONTROL)
+                                            control_last_toggled = time.time()
+                                        elif self.parent.CONTROL_TOGGLE == self.parent.CRANE_CONTROL:
+                                            self.parent.toggle_control(self.parent.GIMBAL_CONTROL)
+                                            control_last_toggled = time.time()
 
-                    if button_num == 9:
-                        if button == 1:
-                            self.parent.trigger_whole_sequence(self.parent.sequence_steps)
+                        if button_num == 9:
+                            if button == 1:
+                                self.parent.trigger_whole_sequence(self.parent.sequence_steps)
+                                last_command_sent_at=time.time()
 
                 hats = joystick.get_numhats()
 
