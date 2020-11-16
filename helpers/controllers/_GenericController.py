@@ -209,15 +209,15 @@ class _GenericController:
             return True
 
         elif line[0] == "<":
-            self.master.logger.info("{}:{}".format(self.master.name, line))
+            self.master.logger.debug("{}:{}".format(self.master.name, line))
             self.parseBracketAngle(line, cline)
 
         elif line[0] == "[":
-            self.master.logger.info("{}:{}".format(self.master.name, line))
+            self.master.logger.debug("{}:{}".format(self.master.name, line))
             self.parseBracketSquare(line)
 
         elif "error:" in line or "ALARM:" in line:
-            self.master.logger.info("error: {}".format(line))
+            self.master.logger.error("error: {}".format(line))
             self.master._gcount += 1
             # print "gcount ERROR=",self._gcount
             if cline:

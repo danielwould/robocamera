@@ -282,13 +282,15 @@ class grbl_controller:
             self.gcode_sequence.append(
                 "\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(x, y, z, feedrate, dwell))
 
-    def print_gcode_sequence(self, name):
+    def print_gcode_sequence(self):
         seq_num = 0
+        self.logger.info("Current gcode sequence")
         for gcode in self.gcode_sequence:
-            self.logger.info("{}:{}:{}".format(name, seq_num, gcode))
+            self.logger.info("{}:{}".format(seq_num, gcode))
             seq_num = seq_num+1
 
-    def run_sequence(self, name):
+    def run_sequence(self):
+        self.logger.info("Running stored qcode sequence")
         for gcode in self.gcode_sequence:
             self.sendGCode(gcode)
         self.reset_gcode_sequence()

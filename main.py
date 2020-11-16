@@ -73,7 +73,7 @@ class RobotCamera(tk.Frame):
         self.create_widgets()
 
     def init_controllers(self):
-        MOCK = 0
+        MOCK = 1
         self.gimbal_inst = gimbal("/dev/ttyACM0", MOCK,0,"Gimbal")
         self.gimbal_inst.set_small_step_rotate(0.2)
         self.gimbal_inst.set_big_step_rotate(2)
@@ -114,16 +114,16 @@ class RobotCamera(tk.Frame):
         savepoint_info = Frame(info,relief=tk.RIDGE)
         savepoint_info.pack(side="top") 
         self.sp1_pos_text = tk.Label(savepoint_info,text="Y/LB", relief=tk.RIDGE)
-        self.sp1_pos_text.config(font=("Courier", 12))
+        self.sp1_pos_text.config(font=("Courier", 8))
         self.sp1_pos_text.pack()
         self.sp2_pos_text = tk.Label(savepoint_info,text="B/RB", relief=tk.RIDGE)
-        self.sp2_pos_text.config(font=("Courier", 12))
+        self.sp2_pos_text.config(font=("Courier", 8))
         self.sp2_pos_text.pack()
         self.sp3_pos_text = tk.Label(savepoint_info,text="X/L1", relief=tk.RIDGE)
-        self.sp3_pos_text.config(font=("Courier", 12))
+        self.sp3_pos_text.config(font=("Courier", 8))
         self.sp3_pos_text.pack()
         self.sp4_pos_text = tk.Label(savepoint_info,text="A/R1", relief=tk.RIDGE)
-        self.sp4_pos_text.config(font=("Courier", 12))
+        self.sp4_pos_text.config(font=("Courier", 8))
         self.sp4_pos_text.pack()
 
         #waypoints
@@ -138,16 +138,16 @@ class RobotCamera(tk.Frame):
         #
         Motion_controls = Frame(right_side,relief=tk.RIDGE)
         Motion_controls.pack(side="top")
-        self.up = tk.Button(Motion_controls, text="U", fg="yellow",bg="grey", command=self.tilt_up)
+        self.up = tk.Button(Motion_controls, text="U", fg="#ffcc33",bg="#333333", command=self.tilt_up)
         self.up.config(font=("Courier", 22))
         self.up.pack(side="top", padx=2,pady=2)
-        self.left = tk.Button(Motion_controls, text="L", fg="yellow",bg="grey", command=self.rotate_left)
+        self.left = tk.Button(Motion_controls, text="L", fg="#ffcc33",bg="#333333", command=self.rotate_left)
         self.left.config(font=("Courier", 22))
         self.left.pack(side="left", padx=2,pady=2)
-        self.right = tk.Button(Motion_controls, text="R", fg="yellow",bg="grey", command=self.rotate_right)
+        self.right = tk.Button(Motion_controls, text="R", fg="#ffcc33",bg="#333333", command=self.rotate_right)
         self.right.config(font=("Courier", 22))
         self.right.pack(side="right", padx=2,pady=2)
-        self.down = tk.Button(Motion_controls, text="D", fg="yellow",bg="grey", command=self.tilt_down)
+        self.down = tk.Button(Motion_controls, text="D", fg="#ffcc33",bg="#333333", command=self.tilt_down)
         self.down.config(font=("Courier", 22))
         self.down.pack(side="bottom", padx=2,pady=2)
 
@@ -161,15 +161,15 @@ class RobotCamera(tk.Frame):
         controller_select.pack(side="top")
         button_pairs = Frame(controller_select,relief=tk.GROOVE)
         button_pairs.pack(side="left")
-        self.gimbalToggle = tk.Button(button_pairs, text="Gimbal", fg="yellow",bg="black", command=lambda: self.toggle_control(self.GIMBAL_CONTROL))
+        self.gimbalToggle = tk.Button(button_pairs, text="Gimbal", fg="#ffcc33",bg="#333333", command=lambda: self.toggle_control(self.GIMBAL_CONTROL))
         self.gimbalToggle.pack(side="top", padx=2,pady=2)
-        self.craneToggle = tk.Button(button_pairs, text="Crane", fg="yellow",bg="black", command=lambda: self.toggle_control(self.CRANE_CONTROL))
+        self.craneToggle = tk.Button(button_pairs, text="Crane", fg="#ffcc33",bg="#333333", command=lambda: self.toggle_control(self.CRANE_CONTROL))
         self.craneToggle.pack(side="bottom", padx=2,pady=2)
         move_select = Frame(controller_select,relief=tk.GROOVE)
         move_select.pack(side="right")
-        self.moveFeedToggle = tk.Button(move_select, text="Feed mm/s", fg="yellow",bg="black", command=lambda: self.toggle_move_mode(self.FEED_RATE))
+        self.moveFeedToggle = tk.Button(move_select, text="Feed mm/s", fg="#ffcc33",bg="#333333", command=lambda: self.toggle_move_mode(self.FEED_RATE))
         self.moveFeedToggle.pack(side="top", padx=2,pady=2)
-        self.moveTimeToggle = tk.Button(move_select, text="Move Time", fg="yellow",bg="black", command=lambda: self.toggle_move_mode(self.MOVE_TIME))
+        self.moveTimeToggle = tk.Button(move_select, text="Move Time", fg="#ffcc33",bg="#333333", command=lambda: self.toggle_move_mode(self.MOVE_TIME))
         self.moveTimeToggle.pack(side="bottom", padx=2,pady=2)
 
         #
@@ -177,10 +177,10 @@ class RobotCamera(tk.Frame):
         #
         wayPoint_controls = Frame(Toggle_controls,relief=tk.RIDGE)
         wayPoint_controls.pack(side="top")
-        self.addWaypoint = tk.Button(wayPoint_controls, text="Add Waypoint", fg="black",
+        self.addWaypoint = tk.Button(wayPoint_controls, text="Add Waypoint", fg="#333333",bg="#ffcc33",
                               command=lambda: self.add_waypoint(self.dwell_time.get()))
         self.addWaypoint.pack(padx=2,pady=2)
-        self.deleteWaypoint = tk.Button(wayPoint_controls, text="Del Waypoint", fg="black",
+        self.deleteWaypoint = tk.Button(wayPoint_controls, text="Del Waypoint", fg="#333333",bg="#ffcc33",
                               command=self.delete_waypoint)
         self.deleteWaypoint.pack(padx=2,pady=2)
 
@@ -251,12 +251,6 @@ class RobotCamera(tk.Frame):
                 feedval, self.crane_inst.get_feed_speed()))
             self.crane_inst.set_feed_speed(feedval)
 
-    def set_delay_rate(self,val):
-        print("set crane delay to {}".format(val))
-        self.crane_inst.set_command_delay(val)
-
-
-
     def set_move_time(self,seconds):
         if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
             print("updating gimbal move time from {} to {}".format(
@@ -301,16 +295,13 @@ class RobotCamera(tk.Frame):
                 if self.MOVE_TOGGLE == self.MOVE_TIME:
                     self.crane_inst.add_waypoint_by_time_to_sequqnce(self.sequence_steps.waypoints[i].get_crane_position(),self.sequence_steps.waypoints[i].get_crane_travel_to_duration(),self.sequence_steps.waypoints[i].get_dwell_time())
                     self.gimbal_inst.add_waypoint_by_time_to_sequqnce(self.sequence_steps.waypoints[i].get_gimbal_position(), self.sequence_steps.waypoints[i].get_gimbal_travel_to_duration(),self.sequence_steps.waypoints[i].get_dwell_time())
-        print("===========")
-        print("built crane sequence")
-        self.crane_inst.get_current_gcode_sequence("crane")
-        print("===========")
-        print("built gimbal sequence")
-        self.gimbal_inst.get_current_gcode_sequence("gimbal")
-        print("===========")
+        
+        self.crane_inst.get_current_gcode_sequence()
+        self.gimbal_inst.get_current_gcode_sequence()
+        
 
-        self.crane_inst.trigger_sequence("crane")
-        self.gimbal_inst.trigger_sequence("gimbal")
+        self.crane_inst.trigger_sequence()
+        self.gimbal_inst.trigger_sequence()
         #set location to last wp
 
 

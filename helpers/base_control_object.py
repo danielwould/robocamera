@@ -144,11 +144,11 @@ class base_control_object:
         self.controller.add_absolute_move_by_feed_to_sequence(position.get_rotation_pos(),position.get_tilt_pos(),0,duration, dwell)
         print("{} feedraet waypoint added to gcode sequence".format(time.ctime()))
         
-    def trigger_sequence(self, name):
-        self.controller.run_sequence(name)
+    def trigger_sequence(self):
+        self.controller.run_sequence()
         
-    def get_current_gcode_sequence(self,name):
-        self.controller.print_gcode_sequence(name)
+    def get_current_gcode_sequence(self):
+        self.controller.print_gcode_sequence()
 
     def status(self):
         self.controller.status()
