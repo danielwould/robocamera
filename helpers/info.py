@@ -15,8 +15,8 @@ class info():
 
     def main(self):
         # Loop until the user clicks the close button.
-        try:
-            while not self.done:
+        while not self.done:
+            try:
                 time.sleep(0.2)
                 #self.gimbal_inst.status()
                 #self.crane_inst.status()
@@ -42,6 +42,6 @@ class info():
                     self.parent.moveTimeToggle["bg"]="#333333"
                     self.parent.moveFeedToggle["fg"]="#333333"
                     self.parent.moveTimeToggle["fg"]="#ffcc33"
-        except:
-            print("Error in ui thread")
-            time.sleep(1)
+            except:
+                print("Error in ui thread")
+                time.sleep(1)
