@@ -253,6 +253,7 @@ class RobotCamera(tk.Frame):
         self.movetime_label.config(font=("Courier", 12))
         self.movetime_label.pack(side="top")
         self.move_duration = StringVar(move)
+        self.move_duration.trace("w",self.set_move_time)
         self.move_duration.set(10) # initial value
         self.move_duration = OptionMenu(move, self.move_duration, 2, 5,10,20,30,60,120)
         self.move_duration.pack(side="bottom")
@@ -265,14 +266,14 @@ class RobotCamera(tk.Frame):
                               command=self.quit)
         self.quit.pack(side="bottom", pady=50)
 
-    def say_hi(self):
-        print("hi there, everyone!")
-
-
     def toggle_control(self,value):
         print("toggle control to")
         print(value)
         self.CONTROL_TOGGLE = value
+        if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
+            self.move_duration.set(self.gimbal_inst.get_move_duration())
+        if self.CONTROL_TOGGLE == self.CRANE_CONTROL:
+            self.move_duration.set(self.crane_inst.get_move_duration())
 
     def toggle_move_mode(self,value):
         print("toggle move mode to")
@@ -291,15 +292,15 @@ class RobotCamera(tk.Frame):
                 feedval, self.crane_inst.get_feed_speed()))
             self.crane_inst.set_feed_speed(feedval)
 
-    def set_move_time(self,seconds):
+    def set_move_time(self):
         if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
             print("updating gimbal move time from {} to {}".format(
-                seconds, self.gimbal_inst.get_move_duration()))
-            self.gimbal_inst.set_move_duration(seconds)
+                self.move_duration.get(), self.gimbal_inst.get_move_duration()))
+            self.gimbal_inst.set_move_duration(self.move_duration.get())
         if self.CONTROL_TOGGLE == self.CRANE_CONTROL:
             print("updating crane move time from {} to {}".format(
-                seconds, self.crane_inst.get_move_duration()))
-            self.crane_inst.set_move_duration(seconds)
+                self.move_duration.get(), self.crane_inst.get_move_duration()))
+            self.crane_inst.set_move_duration(self.move_duration.get())
 
 
     def add_waypoint(self,dwell_input_text):
@@ -347,6 +348,7 @@ class RobotCamera(tk.Frame):
 
     def save_point_move(self,savepoint):
         self.crane_inst.set_command_delay(self.crane_delay.get())
+        
         if self.MOVE_TOGGLE == self.FEED_RATE:
             self.crane_inst.move_to_position_at_rate(savepoint.get_crane_position())
             self.gimbal_inst.move_to_position_at_rate(savepoint.get_gimbal_position())
