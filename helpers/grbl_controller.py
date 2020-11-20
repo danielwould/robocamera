@@ -373,64 +373,71 @@ class grbl_controller:
         gcodeToSend = None			# next string to send
         lastWriteAt = tg = time.time()
         while self.stop_signal != True:
-            time.sleep(0.1)
-            #print ("gcode queue length {}".format(self.queue.qsize()))
+            try:
+                time.sleep(0.1)
+                #print ("gcode queue length {}".format(self.queue.qsize()))
 
-            t = time.time()
+                t = time.time()
 
-            # Anything to receive?
-            if self.MODE == self.REAL_MODE:
-                if self.serial.inWaiting():
+                # Anything to receive?
+                if self.MODE == self.REAL_MODE:
+                    if self.serial.inWaiting():
+                        try:
+                            line = str(self.serial.readline().decode()).strip()
+                        except:
+                            self.emptyQueue()
+                            return
+
+                        # print "<R<",repr(line)
+                        # print "*-* stack=",sline,"sum=",sum(cline),"wait=",wait,"pause=",self._pause
+                        if not line:
+                            pass
+                        elif self.mcontrol.parseLine(line, cline, sline):
+                            pass
+
+
+                # refresh machine position?
+                if gcodeToSend is None:
                     try:
-                        line = str(self.serial.readline().decode()).strip()
-                    except:
-                        self.emptyQueue()
-                        return
+                        self.logger.debug("Command queue length {}".format(self.queue.qsize()))
+                        gcodeToSend = self.queue.get_nowait()
+                    except Empty:
+                        #nothing to send
+                        gcodeToSend = None
+                
+                    if gcodeToSend is not None:
+                        sline.append(gcodeToSend)
+                        cline.append(len(gcodeToSend))
+                        self.logger.debug("send buffer size {}".format(sum(cline)))
 
-                    # print "<R<",repr(line)
-                    # print "*-* stack=",sline,"sum=",sum(cline),"wait=",wait,"pause=",self._pause
-                    if not line:
-                        pass
-                    elif self.mcontrol.parseLine(line, cline, sline):
-                        pass
+                if gcodeToSend is not None and sum(cline) < RX_BUFFER_SIZE:
+                    # Bookkeeping of the buffers
+                
+                    self._sumcline = sum(cline)
+        #				if isinstance(tosend, list):
+        #					self.serial_write(str(tosend.pop(0)))
+        #					if not tosend: tosend = None
 
+                    # print ">S>",repr(tosend),"stack=",sline,"sum=",sum(cline)
+                    if self.mcontrol.gcode_case > 0:
+                        gcodeToSend = gcodeToSend.upper()
+                    if self.mcontrol.gcode_case < 0:
+                        gcodeToSend = gcodeToSend.lower()
+                    self.logger.debug("writing queued instruction {}".format(gcodeToSend))
+                    self.serial_write(gcodeToSend.encode())
 
-            # refresh machine position?
-            if gcodeToSend is None:
-                try:
-                    self.logger.debug("Command queue length {}".format(self.queue.qsize()))
-                    gcodeToSend = self.queue.get_nowait()
-                except Empty:
-                    #nothing to send
                     gcodeToSend = None
-            
-                if gcodeToSend is not None:
-                    sline.append(gcodeToSend)
-                    cline.append(len(gcodeToSend))
-                    self.logger.debug("send buffer size {}".format(sum(cline)))
-
-            if gcodeToSend is not None and sum(cline) < RX_BUFFER_SIZE:
-                # Bookkeeping of the buffers
-               
-                self._sumcline = sum(cline)
-    #				if isinstance(tosend, list):
-    #					self.serial_write(str(tosend.pop(0)))
-    #					if not tosend: tosend = None
-
-                # print ">S>",repr(tosend),"stack=",sline,"sum=",sum(cline)
-                if self.mcontrol.gcode_case > 0:
-                    gcodeToSend = gcodeToSend.upper()
-                if self.mcontrol.gcode_case < 0:
-                    gcodeToSend = gcodeToSend.lower()
-                self.logger.debug("writing queued instruction {}".format(gcodeToSend))
-                self.serial_write(gcodeToSend.encode())
-
-                gcodeToSend = None
-            else:
-                if t-lastWriteAt > SERIAL_POLL:
-                    self.serial_write(b"?")
-                    lastWriteAt = t
                 else:
-                    if t-tg > G_POLL:
-                        self.serial_write(b"$G\n")
-                        tg = t   
+                    if t-lastWriteAt > SERIAL_POLL:
+                        self.serial_write(b"?")
+                        lastWriteAt = t
+                    else:
+                        if t-tg > G_POLL:
+                            self.serial_write(b"$G\n")
+                            tg = t
+            except:
+                self.logger.error("Exception in thread for {}".format(name))   
+        self.logger.info("########################################")
+        self.logger.info("Thread stopping for grbl on :{}".format(name))
+        self.logger.info("########################################")
+        
