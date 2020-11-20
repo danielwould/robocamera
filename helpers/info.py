@@ -43,5 +43,5 @@ class info():
                     self.parent.moveFeedToggle["fg"]="#333333"
                     self.parent.moveTimeToggle["fg"]="#ffcc33"
         except:
-            print "Error in ui thread"
+            print("Error in ui thread")
             time.sleep(1)
