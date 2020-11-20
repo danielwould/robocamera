@@ -296,11 +296,11 @@ class RobotCamera(tk.Frame):
         if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
             print("updating gimbal move time from {} to {}".format(
                 self.move_duration.get(), self.gimbal_inst.get_move_duration()))
-            self.gimbal_inst.set_move_duration(self.move_duration.get())
+            self.gimbal_inst.set_move_duration(int(self.move_duration.get()))
         if self.CONTROL_TOGGLE == self.CRANE_CONTROL:
             print("updating crane move time from {} to {}".format(
                 self.move_duration.get(), self.crane_inst.get_move_duration()))
-            self.crane_inst.set_move_duration(self.move_duration.get())
+            self.crane_inst.set_move_duration(int(self.move_duration.get()))
 
 
     def add_waypoint(self,dwell_input_text):
