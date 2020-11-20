@@ -245,7 +245,7 @@ class grbl_controller:
         self.gcode_sequence = []
 
     def set_command_delay(self, value):
-        self.dwell_delay = float(value/1000,5)
+        self.dwell_delay = round(value/1000,4)
 
     def relative_move(self, move_str, feedrate):
         self.sendGCode("g91")
