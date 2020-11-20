@@ -43,11 +43,6 @@ SHIFT_CHARS = '~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
 
 
 class RobotCamera(tk.Frame):
-    
-    
-    
-
-    
 
     def __init__(self, master=None):
         super().__init__(master)
@@ -73,7 +68,7 @@ class RobotCamera(tk.Frame):
         self.create_widgets()
 
     def init_controllers(self):
-        MOCK = 1
+        MOCK = 0
         self.gimbal_inst = gimbal("/dev/ttyACM0", MOCK,0,"Gimbal")
         self.gimbal_inst.set_small_step_rotate(0.2)
         self.gimbal_inst.set_big_step_rotate(2)
@@ -101,10 +96,10 @@ class RobotCamera(tk.Frame):
 
         self.gimbal_pos_text = tk.Label(location_info,text="GimbalPos", relief=tk.RIDGE)
         self.gimbal_pos_text.config(font=("Courier", 16))
-        self.gimbal_pos_text.pack(side="top")
+        self.gimbal_pos_text.pack(side="left", padx=10)
         self.crane_pos_text = tk.Label(location_info,text="CranePos", relief=tk.RIDGE)
         self.crane_pos_text.config(font=("Courier", 16))
-        self.crane_pos_text.pack(side="top")
+        self.crane_pos_text.pack(side="right")
 
         info = Frame(left,relief=tk.SUNKEN)
         info.pack(side="left")
@@ -112,24 +107,69 @@ class RobotCamera(tk.Frame):
         #savepoints
         #
         savepoint_info = Frame(info,relief=tk.RIDGE)
-        savepoint_info.pack(side="top") 
+        savepoint_info.pack(side="top")
+        savepoint_saves = Frame (savepoint_info)
+        savepoint_saves.pack(side="left")
+        savepoint_moves = Frame (savepoint_info)
+        savepoint_moves.pack(side="right")
+        self.set_savepoint_1 = tk.Button(savepoint_saves, text="Save", fg="#ffcc33", bg="#333333", command=lambda :self.save_position(1))
+        self.set_savepoint_1.config(font=("Courier", 5))
+        self.set_savepoint_1.pack(side="top", padx=2, pady=2)
+        self.set_savepoint_2 = tk.Button(savepoint_saves, text="Save", fg="#ffcc33", bg="#333333",
+                                         command=lambda: self.save_position(2))
+        self.set_savepoint_2.config(font=("Courier", 5))
+        self.set_savepoint_2.pack(side="top", padx=2, pady=2)
+        self.set_savepoint_3 = tk.Button(savepoint_saves, text="Save", fg="#ffcc33", bg="#333333",
+                                         command=lambda: self.save_position(3))
+        self.set_savepoint_3.config(font=("Courier", 5))
+        self.set_savepoint_3.pack(side="top", padx=2, pady=2)
+        self.set_savepoint_4 = tk.Button(savepoint_saves, text="Save", fg="#ffcc33", bg="#333333",
+                                         command=lambda: self.save_position(4))
+        self.set_savepoint_4.config(font=("Courier", 5))
+        self.set_savepoint_4.pack(side="top", padx=2, pady=2)
+
         self.sp1_pos_text = tk.Label(savepoint_info,text="Y/LB", relief=tk.RIDGE)
         self.sp1_pos_text.config(font=("Courier", 8))
-        self.sp1_pos_text.pack()
+        self.sp1_pos_text.pack(pady=5)
+
         self.sp2_pos_text = tk.Label(savepoint_info,text="B/RB", relief=tk.RIDGE)
         self.sp2_pos_text.config(font=("Courier", 8))
-        self.sp2_pos_text.pack()
+        self.sp2_pos_text.pack(pady=5)
+
         self.sp3_pos_text = tk.Label(savepoint_info,text="X/L1", relief=tk.RIDGE)
         self.sp3_pos_text.config(font=("Courier", 8))
-        self.sp3_pos_text.pack()
+        self.sp3_pos_text.pack(pady=5)
+
         self.sp4_pos_text = tk.Label(savepoint_info,text="A/R1", relief=tk.RIDGE)
         self.sp4_pos_text.config(font=("Courier", 8))
-        self.sp4_pos_text.pack()
+        self.sp4_pos_text.pack(pady=5)
 
+        self.move_savepoint_1 = tk.Button(savepoint_moves, text="Move", fg="#ffcc33", bg="#333333",
+                                        command=lambda: self.save_point_move(self.save_position_1))
+        self.move_savepoint_1.config(font=("Courier", 5))
+        self.move_savepoint_1.pack(side="top", padx=2, pady=2)
+        self.move_savepoint_2 = tk.Button(savepoint_moves, text="Move", fg="#ffcc33", bg="#333333",
+                                         command=lambda: self.save_point_move(self.save_position_2))
+        self.move_savepoint_2.config(font=("Courier", 5))
+        self.move_savepoint_2.pack(side="top", padx=2, pady=2)
+        self.move_savepoint_3 = tk.Button(savepoint_moves, text="Move", fg="#ffcc33", bg="#333333",
+                                         command=lambda: self.save_point_move(self.save_position_3))
+        self.move_savepoint_3.config(font=("Courier", 5))
+        self.move_savepoint_3.pack(side="top", padx=2, pady=2)
+        self.move_savepoint_4 = tk.Button(savepoint_moves, text="Move", fg="#ffcc33", bg="#333333",
+                                         command=lambda: self.save_point_move(self.save_position_4))
+        self.move_savepoint_4.config(font=("Courier", 5))
+        self.move_savepoint_4.pack(side="top", padx=2, pady=2)
         #waypoints
-        
+
+        self.waypoint_start = tk.Button(info, text="Run", fg="#ffcc33", bg="#333333",
+                                        command=self.trigger_whole_sequence)
+        self.waypoint_start.config(font=("Courier", 5))
+        self.waypoint_start.pack(side="bottom")
         self.waypoint_listbox = Listbox(info, width=60)
         self.waypoint_listbox.pack(side="bottom")
+
+
 
         right_side = Frame(self,relief=tk.RIDGE)
         right_side.pack(side="right")
@@ -350,7 +390,6 @@ class RobotCamera(tk.Frame):
         sp1_pos_text['text'] = "A/R1 : {}".format(new_waypoint.location_str)
 
     def tilt_up(self):
-        print("up")
         if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
             self.gimbal_inst.tilt_up_small()
         if self.CONTROL_TOGGLE == self.CRANE_CONTROL:

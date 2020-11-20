@@ -16,7 +16,7 @@ class info():
     def main(self):
         # Loop until the user clicks the close button.
         while not self.done:
-            time.sleep(0.5)
+            time.sleep(0.2)
             #self.gimbal_inst.status()
             #self.crane_inst.status()
             self.parent.gimbal_pos_text['text']="GimbalPos:\n{}".format(self.gimbal_inst.current_location_str())

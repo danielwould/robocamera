@@ -217,7 +217,7 @@ class _GenericController:
             self.parseBracketSquare(line)
 
         elif "error:" in line or "ALARM:" in line:
-            self.master.logger.error("error: {}".format(line))
+            self.master.logger.error("GRBL error: {}".format(line))
             self.master._gcount += 1
             # print "gcount ERROR=",self._gcount
             if cline:

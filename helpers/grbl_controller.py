@@ -248,55 +248,64 @@ class grbl_controller:
         self.dwell_delay = value
 
     def relative_move(self, move_str, feedrate):
-
-        self.sendGCode("g91\r\ng94\r\ng1 {} f{}".format(move_str, feedrate))
+        self.sendGCode("g91")
+        self.sendGCode("g94")
+        self.sendGCode("g1 {} f{}".format(move_str, feedrate))
 
     def absolute_move(self, x, y, z, feedrate, dwell):
-        self.sendGCode("g4 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(
-            self.dwell_delay, x, y, z, feedrate, dwell))
+        self.sendGCode("g04 P{}".format(self.dwell_delay))
+        self.sendGCode("g90")
+        self.sendGCode("g94")
+        self.sendGCode("g1 x{} y{} z{} f{}".format(x, y, z, feedrate))
+        self.sendGCode("g4 P{}".format(dwell))
 
     def absolute_move_by_time(self, x, y, z, seconds, dwell):
         # calculate f value from desired
         # f2 = 60/2 = 30s
         feedval = 60 / seconds
-        self.sendGCode("g4 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(
-            self.dwell_delay, x, y, z, feedval, dwell))
+        self.sendGCode("g04 P{}".format(self.dwell_delay))
+        self.sendGCode("g90")
+        self.sendGCode("g93")
+        self.sendGCode("g1 x{} y{} z{} f{}".format(x, y, z, feedval))
+        self.sendGCode("g4 P{}".format(dwell))
 
     def add_absolute_move_by_time_to_sequence(self, x, y, z, seconds, dwell):
         feedval = 60 / seconds
         if len(self.gcode_sequence) == 0:
             # first statement gets initial delay
-            self.gcode_sequence.append("g04 P{}\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(
-                self.dwell_delay, x, y, z, feedval, dwell))
-        else:
-            self.gcode_sequence.append(
-                "\r\ng90\r\ng93\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(x, y, z, feedval, dwell))
+            self.gcode_sequence.append("g04 P{}".format(self.dwell_delay))
+        self.gcode_sequence.append("g90")
+        self.gcode_sequence.append("g93")
+        self.gcode_sequence.append("g1 x{} y{} z{} f{}".format(x, y, z, feedval))
+        self.gcode_sequence.append("g4 P{}".format(dwell))
 
     def add_absolute_move_by_feed_to_sequence(self, x, y, z, feedrate, dwell):
 
         if len(self.gcode_sequence) == 0:
             # first statement gets initial delay
-            self.gcode_sequence.append("g04 P{}\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(
-                self.dwell_delay, x, y, z, feedrate, dwell))
-        else:
-            self.gcode_sequence.append(
-                "\r\ng90\r\ng94\r\ng1 x{} y{} z{} f{}\r\ng4 P{}".format(x, y, z, feedrate, dwell))
+            self.gcode_sequence.append("g04 P{}".format(self.dwell_delay))
+        self.gcode_sequence.append("g90")
+        self.gcode_sequence.append("g94")
+        self.gcode_sequence.append("g1 x{} y{} z{} f{}".format(x, y, z, feedrate))
+        self.gcode_sequence.append("g4 P{}".format(dwell))
 
     def print_gcode_sequence(self):
         seq_num = 0
         self.logger.info("Current gcode sequence")
+        self.logger.info("########### START ##############")
         for gcode in self.gcode_sequence:
             self.logger.info("{}:{}".format(seq_num, gcode))
             seq_num = seq_num+1
+        self.logger.info("########### END ##############")
 
     def run_sequence(self):
-        self.logger.info("Running stored qcode sequence")
+        self.logger.info("Queuing stored gcode sequence")
         for gcode in self.gcode_sequence:
-            self.sendGCode(gcode)
+            self.queue.put(gcode+"\n")
         self.reset_gcode_sequence()
 
     def sendGCode(self, cmd):
-        self.logger.info("{} : instruction: {}".format(time.ctime(), cmd))
+        self.logger.info("{} : instruction:\n{}".format(time.ctime(), cmd))
         if self.serial and not self.running:
             if isinstance(cmd, tuple):
                 self.queue.put(cmd)
@@ -304,8 +313,8 @@ class grbl_controller:
                 self.queue.put(cmd+"\n")
 
     def position_str(self):
-        pos_str =  "wx:{},wy:{},wz:{},mx:{},my:{},mz:{}".format(self.mcontrol.cnc_obj.vars["wx"], self.mcontrol.cnc_obj.vars["wy"], self.mcontrol.cnc_obj.vars["wz"], self.mcontrol.cnc_obj.vars["mx"], self.mcontrol.cnc_obj.vars["my"], self.mcontrol.cnc_obj.vars["mz"])
-        #self.logger.info("returning position: {}".format(pos_str))
+        pos_str =  "wx:{},wy:{},wz:{}\nmx:{},my:{},mz:{}".format(self.mcontrol.cnc_obj.vars["wx"], self.mcontrol.cnc_obj.vars["wy"], self.mcontrol.cnc_obj.vars["wz"], self.mcontrol.cnc_obj.vars["mx"], self.mcontrol.cnc_obj.vars["my"], self.mcontrol.cnc_obj.vars["mz"])
+        self.logger.debug("returning position: {}".format(pos_str))
         return pos_str
         
     
@@ -320,7 +329,7 @@ class grbl_controller:
     # ----------------------------------------------------------------------
 
     def serial_write(self, data):
-        #self.logger.info("W "+str(type(data))+" : "+str(data))
+        self.logger.debug("W "+str(type(data))+" : "+str(data))
 
         # if sys.version_info[0] == 2:
         #	ret = self.serial.write(str(data))
@@ -329,7 +338,7 @@ class grbl_controller:
                 ret = self.serial.write(data)
             else:
                 ret = self.serial.write(data.encode())
-
+            self.logger.debug("grbl response {}".format(ret))
             return ret
 
     def emptyQueue(self):
@@ -364,7 +373,7 @@ class grbl_controller:
         gcodeToSend = None			# next string to send
         lastWriteAt = tg = time.time()
         while self.stop_signal != True:
-            time.sleep(0.2)
+            time.sleep(0.1)
             #print ("gcode queue length {}".format(self.queue.qsize()))
 
             t = time.time()
@@ -387,16 +396,18 @@ class grbl_controller:
 
 
             # refresh machine position?
-
-            try:
-                gcodeToSend = self.queue.get_nowait()
-            except Empty:
-                #nothing to send
-                gcodeToSend = None   
+            if gcodeToSend is None:
+                try:
+                    self.logger.debug("Command queue length {}".format(self.queue.qsize()))
+                    gcodeToSend = self.queue.get_nowait()
+                except Empty:
+                    #nothing to send
+                    gcodeToSend = None
             
-            if gcodeToSend is not None:
-                sline.append(gcodeToSend)
-                cline.append(len(gcodeToSend))
+                if gcodeToSend is not None:
+                    sline.append(gcodeToSend)
+                    cline.append(len(gcodeToSend))
+                    self.logger.debug("send buffer size {}".format(sum(cline)))
 
             if gcodeToSend is not None and sum(cline) < RX_BUFFER_SIZE:
                 # Bookkeeping of the buffers
@@ -411,7 +422,7 @@ class grbl_controller:
                     gcodeToSend = gcodeToSend.upper()
                 if self.mcontrol.gcode_case < 0:
                     gcodeToSend = gcodeToSend.lower()
-                self.logger.info("writing queued instruction {}".format(gcodeToSend))
+                self.logger.debug("writing queued instruction {}".format(gcodeToSend))
                 self.serial_write(gcodeToSend.encode())
 
                 gcodeToSend = None
