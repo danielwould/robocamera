@@ -255,8 +255,8 @@ class RobotCamera(tk.Frame):
         self.move_duration = StringVar(move)
         self.move_duration.trace("w",self.set_move_time)
         self.move_duration.set(10) # initial value
-        self.move_duration = OptionMenu(move, self.move_duration, 2, 5,10,20,30,60,120)
-        self.move_duration.pack(side="bottom")
+        self.move_duration_select = OptionMenu(move, self.move_duration, 2, 5,10,20,30,60,120)
+        self.move_duration_select.pack(side="bottom")
         
         self.crane_delay = Scale(options_controls, from_=0, to=2000, tickinterval=100)
         self.crane_delay.set(500)
@@ -292,7 +292,7 @@ class RobotCamera(tk.Frame):
                 feedval, self.crane_inst.get_feed_speed()))
             self.crane_inst.set_feed_speed(feedval)
 
-    def set_move_time(self):
+    def set_move_time(self, *args):
         if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
             print("updating gimbal move time from {} to {}".format(
                 self.move_duration.get(), self.gimbal_inst.get_move_duration()))
