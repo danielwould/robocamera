@@ -17,6 +17,7 @@ from helpers.gimbal import gimbal
 from helpers.CNC import CNC
 from helpers.joystick import Joystick
 from helpers.info import info
+from helpers.grbl_controller import grbl_controller
 import os
 import sys
 try:
@@ -69,12 +70,16 @@ class RobotCamera(tk.Frame):
 
     def init_controllers(self):
         MOCK = 0
-        self.gimbal_inst = gimbal("/dev/ttyACM0", MOCK,0,"Gimbal")
+       
+        self.controller=grbl_controller(MOCK,0)
+        self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
+
+        self.gimbal_inst = gimbal("x","y","z", self.controller)
         self.gimbal_inst.set_small_step_rotate(0.2)
         self.gimbal_inst.set_big_step_rotate(2)
         self.gimbal_inst.set_small_step_tilt(0.2)
         self.gimbal_inst.set_big_step_tilt(2)
-        self.crane_inst = crane("/dev/ttyACM1", MOCK,1,"Crane")
+        self.crane_inst = crane("a","b","c",self.controller)
 
     def init_joysticks(self):
         self.joy = Joystick(self, self.gimbal_inst, self.crane_inst)
@@ -270,11 +275,7 @@ class RobotCamera(tk.Frame):
         print("toggle control to")
         print(value)
         self.CONTROL_TOGGLE = value
-        if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
-            self.move_duration.set(self.gimbal_inst.get_move_duration())
-        if self.CONTROL_TOGGLE == self.CRANE_CONTROL:
-            self.move_duration.set(self.crane_inst.get_move_duration())
-
+        
     def toggle_move_mode(self,value):
         print("toggle move mode to")
         print(value)
@@ -293,14 +294,8 @@ class RobotCamera(tk.Frame):
             self.crane_inst.set_feed_speed(feedval)
 
     def set_move_time(self, *args):
-        if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
-            print("updating gimbal move time from {} to {}".format(
-                self.move_duration.get(), self.gimbal_inst.get_move_duration()))
-            self.gimbal_inst.set_move_duration(int(self.move_duration.get()))
-        if self.CONTROL_TOGGLE == self.CRANE_CONTROL:
-            print("updating crane move time from {} to {}".format(
-                self.move_duration.get(), self.crane_inst.get_move_duration()))
-            self.crane_inst.set_move_duration(int(self.move_duration.get()))
+        self.gimbal_inst.set_move_duration(int(self.move_duration.get()))
+        self.crane_inst.set_move_duration(int(self.move_duration.get()))
 
 
     def add_waypoint(self,dwell_input_text):

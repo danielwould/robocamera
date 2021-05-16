@@ -11,11 +11,15 @@ class base_control_object:
     last_command_sent_at = time.time()
     command_throttle_limit=0.2
     last_position_in_sequence=None
+    rotate_axis = "x"
+    tilt_axis = "y"
+    zoom_axis = "z"
 
-    def __init__(self, device, mode,dwell_delay,name):
-        self.device = device
-        self.controller=grbl_controller(mode,dwell_delay)
-        self.controller.set_device(self.device, 115200,name)
+    def __init__(self, rotate_axis, tilt_axis, zoom_axis, controller):
+        self.rotate_axis = rotate_axis
+        self.tilt_axis = tilt_axis
+        self.zoom_axis = zoom_axis
+        self.controller=controller
 
     def reset(self):
         self.controller.reset()
@@ -61,7 +65,7 @@ class base_control_object:
 
     def rotate_right_small(self):
         if time.time()-self.last_command_sent_at > self.command_throttle_limit:
-            self.controller.relative_move("x{}".format(
+            self.controller.relative_move("{}}{}".format(self.rotate_axis,
                 self.small_step_rotate), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             
@@ -69,13 +73,13 @@ class base_control_object:
     def rotate_left_small(self):
         if time.time()-self.last_command_sent_at > self.command_throttle_limit:
             self.controller.relative_move(
-                "x-{}".format(self.small_step_rotate), self.current_feed_speed)
+                "{}}-{}".format(self.rotate_axis,self.small_step_rotate), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             
 
     def rotate_right_large(self):
         if time.time()-self.last_command_sent_at > self.command_throttle_limit:
-            self.controller.relative_move("x{}".format(
+            self.controller.relative_move("{}{}".format(self.rotate_axis,
                 self.big_step_rotate), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             
@@ -83,13 +87,13 @@ class base_control_object:
     def rotate_left_large(self):
         if time.time()-self.last_command_sent_at > self.command_throttle_limit:
             self.controller.relative_move(
-                "x-{}".format(self.big_step_rotate), self.current_feed_speed)
+                "{}-{}".format(self.rotate_axis,self.big_step_rotate), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             
 
     def tilt_up_small(self):
         if time.time()-self.last_command_sent_at > self.command_throttle_limit:
-            self.controller.relative_move("y-{}".format(
+            self.controller.relative_move("{}}-{}".format(self.tilt_axis,
                 self.small_step_tilt), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             
@@ -97,21 +101,21 @@ class base_control_object:
     def tilt_down_small(self):
         if time.time()-self.last_command_sent_at > self.command_throttle_limit:
             self.controller.relative_move(
-                "y{}".format(self.small_step_tilt), self.current_feed_speed)
+                "{}{}".format(self.tilt_axis,self.small_step_tilt), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             
 
     def tilt_up_large(self):
         if time.time()-self.last_command_sent_at > self.command_throttle_limit:
-            self.controller.relative_move("y-{}".format(
-                self.big_step_tilt), self.current_feed_speed)
+            self.controller.relative_move("{}-{}".format(
+                self.tilt_axis,self.big_step_tilt), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             
 
     def tilt_down_large(self):
         if time.time()-self.last_command_sent_at > self.command_throttle_limit:
             self.controller.relative_move(
-                "y{}".format(self.big_step_tilt), self.current_feed_speed)
+                "{}{}".format(self.tilt_axis,self.big_step_tilt), self.current_feed_speed)
             self.last_command_sent_at = time.time()
             
 

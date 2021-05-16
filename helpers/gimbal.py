@@ -5,28 +5,29 @@ import time
 class gimbal(base_control_object):
     small_step_zoom = 0.2
     big_step_zoom = 1
-
-    def __init__(self, device, mode, dwell_delay,name):
-        super().__init__(device, mode, dwell_delay,name)
+    
+    def __init__(self):
+        super().__init__()
+        
 
     def zoom_in_small(self):
-        self.controller.relative_move("z-{}".format(
+        self.controller.relative_move("{}-{}".format(self.zoom_axis,
             self.small_step_zoom), self.current_feed_speed)
         self.last_command_sent_at = time.time()
 
     def zoom_out_small(self):
         self.controller.relative_move(
-            "z{}".format(self.small_step_zoom), self.current_feed_speed)
+            "{}{}".format(self.zoom_axis,self.small_step_zoom), self.current_feed_speed)
         self.last_command_sent_at = time.time()
 
     def zoom_in_large(self):
-        self.controller.relative_move("z-{}".format(
-            self.big_step_zoom), self.current_feed_speed)
+        self.controller.relative_move("{}-{}".format(
+            self.zoom_axis,self.big_step_zoom), self.current_feed_speed)
         self.last_command_sent_at = time.time()
 
     def zoom_out_large(self):
         self.controller.relative_move(
-            "z{}".format(self.big_step_zoom), self.current_feed_speed)
+            "{}{}".format(self.zoom_axis,self.big_step_zoom), self.current_feed_speed)
         self.last_command_sent_at = time.time()
 
     # override move commands to include the third axis
