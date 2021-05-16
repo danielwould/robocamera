@@ -37,7 +37,7 @@ class Controller(_GenericGRBL):
         self.master = master
         self.cnc_obj = CNC()
         
-        #print("grbl1 loaded")
+        #self.master.logger.info("grbl1 loaded")
 
     def jog(self, dir):
         self.master.sendGCode("$J=G91 %s F100000" %
@@ -137,7 +137,7 @@ class Controller(_GenericGRBL):
                 except (ValueError, IndexError):
                     self.cnc_obj.vars["state"] = "Garbage receive %s: %s" % (
                         word[0], line)
-                    print("error: {}".format(self.cnc_obj.vars["state"]))
+                    self.master.logger.error("MPos error: {}".format(self.cnc_obj.vars["state"]))
                     break
             elif word[0] == "F":
                 try:
@@ -145,7 +145,7 @@ class Controller(_GenericGRBL):
                 except (ValueError, IndexError):
                     self.cnc_obj.vars["state"] = "Garbage receive %s: %s" % (
                         word[0], line)
-                    print("error: {}".format(self.cnc_obj.vars["state"]))
+                    self.master.logger.error("F error: {}".format(self.cnc_obj.vars["state"]))
                     break
             elif word[0] == "FS":
                 try:
@@ -154,7 +154,7 @@ class Controller(_GenericGRBL):
                 except (ValueError, IndexError):
                     self.cnc_obj.vars["state"] = "Garbage receive %s: %s" % (
                         word[0], line)
-                    print("error: {}".format(self.cnc_obj.vars["state"]))
+                    self.master.logger.error("FS error: {}".format(self.cnc_obj.vars["state"]))
                     break
             elif word[0] == "Bf":
                 try:
@@ -163,7 +163,7 @@ class Controller(_GenericGRBL):
                 except (ValueError, IndexError):
                     self.cnc_obj.vars["state"] = "Garbage receive %s: %s" % (
                         word[0], line)
-                    print("error: {}".format(self.cnc_obj.vars["state"]))
+                    self.master.logger.error("Bf error: {}".format(self.cnc_obj.vars["state"]))
                     break
             elif word[0] == "Ov":
                 try:
@@ -173,7 +173,7 @@ class Controller(_GenericGRBL):
                 except (ValueError, IndexError):
                     self.cnc_obj.vars["state"] = "Garbage receive %s: %s" % (
                         word[0], line)
-                    print("error: {}".format(self.cnc_obj.vars["state"]))
+                    self.master.logger.error("Ov error: {}".format(self.cnc_obj.vars["state"]))
                     break
             elif word[0] == "WCO":
                 try:
@@ -190,17 +190,17 @@ class Controller(_GenericGRBL):
                 except (ValueError, IndexError):
                     self.cnc_obj.vars["state"] = "Garbage receive %s: %s" % (
                         word[0], line)
-                    print("error: {}".format(self.cnc_obj.vars["state"]))
+                    self.master.logger.error("WCO error: {}".format(self.cnc_obj.vars["state"]))
                     break
             elif word[0] == "Pn":
                 try:
                     self.cnc_obj.vars["pins"] = word[1]
                     if 'S' in word[1]:
                         if self.cnc_obj.vars["state"] == 'Idle' and not self.master.running:
-                            print("Stream requested by CYCLE START machine button")
+                            self.master.logger.info("Stream requested by CYCLE START machine button")
                             self.master.event_generate("<<Run>>", when='tail')
                         else:
-                            print("Ignoring machine stream request, because of state: ",
+                            self.master.logger.info("Ignoring machine stream request, because of state: ",
                                   self.cnc_obj.vars["state"], self.master.running)
                 except (ValueError, IndexError):
                     break
