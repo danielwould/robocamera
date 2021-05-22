@@ -2,10 +2,8 @@ import time
 import threading
 
 class info():
-    def __init__(self, parent, gimbal,crane):
+    def __init__(self, parent):
         self.parent = parent
-        self.gimbal_inst = gimbal
-        self.crane_inst = crane
         self.done = False
         self.thread = threading.Thread(target=self.main)
         self.thread.start()
@@ -20,8 +18,8 @@ class info():
                 time.sleep(0.2)
                 #self.gimbal_inst.status()
                 #self.crane_inst.status()
-                self.parent.gimbal_pos_text['text']="GimbalPos:\n{}".format(self.gimbal_inst.current_location_str())
-                self.parent.crane_pos_text['text']="CranePos:\n{}".format(self.crane_inst.current_location_str())
+                self.parent.pos_text['text']="GimbalPos:\n{}".format(self.parent.controller.position_str())
+                
                 if self.parent.CONTROL_TOGGLE == self.parent.GIMBAL_CONTROL:
                     self.parent.gimbalToggle["bg"]="#ffcc33"
                     self.parent.gimbalToggle["fg"]="#333333"

@@ -137,6 +137,8 @@ class grbl_controller:
         self.controllerSet("GRBL1")
         self.MODE = mode
         self.dwell_delay = dwell_delay
+        self.current_move_duration = 10
+        self.current_feed_speed = 1000
         self.gcode_sequence = []
         self.log = Queue()  # Log queue returned from GRBL
         self.queue = Queue()  # Command queue to be send to GRBL
@@ -237,6 +239,8 @@ class grbl_controller:
 
     def reset(self):
         self.mcontrol._wcsSet(0,0,0)
+        self.mcontrol.unlock()
+        self.mcontrol.viewParameters()
         #self.write_gcode("G10 P0 X0 Y0 Z0")
         # Toggle DTR to reset Arduino
         
@@ -247,46 +251,59 @@ class grbl_controller:
     def set_command_delay(self, value):
         self.dwell_delay = round(value/1000,4)
 
-    def relative_move(self, move_str, feedrate):
+    def set_move_duration(self,value):
+        self.current_move_duration=value
+    
+    def get_move_duration(self):
+        return self.current_move_duration
+
+
+    def set_feed_speed(self,value):
+        self.current_feed_speed=value
+    
+    def get_feed_speed(self):
+        return self.current_feed_speed
+
+    def relative_move(self, move_str):
         self.sendGCode("g91")
         self.sendGCode("g94")
-        self.sendGCode("g1 {} f{}".format(move_str, feedrate))
+        self.sendGCode("g1 {} f{}".format(move_str, self.current_feed_speed))
 
-    def absolute_move(self, x, y, z, feedrate, dwell):
+    def absolute_move(self, x, y, z, a, b, feedrate, dwell):
         self.sendGCode("g04 P{}".format(self.dwell_delay))
         self.sendGCode("g90")
         self.sendGCode("g94")
-        self.sendGCode("g1 x{} y{} z{} f{}".format(x, y, z, feedrate))
+        self.sendGCode("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z, a,b,feedrate))
         self.sendGCode("g4 P{}".format(dwell))
 
-    def absolute_move_by_time(self, x, y, z, seconds, dwell):
+    def absolute_move_by_time(self, x, y, z, a, b, seconds, dwell):
         # calculate f value from desired
         # f2 = 60/2 = 30s
         feedval = 60 / seconds
         self.sendGCode("g04 P{}".format(self.dwell_delay))
         self.sendGCode("g90")
         self.sendGCode("g93")
-        self.sendGCode("g1 x{} y{} z{} f{}".format(x, y, z, feedval))
+        self.sendGCode("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z, a,b,feedval))
         self.sendGCode("g4 P{}".format(dwell))
 
-    def add_absolute_move_by_time_to_sequence(self, x, y, z, seconds, dwell):
+    def add_absolute_move_by_time_to_sequence(self, x, y, z, a, b, seconds, dwell):
         feedval = 60 / seconds
         if len(self.gcode_sequence) == 0:
             # first statement gets initial delay
             self.gcode_sequence.append("g04 P{}".format(self.dwell_delay))
         self.gcode_sequence.append("g90")
         self.gcode_sequence.append("g93")
-        self.gcode_sequence.append("g1 x{} y{} z{} f{}".format(x, y, z, feedval))
+        self.gcode_sequence.append("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z,a,b, feedval))
         self.gcode_sequence.append("g4 P{}".format(dwell))
 
-    def add_absolute_move_by_feed_to_sequence(self, x, y, z, feedrate, dwell):
+    def add_absolute_move_by_feed_to_sequence(self, x, y, z, a, b, feedrate, dwell):
 
         if len(self.gcode_sequence) == 0:
             # first statement gets initial delay
             self.gcode_sequence.append("g04 P{}".format(self.dwell_delay))
         self.gcode_sequence.append("g90")
         self.gcode_sequence.append("g94")
-        self.gcode_sequence.append("g1 x{} y{} z{} f{}".format(x, y, z, feedrate))
+        self.gcode_sequence.append("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z,a,b, feedrate))
         self.gcode_sequence.append("g4 P{}".format(dwell))
 
     def print_gcode_sequence(self):
@@ -313,15 +330,15 @@ class grbl_controller:
                 self.queue.put(cmd+"\n")
 
     def position_str(self):
-        pos_str =  "wx:{},wy:{},wz:{}\nmx:{},my:{},mz:{}".format(self.mcontrol.cnc_obj.vars["wx"], self.mcontrol.cnc_obj.vars["wy"], self.mcontrol.cnc_obj.vars["wz"], self.mcontrol.cnc_obj.vars["mx"], self.mcontrol.cnc_obj.vars["my"], self.mcontrol.cnc_obj.vars["mz"])
+        pos_str =  "wx:{},wy:{},wz:{},wa:{},wb:{}\nmx:{},my:{},mz:{},ma:{},mb:{}".format(self.mcontrol.cnc_obj.vars["wx"], self.mcontrol.cnc_obj.vars["wy"], self.mcontrol.cnc_obj.vars["wz"],self.mcontrol.cnc_obj.vars["wa"],self.mcontrol.cnc_obj.vars["wb"],self.mcontrol.cnc_obj.vars["mx"], self.mcontrol.cnc_obj.vars["my"], self.mcontrol.cnc_obj.vars["mz"],self.mcontrol.cnc_obj.vars["ma"],self.mcontrol.cnc_obj.vars["mb"])
         self.logger.debug("returning position: {}".format(pos_str))
         return pos_str
         
     
     
          
-    def currentlocation(self):
-        loc = location(self.mcontrol.cnc_obj.vars["wx"],self.mcontrol.cnc_obj.vars["wy"],self.mcontrol.cnc_obj.vars["wz"])
+    def currentlocation(self, rotation_axis, tilt_axis, zoom_axis):
+        loc = location(self.mcontrol.cnc_obj.vars["w{}".format(rotation_axis)],self.mcontrol.cnc_obj.vars["w{}".format(tilt_axis)],self.mcontrol.cnc_obj.vars["w{}".format(zoom_axis)])
         return loc
 
     # ----------------------------------------------------------------------
@@ -374,7 +391,7 @@ class grbl_controller:
         lastWriteAt = tg = time.time()
         while self.stop_signal != True:
             try:
-                time.sleep(0.1)
+                time.sleep(0.01)
                 #print ("gcode queue length {}".format(self.queue.qsize()))
 
                 t = time.time()

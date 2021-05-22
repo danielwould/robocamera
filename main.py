@@ -72,20 +72,22 @@ class RobotCamera(tk.Frame):
         MOCK = 0
        
         self.controller=grbl_controller(MOCK,0)
-        self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
+        #self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
+        self.controller.set_device("COM3", 115200,"CameraArm")
 
         self.gimbal_inst = gimbal("x","y","z", self.controller)
         self.gimbal_inst.set_small_step_rotate(0.2)
         self.gimbal_inst.set_big_step_rotate(2)
         self.gimbal_inst.set_small_step_tilt(0.2)
         self.gimbal_inst.set_big_step_tilt(2)
-        self.crane_inst = crane("a","b","c",self.controller)
+        self.crane_inst = crane("a","b","b",self.controller)
+        self.controller.reset()
 
     def init_joysticks(self):
         self.joy = Joystick(self, self.gimbal_inst, self.crane_inst)
 
     def init_info_updater(self):
-        self.info_update = info(self,self.gimbal_inst,self.crane_inst)
+        self.info_update = info(self)
 
 
     def create_widgets(self):
@@ -99,13 +101,10 @@ class RobotCamera(tk.Frame):
         location_info = Frame(left,relief=tk.RIDGE)
         location_info.pack(side="top") 
 
-        self.gimbal_pos_text = tk.Label(location_info,text="GimbalPos", relief=tk.RIDGE)
-        self.gimbal_pos_text.config(font=("Courier", 16))
-        self.gimbal_pos_text.pack(side="left", padx=10)
-        self.crane_pos_text = tk.Label(location_info,text="CranePos", relief=tk.RIDGE)
-        self.crane_pos_text.config(font=("Courier", 16))
-        self.crane_pos_text.pack(side="right")
-
+        self.pos_text = tk.Label(location_info,text="Pos", relief=tk.RIDGE)
+        self.pos_text.config(font=("Courier", 16))
+        self.pos_text.pack(side="left", padx=10)
+        
         info = Frame(left,relief=tk.SUNKEN)
         info.pack(side="left")
         #
@@ -284,18 +283,14 @@ class RobotCamera(tk.Frame):
    
 
     def set_feed_rate(self, feedval):
-        if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
-            print("updating feeddefault from {} to {}".format(
-                feedval, self.gimbal_inst.get_feed_speed()))
-            self.gimbal_inst.set_feed_speed(feedval)
-        if self.CONTROL_TOGGLE == self.CRANE_CONTROL:
-            print("updating crane feeddefault from {} to {}".format(
-                feedval, self.crane_inst.get_feed_speed()))
-            self.crane_inst.set_feed_speed(feedval)
+        print("updating feeddefault from {} to {}".format(
+               feedval, self.controller.get_feed_speed()))
+        self.controller.set_feed_speed(feedval)
+        
 
     def set_move_time(self, *args):
-        self.gimbal_inst.set_move_duration(int(self.move_duration.get()))
-        self.crane_inst.set_move_duration(int(self.move_duration.get()))
+        self.controller.set_move_duration(int(self.move_duration.get()))
+        
 
 
     def add_waypoint(self,dwell_input_text):
@@ -306,10 +301,9 @@ class RobotCamera(tk.Frame):
             location(crane_position.get_rotation_pos(), crane_position.get_tilt_pos(),crane_position.get_zoom_pos()),
             location(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()))
         wp.set_dwell_time(self.dwell_time.get())
-        wp.set_gimbal_travel_to_feed_rate(self.gimbal_inst.get_feed_speed())
-        wp.set_crane_travel_to_feed_rate(self.crane_inst.get_feed_speed())
-        wp.set_gimbal_travel_to_duration(self.gimbal_inst.get_move_duration())
-        wp.set_crane_travel_to_duration(self.crane_inst.get_move_duration())
+        wp.set_feed_rate(self.controller.get_feed_speed())
+        wp.set_travel_duration(self.controller.get_move_duration())
+       
         self.sequence_steps.add_waypoint(wp)
         self.waypoint_listbox.insert("end","{} dwell for:{}".format(wp.location_str(),self.dwell_time.get()))
 
@@ -326,18 +320,16 @@ class RobotCamera(tk.Frame):
         
             #for wp in sequence_steps.waypoints:
                 if self.MOVE_TOGGLE == self.FEED_RATE:
-                    self.crane_inst.add_waypoint_by_feedrate_to_sequqnce(self.sequence_steps.waypoints[i].get_crane_position(), self.sequence_steps.waypoints[i].get_crane_travel_to_feed_rate(),self.sequence_steps.waypoints[i].get_dwell_time())
-                    self.gimbal_inst.add_waypoint_by_feedrate_to_sequqnce(self.sequence_steps.waypoints[i].get_gimbal_position(), self.sequence_steps.waypoints[i].get_gimbal_travel_to_feed_rate(),self.sequence_steps.waypoints[i].get_dwell_time())
+                    self.controller.add_absolute_move_by_feed_to_sequence(self.sequence_steps.waypoints[i].xpos,self.sequence_steps.waypoints[i].ypos,self.sequence_steps.waypoints[i].zpos,self.sequence_steps.waypoints[i].apos,self.sequence_steps.waypoints[i].bpos,self.sequence_steps.waypoints[i].get_feed_rate(),self.sequence_steps.waypoints[i].get_dwell_time() )
                 if self.MOVE_TOGGLE == self.MOVE_TIME:
-                    self.crane_inst.add_waypoint_by_time_to_sequqnce(self.sequence_steps.waypoints[i].get_crane_position(),self.sequence_steps.waypoints[i].get_crane_travel_to_duration(),self.sequence_steps.waypoints[i].get_dwell_time())
-                    self.gimbal_inst.add_waypoint_by_time_to_sequqnce(self.sequence_steps.waypoints[i].get_gimbal_position(), self.sequence_steps.waypoints[i].get_gimbal_travel_to_duration(),self.sequence_steps.waypoints[i].get_dwell_time())
+                    self.controller.add_absolute_move_by_time_to_sequence(self.sequence_steps.waypoints[i].xpos,self.sequence_steps.waypoints[i].ypos,self.sequence_steps.waypoints[i].zpos,self.sequence_steps.waypoints[i].apos,self.sequence_steps.waypoints[i].bpos,self.sequence_steps.waypoints[i].get_travel_duration(),self.sequence_steps.waypoints[i].get_dwell_time())
+                    
         
-        self.crane_inst.get_current_gcode_sequence()
-        self.gimbal_inst.get_current_gcode_sequence()
+        self.controller.print_gcode_sequence()
         
 
-        self.crane_inst.trigger_sequence()
-        self.gimbal_inst.trigger_sequence()
+        self.controller.run_sequence()
+        
         #set location to last wp
 
 
@@ -345,11 +337,9 @@ class RobotCamera(tk.Frame):
         self.crane_inst.set_command_delay(self.crane_delay.get())
         
         if self.MOVE_TOGGLE == self.FEED_RATE:
-            self.crane_inst.move_to_position_at_rate(savepoint.get_crane_position())
-            self.gimbal_inst.move_to_position_at_rate(savepoint.get_gimbal_position())
+            self.controller.absolute_move(savepoint.xpos,savepoint.ypos,savepoint.xpos, savepoint.apos,savepoint.bpos,savepoint.get_feed_rate(),savepoint.get_dwell_time())
         if self.MOVE_TOGGLE == self.MOVE_TIME:
-            self.crane_inst.move_to_position_in_time(savepoint.get_crane_position())
-            self.gimbal_inst.move_to_position_in_time(savepoint.get_gimbal_position())
+            self.controller.absolute_move_by_time(savepoint.xpos,savepoint.ypos,savepoint.xpos, savepoint.apos,savepoint.bpos,savepoint.get_travel_duration(),savepoint.get_dwell_time())
             
 
     def save_position(self,savepoint):
@@ -357,8 +347,9 @@ class RobotCamera(tk.Frame):
         crane_position = self.crane_inst.get_current_location()
         gimbal_position = self.gimbal_inst.get_current_location()
         new_waypoint = waypoint(
-            location(crane_position.get_rotation_pos(), crane_position.get_tilt_pos(),0),
-            location(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()))
+            location(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()),
+            location(crane_position.get_rotation_pos(), crane_position.get_tilt_pos(),0)
+            )
         if savepoint == 1:
             self.save_position_1 = new_waypoint
             self.sp1_pos_text['text'] = "Y/LB : {}".format(new_waypoint.location_str())

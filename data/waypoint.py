@@ -2,19 +2,26 @@
 class waypoint:
 
     dwell_time = 10
-    gimbal_travel_feed_rate = 250
-    crane_travel_feed_rate = 500
+    feed_rate = 250
     travel_duration = 10
+    xpos=0
+    ypos=0
+    zpos=0
+    apos=0
+    bpos=0
     
 
-    def __init__(self, pos):
-        self.pos = pos
-        self.gimbal_travel_feed_rate=200
-        self.crane_travel_feed_rate=500
+    def __init__(self, xyzpos, abcpos):
+        self.xpos = xyzpos.get_rotation_pos()
+        self.ypos = xyzpos.get_tilt_pos()
+        self.zpos = xyzpos.get_zoom_pos()
+        self.apos = abcpos.get_rotation_pos()
+        self.bpos = abcpos.get_tilt_pos()
+
+        self.feed_rate=200
+        
 
 
-    def get_position(self):
-        return self.pos
 
     def set_dwell_time(self,time):
         self.dwell_time = time
@@ -22,17 +29,11 @@ class waypoint:
     def get_dwell_time(self):
         return self.dwell_time
 
-    def set_crane_travel_to_feed_rate(self,feedrate):
-        self.crane_travel_feed_rate = feedrate
+    def set_feed_rate(self,feedrate):
+        self.feed_rate = feedrate
 
-    def get_crane_travel_to_feed_rate(self):
-        return self.crane_travel_feed_rate
-
-    def set_gimbal_travel_to_feed_rate(self,feedrate):
-        self.gimbal_travel_feed_rate = feedrate
-
-    def get_gimbal_travel_to_feed_rate(self):
-        return self.gimbal_travel_feed_rate
+    def get_feed_rate(self):
+        return self.feed_rate
 
     def set_travel_duration(self,seconds):
         self.travel_duration = seconds
@@ -42,6 +43,6 @@ class waypoint:
 
 
     def location_str(self):
-        return "Position: {}".format(self.pos.location_str())
+        return "Position: x{} y{} z{} a{} b{}".format(self.xpos,self.ypos, self.zpos, self.apos, self.bpos)
     def get_feed_info(self):
-        return "dwell {} cf:{} gf:{} td:{}".format(self.dwell_time,self.crane_travel_feed_rate,self.gimbal_travel_feed_rate,self.travel_duration)
+        return "dwell {} f:{} td:{}".format(self.dwell_time,self.feed_rate,self.travel_duration)
