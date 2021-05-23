@@ -15,7 +15,7 @@ class info():
         # Loop until the user clicks the close button.
         while not self.done:
             try:
-                time.sleep(0.2)
+                time.sleep(0.3)
                 #self.gimbal_inst.status()
                 #self.crane_inst.status()
                 self.parent.pos_text['text']="GimbalPos:\n{}".format(self.parent.controller.position_str())

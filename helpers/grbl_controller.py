@@ -194,14 +194,14 @@ class grbl_controller:
                 self.serial.setDTR(0)
             except IOError:
                 pass
-            time.sleep(1)
+            time.sleep(0.2)
 
             self.serial.flushInput()
             try:
                 self.serial.setDTR(1)
             except IOError:
                 pass
-            time.sleep(1)
+            time.sleep(0.2)
             self.serial_write(b"\n\n")
             #soft reset grbl
             self.serial_write(b"\030")
@@ -391,7 +391,7 @@ class grbl_controller:
         lastWriteAt = tg = time.time()
         while self.stop_signal != True:
             try:
-                time.sleep(0.1)
+                time.sleep(0.2)
                 #print ("gcode queue length {}".format(self.queue.qsize()))
 
                 t = time.time()

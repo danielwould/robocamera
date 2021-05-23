@@ -17,7 +17,7 @@ class Joystick():
         self.done=True
 
     def main(self):
-       
+        time.sleep(0.2)
         control_last_toggled = time.time()
         last_command_sent_at = time.time()
         # Loop until the user clicks the close button.
