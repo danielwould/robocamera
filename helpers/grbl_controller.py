@@ -391,7 +391,7 @@ class grbl_controller:
         lastWriteAt = tg = time.time()
         while self.stop_signal != True:
             try:
-                time.sleep(0.01)
+                time.sleep(0.1)
                 #print ("gcode queue length {}".format(self.queue.qsize()))
 
                 t = time.time()
