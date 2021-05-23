@@ -338,7 +338,7 @@ class RobotCamera(tk.Frame):
         self.crane_inst.set_command_delay(self.crane_delay.get())
         
         if self.MOVE_TOGGLE == self.FEED_RATE:
-            self.controller.absolute_move(savepoint.xpos,savepoint.ypos,savepoint.xpos, savepoint.apos,savepoint.bpos,savepoint.get_feed_rate(),savepoint.get_dwell_time())
+            self.controller.absolute_move(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,savepoint.get_feed_rate(),savepoint.get_dwell_time())
         if self.MOVE_TOGGLE == self.MOVE_TIME:
             self.controller.absolute_move_by_time(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,savepoint.get_travel_duration(),savepoint.get_dwell_time())
             
