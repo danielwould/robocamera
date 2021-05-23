@@ -300,7 +300,7 @@ class RobotCamera(tk.Frame):
         wp = waypoint(
             location(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()),
             location(crane_position.get_rotation_pos(), crane_position.get_tilt_pos(),crane_position.get_zoom_pos())
-            ))
+            )
         wp.set_dwell_time(self.dwell_time.get())
         wp.set_feed_rate(self.controller.get_feed_speed())
         wp.set_travel_duration(self.controller.get_move_duration())
