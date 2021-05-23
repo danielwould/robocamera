@@ -28,7 +28,7 @@ class Joystick():
         pygame.joystick.init()
         # -------- Main Program Loop -----------
         while not self.done:
-            time.sleep(0.2)
+            
             #
             # EVENT PROCESSING STEP
             #
