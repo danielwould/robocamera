@@ -382,16 +382,16 @@ class grbl_controller:
         self.logger.info("Thread start for grbl on :{}".format(name))
         self.logger.info("########################################")
         # wait for commands to complete (status change to Idle)
-        self.sleep_event    = threading.Event()
+        #self.sleep_event    = threading.Event()
         self.sio_wait = False
         self.sio_status = False		# waiting for status <...> report
         cline = []		# length of pipeline commands
         sline = []			# pipeline commands
         gcodeToSend = None			# next string to send
         lastWriteAt = tg = time.time()
-        while self.stop_signal != True:
+        while self.thread:
             try:
-                time.sleep(0.2)
+                
                 #print ("gcode queue length {}".format(self.queue.qsize()))
 
                 t = time.time()

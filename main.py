@@ -81,6 +81,10 @@ class RobotCamera(tk.Frame):
         self.gimbal_inst.set_small_step_tilt(0.2)
         self.gimbal_inst.set_big_step_tilt(2)
         self.crane_inst = crane("a","b","b",self.controller)
+        self.crane_inst.set_small_step_rotate(2)
+        self.crane_inst.set_big_step_rotate(10)
+        self.crane_inst.set_small_step_tilt(2)
+        self.crane_inst.set_big_step_tilt(10)
         self.controller.reset()
 
     def init_joysticks(self):

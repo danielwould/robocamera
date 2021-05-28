@@ -6,7 +6,7 @@ class base_control_object:
     small_step_rotate = 1
     big_step_rotate = 10
     small_step_tilt = 1
-    big_step_tilt = 5
+    big_step_tilt = 10
     last_command_sent_at = time.time()
     command_throttle_limit=0.2
     last_position_in_sequence=None
