@@ -265,10 +265,11 @@ class grbl_controller:
         return self.current_feed_speed
 
     def relative_move(self, move_str):
-        self.sendGCode("$J=G91 G21 {} f{}".format(move_str, self.current_feed_speed))
+        self.queue.put("$J=G91 G21 {} f{}".format(move_str, self.current_feed_speed))
 
     def cancel_jog(self):
-         self.queue.put('\x84')
+        self.logger.info("cancel jog operations")
+        self.queue.put('\x84')
 
     def absolute_move(self, x, y, z, a, b, feedrate, dwell):
         self.sendGCode("g04 P{}".format(self.dwell_delay))
@@ -391,7 +392,7 @@ class grbl_controller:
         gcodeToSend = None			# next string to send
         lastWriteAt = tg = time.time()
         while self.app_running:
-            time.sleep(0.1)
+            time.sleep(0.01)
             try:
                 
                 #print ("gcode queue length {}".format(self.queue.qsize()))
@@ -403,6 +404,7 @@ class grbl_controller:
                     if self.serial.inWaiting():
                         try:
                             line = str(self.serial.readline().decode()).strip()
+                            self.logger.info("received status line: {}".format(line))
                         except:
                             self.emptyQueue()
                             return
