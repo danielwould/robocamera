@@ -177,7 +177,7 @@ class grbl_controller:
         self.serial = serial.Serial(device,baudrate)
 
         self.serial.flushInput()
-        self.serial.write("\r\n\r\n")
+        self.serial.write("\r\n\r\n".encode())
 
         # Wait for grbl to initialize and flush startup text in serial input
         time.sleep(2)
