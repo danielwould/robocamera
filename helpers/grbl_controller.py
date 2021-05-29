@@ -352,13 +352,12 @@ class grbl_controller:
 
         # if sys.version_info[0] == 2:
         #	ret = self.serial.write(str(data))
-        if self.MODE == self.REAL_MODE:
-            if isinstance(data, bytes):
-                ret = self.serial.write(data)
-            else:
-                ret = self.serial.write(data.encode())
-            self.logger.debug("grbl response {}".format(ret))
-            return ret
+        if isinstance(data, bytes):
+            ret = self.serial.write(data)
+        else:
+            ret = self.serial.write(data.encode())
+        self.logger.debug("grbl response {}".format(ret))
+        return ret
 
     def emptyQueue(self):
         while self.queue.qsize() > 0:
