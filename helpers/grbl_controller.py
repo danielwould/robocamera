@@ -126,7 +126,7 @@ class grbl_controller:
     MODE = REAL_MODE
     dwell_delay = 0
     gcode_sequence = []
-    running = False
+    app_running = False
 
     def __init__(self, mode, dwell_delay):
         
@@ -207,7 +207,7 @@ class grbl_controller:
         self._gcount = 0
         self._alarm = True
         self.name=name
-        self.running=True
+        self.app_running=True
         self.thread = threading.Thread(
             target=self.control_thread, args=(name,))
         self.thread.daemon = True
@@ -242,7 +242,7 @@ class grbl_controller:
         #self.write_gcode("G10 P0 X0 Y0 Z0")
         # Toggle DTR to reset Arduino
     def stop(self):
-        self.running=False
+        self.app_running=False
         
 
     def reset_gcode_sequence(self):
@@ -390,7 +390,7 @@ class grbl_controller:
         sline = []			# pipeline commands
         gcodeToSend = None			# next string to send
         lastWriteAt = tg = time.time()
-        while self.running:
+        while self.app_running:
             try:
                 
                 #print ("gcode queue length {}".format(self.queue.qsize()))
