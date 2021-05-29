@@ -187,6 +187,17 @@ class grbl_controller:
         self._alarm = True
         self.name=name
         self.app_running=True
+        while 1:
+            grbl_out = s.readline().strip() # Wait for grbl response with carriage return
+            if grbl_out.find('ok') >= 0 :
+                if verbose: print "  REC<"+str(l_count)+": \""+grbl_out+"\""
+                break
+            elif grbl_out.find('error') >= 0 :
+                if verbose: print "  REC<"+str(l_count)+": \""+grbl_out+"\""
+                error_count += 1
+                break
+            else:
+                print "    MSG: \""+grbl_out+"\""
         self.thread = threading.Thread(
             target=self.control_thread, args=(name,))
         #self.thread.daemon = True
