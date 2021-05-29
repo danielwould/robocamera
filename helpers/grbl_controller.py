@@ -174,36 +174,15 @@ class grbl_controller:
         self.logger.setLevel(logging.INFO)
         self.serial_device = device
         
-        
-        #self.serial = serial.Serial(device, 115200, timeout=0.2)
-        self.serial = serial.serial_for_url(
-            device,
-            baudrate,
-            bytesize=serial.EIGHTBITS,
-            parity=serial.PARITY_NONE,
-            stopbits=serial.STOPBITS_ONE,
-            timeout=SERIAL_TIMEOUT,
-            xonxoff=False,
-            rtscts=False)
-        # Toggle DTR to reset Arduino
-        try:
-            self.serial.setDTR(0)
-        except IOError:
-            self.logger.info("error set DTR0")
-            
-            pass
-        time.sleep(0.2)
+        self.serial = serial.Serial(device,baudrate)
 
         self.serial.flushInput()
-        try:
-            self.serial.setDTR(1)
-        except IOError:
-            self.logger.info("error set DTR1")
-            pass
-        time.sleep(0.2)
-        self.serial_write(b"\n\n")
-        #soft reset grbl
-        self.serial_write(b"\030")
+        self.serial.write("\r\n\r\n")
+
+        # Wait for grbl to initialize and flush startup text in serial input
+        time.sleep(2)
+        self.serial.flushInput()
+        
         self._gcount = 0
         self._alarm = True
         self.name=name
