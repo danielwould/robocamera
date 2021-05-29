@@ -193,6 +193,8 @@ class grbl_controller:
             try:
                 self.serial.setDTR(0)
             except IOError:
+                self.logger.info("error set DTR0")
+                
                 pass
             time.sleep(0.2)
 
@@ -200,6 +202,7 @@ class grbl_controller:
             try:
                 self.serial.setDTR(1)
             except IOError:
+                self.logger.info("error set DTR1")
                 pass
             time.sleep(0.2)
             self.serial_write(b"\n\n")
