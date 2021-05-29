@@ -173,30 +173,32 @@ class grbl_controller:
         self.logger.addHandler(hdlr) 
         self.logger.setLevel(logging.INFO)
         self.serial_device = device
-        
-        self.serial = serial.Serial(device,baudrate)
-
+        #self.serial = serial.Serial(
+        self.serial = serial.serial_for_url(
+						device.replace('\\', '\\\\'), #Escape for windows
+						baudrate,
+						bytesize=serial.EIGHTBITS,
+						parity=serial.PARITY_NONE,
+						stopbits=serial.STOPBITS_ONE,
+						timeout=SERIAL_TIMEOUT,
+						xonxoff=False,
+						rtscts=False)
+		# Toggle DTR to reset Arduino
+        try:
+            self.serial.setDTR(0)
+        except IOError:
+            pass
+        time.sleep(1)
         self.serial.flushInput()
-        self.serial.write("\r\n\r\n".encode())
-
-        # Wait for grbl to initialize and flush startup text in serial input
-        time.sleep(2)
-        self.serial.flushInput()
-        
+        try:
+            self.serial.setDTR(1)
+        except IOError:
+            pass
+        time.sleep(1)
+        self.serial_write("\n\n")
         self._gcount = 0
-        self._alarm = True
-        self.name=name
-        self.app_running=True
-        while 1:
-            grbl_out = self.serial.readline().strip() # Wait for grbl response with carriage return
-            if grbl_out.find('ok') >= 0 :
-                print ("  OK<: {}".format(grbl_out))
-                break
-            elif grbl_out.find('error') >= 0 :
-                print ("  ERROR<: {}".format(grbl_out))
-                break
-            else:
-                print ("    MSG: {}".format(grbl_out))
+        self._alarm  = True
+        self.app_running = True
         self.thread = threading.Thread(
             target=self.control_thread, args=(name,))
         #self.thread.daemon = True
@@ -228,6 +230,8 @@ class grbl_controller:
         self.mcontrol._wcsSet(0,0,0)
         self.mcontrol.unlock()
         self.mcontrol.viewParameters()
+        self.mcontrol.viewSettings()
+
         #self.write_gcode("G10 P0 X0 Y0 Z0")
         # Toggle DTR to reset Arduino
     def stop(self):
@@ -254,7 +258,7 @@ class grbl_controller:
         return self.current_feed_speed
 
     def relative_move(self, move_str):
-        self.queue.put("$J=G91 G21 {} f{}".format(move_str, self.current_feed_speed))
+        self.queue.put("$J=G91 {} f{}\n".format(move_str, self.current_feed_speed))
 
     def cancel_jog(self):
         self.logger.info("cancel jog operations")
@@ -337,7 +341,10 @@ class grbl_controller:
     # ----------------------------------------------------------------------
 
     def serial_write(self, data):
-        self.logger.debug("W "+str(type(data))+" : "+str(data))
+        if data == b"?":
+            self.logger.debug("W "+str(type(data))+" : "+str(data))
+        else:
+            self.logger.info("W "+str(type(data))+" : "+str(data))
 
         # if sys.version_info[0] == 2:
         #	ret = self.serial.write(str(data))
@@ -345,7 +352,6 @@ class grbl_controller:
             ret = self.serial.write(data)
         else:
             ret = self.serial.write(data.encode())
-        self.logger.debug("grbl response {}".format(ret))
         return ret
 
     def emptyQueue(self):
@@ -380,7 +386,7 @@ class grbl_controller:
         gcodeToSend = None			# next string to send
         lastWriteAt = tg = time.time()
         while self.app_running:
-            time.sleep(0.01)
+            
             try:
                 
                 #print ("gcode queue length {}".format(self.queue.qsize()))
@@ -393,8 +399,6 @@ class grbl_controller:
                 #if self.serial.inWaiting():
                 try:
                     line = str(self.serial.readline().decode()).strip()
-                    if (line != ""):
-                        self.logger.info("received serial data: {}".format(line))
                 except:
                     self.emptyQueue()
                     return
@@ -412,7 +416,7 @@ class grbl_controller:
                     try:
                         self.logger.debug("Command queue length {}".format(self.queue.qsize()))
                         gcodeToSend = self.queue.get_nowait()
-                        self.logger.info("pulled new gcode line to send: {}".format(gcodeToSend))
+                        self.logger.debug("pulled new gcode line to send: {}".format(gcodeToSend))
                     except Empty:
                         #nothing to send
                         gcodeToSend = None
@@ -446,7 +450,9 @@ class grbl_controller:
                         self.sio_status = True
                     else:
                         if t-tg > G_POLL:
-                            self.serial_write(b"$G\n")
+                            gcodeToSend = "$G\n" #FIXME: move to controller specific class
+                            sline.append(gcodeToSend)
+                            cline.append(len(gcodeToSend))
                             tg = t
             except:
                 self.logger.error("Exception in thread for {}".format(name))   

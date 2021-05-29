@@ -74,7 +74,7 @@ class RobotCamera(tk.Frame):
         
         if sys.platform == "win32":
             print("connecting to windows com device")
-            self.controller.set_device("COM5", 115200,"CameraArm")
+            self.controller.set_device("COM3", 115200,"CameraArm")
         else:
             print("connecting to linux tty device")
             self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
