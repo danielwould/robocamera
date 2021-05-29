@@ -405,7 +405,7 @@ class grbl_controller:
                     #if self.serial.inWaiting():
                     try:
                         line = str(self.serial.readline().decode()).strip()
-                        self.logger.info("received status line: {}".format(line))
+                        self.logger.info("received serial data: {}".format(line))
                     except:
                         self.emptyQueue()
                         return
@@ -452,7 +452,6 @@ class grbl_controller:
                     gcodeToSend = None
                 else:
                     if t-lastWriteAt > SERIAL_POLL:
-                        self.logger.info("ping")
                         self.serial_write(b"?")
                         lastWriteAt = t
                     else:
