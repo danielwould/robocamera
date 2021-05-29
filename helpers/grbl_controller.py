@@ -258,7 +258,7 @@ class grbl_controller:
         return self.current_feed_speed
 
     def relative_move(self, axis, multiplier):
-        jogStep = self.currect_feed_speed / 600;
+        jogStep = self.current_feed_speed / 600;
         jogStep = jogStep*multiplier
         self.queue.put("$J=G91 {}{} f{}\n".format(axis,jogStep, self.current_feed_speed))
         time.sleep(0.1)
