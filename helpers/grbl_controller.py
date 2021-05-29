@@ -262,7 +262,8 @@ class grbl_controller:
 
     def cancel_jog(self):
         self.logger.info("cancel jog operations")
-        self.queue.put('\x84')
+        self.queue.put('\x84'.encode('utf-8'))
+        self.logger.info("cancel sent")
 
     def absolute_move(self, x, y, z, a, b, feedrate, dwell):
         self.sendGCode("g04 P{}".format(self.dwell_delay))
