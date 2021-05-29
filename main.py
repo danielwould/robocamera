@@ -72,8 +72,12 @@ class RobotCamera(tk.Frame):
         MOCK = 0
        
         self.controller=grbl_controller(MOCK,0)
-        self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
-        #self.controller.set_device("COM5", 115200,"CameraArm")
+        
+        if sys.platform == "win32":
+            self.controller.set_device("COM5", 115200,"CameraArm")
+        else:
+            self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
+
 
         self.gimbal_inst = gimbal("x","y","z", self.controller)
         self.gimbal_inst.set_small_step_rotate(0.2)

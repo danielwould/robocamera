@@ -398,14 +398,15 @@ class grbl_controller:
                 #print ("gcode queue length {}".format(self.queue.qsize()))
 
                 t = time.time()
-
+              
                 # Anything to receive?
                 if self.MODE == self.REAL_MODE:
                     
                     #if self.serial.inWaiting():
                     try:
                         line = str(self.serial.readline().decode()).strip()
-                        self.logger.info("received serial data: {}".format(line))
+                        if (line != ""):
+                            self.logger.info("received serial data: {}".format(line))
                     except:
                         self.emptyQueue()
                         return
@@ -454,6 +455,7 @@ class grbl_controller:
                     if t-lastWriteAt > SERIAL_POLL:
                         self.serial_write(b"?")
                         lastWriteAt = t
+                        self.sio_status = True
                     else:
                         if t-tg > G_POLL:
                             self.serial_write(b"$G\n")
