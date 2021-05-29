@@ -6,7 +6,6 @@ class Joystick():
 
     deadzone = 0.2
     
-    jog_cancelled=1
     
     def __init__(self, parent, gimbal,crane):
         
@@ -64,11 +63,6 @@ class Joystick():
                             self.crane_inst.rotate_jog(axis)
                         if axis_num == 3:
                             self.crane_inst.tilt_jog(axis)
-                        self.jog_cancelled=0
-                    else:
-                        if self.jog_cancelled == 0:
-                            self.gimbal_inst.cancel_jog()
-                            self.jog_cancelled = 1
                     
                    
                                

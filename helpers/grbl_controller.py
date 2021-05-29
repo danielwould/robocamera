@@ -257,13 +257,11 @@ class grbl_controller:
     def get_feed_speed(self):
         return self.current_feed_speed
 
-    def relative_move(self, move_str):
-        self.queue.put("$J=G91 {} f{}\n".format(move_str, self.current_feed_speed))
-
-    def cancel_jog(self):
-        self.logger.info("cancel jog operations")
-        self.queue.put('\x84'.encode('utf-8'))
-        self.logger.info("cancel sent")
+    def relative_move(self, axis, multiplier):
+        jogStep = self.currect_feed_speed / 600;
+        jogStep = jogStep*multiplier
+        self.queue.put("$J=G91 {}{} f{}\n".format(axis,jogStep, self.current_feed_speed))
+        time.sleep(0.1)
 
     def absolute_move(self, x, y, z, a, b, feedrate, dwell):
         self.sendGCode("g04 P{}".format(self.dwell_delay))
