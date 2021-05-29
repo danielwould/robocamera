@@ -210,7 +210,7 @@ class grbl_controller:
         self.app_running=True
         self.thread = threading.Thread(
             target=self.control_thread, args=(name,))
-        self.thread.daemon = True
+        #self.thread.daemon = True
         self.thread.start()
 
   
@@ -401,20 +401,21 @@ class grbl_controller:
 
                 # Anything to receive?
                 if self.MODE == self.REAL_MODE:
-                    if self.serial.inWaiting():
-                        try:
-                            line = str(self.serial.readline().decode()).strip()
-                            self.logger.info("received status line: {}".format(line))
-                        except:
-                            self.emptyQueue()
-                            return
+                    
+                    #if self.serial.inWaiting():
+                    try:
+                        line = str(self.serial.readline().decode()).strip()
+                        self.logger.info("received status line: {}".format(line))
+                    except:
+                        self.emptyQueue()
+                        return
 
-                        # print "<R<",repr(line)
-                        # print "*-* stack=",sline,"sum=",sum(cline),"wait=",wait,"pause=",self._pause
-                        if not line:
-                            pass
-                        elif self.mcontrol.parseLine(line, cline, sline):
-                            pass
+                    # print "<R<",repr(line)
+                    # print "*-* stack=",sline,"sum=",sum(cline),"wait=",wait,"pause=",self._pause
+                    if not line:
+                        pass
+                    elif self.mcontrol.parseLine(line, cline, sline):
+                        pass
 
 
                 # refresh machine position?

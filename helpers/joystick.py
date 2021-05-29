@@ -54,10 +54,10 @@ class Joystick():
                 for axis_num in range(axes):
 
                     axis = joystick.get_axis(axis_num)
-                                           
+                    print ("axis {}{}".format(axis_num,axis))
 
                     
-                    if (axis >= self.deadzone) | (axis <= -self.deadzone):
+                    if (axis >= self.deadzone ) | (axis <= -self.deadzone):
                         if axis_num == 0:
                             self.gimbal_inst.rotate_jog(axis)
                         if axis_num == 1:
