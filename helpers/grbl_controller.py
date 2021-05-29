@@ -391,6 +391,7 @@ class grbl_controller:
         gcodeToSend = None			# next string to send
         lastWriteAt = tg = time.time()
         while self.app_running:
+            time.sleep(0.1)
             try:
                 
                 #print ("gcode queue length {}".format(self.queue.qsize()))
@@ -419,6 +420,7 @@ class grbl_controller:
                     try:
                         self.logger.debug("Command queue length {}".format(self.queue.qsize()))
                         gcodeToSend = self.queue.get_nowait()
+                        self.logger.info("pulled new gcode line to send: {}".format(gcodeToSend))
                     except Empty:
                         #nothing to send
                         gcodeToSend = None
@@ -447,6 +449,7 @@ class grbl_controller:
                     gcodeToSend = None
                 else:
                     if t-lastWriteAt > SERIAL_POLL:
+                        self.logger.info("ping")
                         self.serial_write(b"?")
                         lastWriteAt = t
                     else:
