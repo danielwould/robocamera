@@ -188,7 +188,7 @@ class grbl_controller:
         self.name=name
         self.app_running=True
         while 1:
-            grbl_out = s.readline().strip() # Wait for grbl response with carriage return
+            grbl_out = self.serial.readline().strip() # Wait for grbl response with carriage return
             if grbl_out.find('ok') >= 0 :
                 print ("  OK<: {}".format(grbl_out))
                 break
