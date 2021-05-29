@@ -4,6 +4,10 @@ import time
 
 class Joystick():
 
+    deadzone = 0.2
+    
+    jog_cancelled=True
+    
     def __init__(self, parent, gimbal,crane):
         
         self.parent = parent
@@ -46,55 +50,31 @@ class Joystick():
                 joystick = pygame.joystick.Joystick(joystick_num)
                 joystick.init()
                 axes = joystick.get_numaxes()
-
+                
                 for axis_num in range(axes):
 
                     axis = joystick.get_axis(axis_num)
-                    if self.parent.CONTROL_TOGGLE == self.parent.GIMBAL_CONTROL:
-                        if time.time() - self.gimbal_inst.last_command_sent_at > 0.2:
-                            if axis_num == 0:
-                                if axis >= 0.99:
-                                    self.gimbal_inst.rotate_right_small()
-                                if axis == -1:
-                                    self.gimbal_inst.rotate_left_small()
-                            if axis_num == 1:
-                                if axis >= 0.99:
-                                    self.gimbal_inst.tilt_down_small()
-                                if axis == -1:
-                                    self.gimbal_inst.tilt_up_small()
-                            if axis_num == 2:
-                                if axis >= 0.99:
-                                    self.gimbal_inst.rotate_right_large()
-                                if axis == -1:
-                                    self.gimbal_inst.rotate_left_large()
-                            if axis_num == 3:
-                                if axis >= 0.99:
-                                    self.gimbal_inst.tilt_down_large()
-                                if axis == -1:
-                                    self.gimbal_inst.tilt_up_large()
+                                           
 
-                    if self.parent.CONTROL_TOGGLE == self.parent.CRANE_CONTROL:
-                        if time.time() - self.crane_inst.last_command_sent_at > 0.2:
-                            if axis_num == 0:
-                                if axis >= 0.99:
-                                    self.crane_inst.rotate_right_small()
-                                if axis == -1:
-                                    self.crane_inst.rotate_left_small()
-                            if axis_num == 1:
-                                if axis >= 0.99:
-                                    self.crane_inst.tilt_down_small()
-                                if axis == -1:
-                                    self.crane_inst.tilt_up_small()
-                            if axis_num == 2:
-                                if axis >= 0.99:
-                                    self.crane_inst.rotate_right_large()
-                                if axis == -1:
-                                    self.crane_inst.rotate_left_large()
-                            if axis_num == 3:
-                                if axis >= 0.99:
-                                    self.crane_inst.tilt_down_large()
-                                if axis == -1:
-                                    self.crane_inst.tilt_up_large()
+                    
+                    if (axis >= self.deadzone) | (axis <= -self.deadzone):
+                        if axis_num == 0:
+                            self.gimbal_inst.rotate_jog(axis)
+                        if axis_num == 1:
+                            self.gimbal_inst.tilt_jog(axis)
+                        if axis_num == 2:
+                            self.crane_inst.rotate_jog(axis)
+                        if axis_num == 3:
+                            self.crane_inst.tilt_jog(axis)
+                        self.jog_cancelled=False
+                    else:
+                        if self.jog_cancelled == False:
+                            self.gimbal_inst.cancel_jog()
+                            self.jog_cancelled = True
+                    
+                   
+                               
+
 
  
                 buttons = joystick.get_numbuttons()

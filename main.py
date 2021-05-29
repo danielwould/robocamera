@@ -72,8 +72,8 @@ class RobotCamera(tk.Frame):
         MOCK = 0
        
         self.controller=grbl_controller(MOCK,0)
-        self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
-        #self.controller.set_device("COM3", 115200,"CameraArm")
+        #self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
+        self.controller.set_device("COM5", 115200,"CameraArm")
 
         self.gimbal_inst = gimbal("x","y","z", self.controller)
         self.gimbal_inst.set_small_step_rotate(0.2)
@@ -384,30 +384,30 @@ class RobotCamera(tk.Frame):
 
     def tilt_up(self):
         if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
-            self.gimbal_inst.tilt_up_small()
+            self.gimbal_inst.tilt_jog(1)
         if self.CONTROL_TOGGLE == self.CRANE_CONTROL:
-            self.crane_inst.tilt_up_small()
+            self.crane_inst.tilt_jog(1)
 
 
     def tilt_down(self):
         if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
-            self.gimbal_inst.tilt_down_small()
+            self.gimbal_inst.tilt_jog(-1)
         if self.CONTROL_TOGGLE == self.CRANE_CONTROL:
-            self.crane_inst.tilt_down_small()
+            self.crane_inst.tilt_jog(-1)
 
 
     def rotate_left(self):
         if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
-            self.gimbal_inst.rotate_left_small()
+            self.gimbal_inst.rotate_jog(1)
         if self.CONTROL_TOGGLE == self.CRANE_CONTROL:
-            self.crane_inst.rotate_left_small()
+            self.crane_inst.rotate_jog(-1)
 
 
     def rotate_right(self):
         if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
-            self.gimbal_inst.rotate_right_small()
+            self.gimbal_inst.rotate_jog(1)
         if self.CONTROL_TOGGLE == self.CRANE_CONTROL:
-            self.crane_inst.rotate_right_small()
+            self.crane_inst.rotate_jog(-1)
 
 
     def zoom_in(self):
@@ -418,17 +418,20 @@ class RobotCamera(tk.Frame):
         self.gimbal_inst.zoom_out_small()
 
     def quit(self):
-        self.gimbal_inst.stop()
-        self.crane_inst.stop()
         self.joy.stop()
         self.info_update.stop()
-        time.sleep(0.5)
+        self.controller.stop()
         self.master.destroy()
+        
+        sys.exit(0)
 
 
 if __name__ == "__main__":
     #main()
     root = tk.Tk()
-    root.geometry("800x400")
-    app = RobotCamera(master=root)
+    #root.withdraw()
+    #root.geometry("800x400")
+    #app = RobotCamera(master=root)
+    app = RobotCamera(root)
     app.mainloop()
+    sys.exit(0)

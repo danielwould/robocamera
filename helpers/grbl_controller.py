@@ -126,8 +126,7 @@ class grbl_controller:
     MODE = REAL_MODE
     dwell_delay = 0
     gcode_sequence = []
-
-    thread = True
+    running = False
 
     def __init__(self, mode, dwell_delay):
         
@@ -208,14 +207,13 @@ class grbl_controller:
         self._gcount = 0
         self._alarm = True
         self.name=name
+        self.running=True
         self.thread = threading.Thread(
             target=self.control_thread, args=(name,))
+        self.thread.daemon = True
         self.thread.start()
 
-
-    def stop(self):
-        self.stop_signal=True
-   
+  
     def controllerLoad(self):
         # Find plugins in the controllers directory and load them
         for f in glob.glob("%s/controllers/*.py" % (prgpath)):
@@ -243,6 +241,8 @@ class grbl_controller:
         self.mcontrol.viewParameters()
         #self.write_gcode("G10 P0 X0 Y0 Z0")
         # Toggle DTR to reset Arduino
+    def stop(self):
+        self.running=False
         
 
     def reset_gcode_sequence(self):
@@ -265,9 +265,10 @@ class grbl_controller:
         return self.current_feed_speed
 
     def relative_move(self, move_str):
-        self.sendGCode("g91")
-        self.sendGCode("g94")
-        self.sendGCode("g1 {} f{}".format(move_str, self.current_feed_speed))
+        self.sendGCode("$J=G91 G21 {} f{}".format(move_str, self.current_feed_speed))
+
+    def cancel_jog(self):
+         self.queue.put('\x84')
 
     def absolute_move(self, x, y, z, a, b, feedrate, dwell):
         self.sendGCode("g04 P{}".format(self.dwell_delay))
@@ -389,7 +390,7 @@ class grbl_controller:
         sline = []			# pipeline commands
         gcodeToSend = None			# next string to send
         lastWriteAt = tg = time.time()
-        while self.thread:
+        while self.running:
             try:
                 
                 #print ("gcode queue length {}".format(self.queue.qsize()))

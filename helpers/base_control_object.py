@@ -62,6 +62,7 @@ class base_control_object:
                 "{}-{}".format(self.rotate_axis,self.small_step_rotate))
             self.last_command_sent_at = time.time()
             
+    
 
     def rotate_right_large(self):
         if time.time()-self.last_command_sent_at > self.command_throttle_limit:
@@ -104,7 +105,14 @@ class base_control_object:
                 "{}{}".format(self.tilt_axis,self.big_step_tilt))
             self.last_command_sent_at = time.time()
            
-     
+    def rotate_jog(self,multiplier):
+        self.controller.relative_move("{}{}".format(self.rotate_axis,(self.big_step_rotate*multiplier)))
+
+    def tilt_jog(self,multiplier):
+        self.controller.relative_move("{}{}".format(self.tilt_axis,(self.big_step_tilt*multiplier)))
+
+    def cancel_jog(self):
+        self.controller.cancel_jog()  
 
     def status(self):
         self.controller.status()
