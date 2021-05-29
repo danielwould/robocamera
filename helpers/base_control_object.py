@@ -106,10 +106,10 @@ class base_control_object:
             self.last_command_sent_at = time.time()
            
     def rotate_jog(self,multiplier):
-        self.controller.relative_move("{}{}".format(self.rotate_axis,(self.big_step_rotate*multiplier)))
+        self.controller.relative_move("{}{}".format(self.rotate_axis,(1*multiplier)))
 
     def tilt_jog(self,multiplier):
-        self.controller.relative_move("{}{}".format(self.tilt_axis,(self.big_step_tilt*multiplier)))
+        self.controller.relative_move("{}{}".format(self.tilt_axis,(1*multiplier)))
 
     def cancel_jog(self):
         self.controller.cancel_jog()  

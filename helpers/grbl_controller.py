@@ -121,20 +121,16 @@ prgpath = os.path.abspath(os.path.dirname(__file__))
 
 class grbl_controller:
     serial_device = None
-    MOCK_MODE = 1
-    REAL_MODE = 0
-    MODE = REAL_MODE
     dwell_delay = 0
     gcode_sequence = []
     app_running = False
 
-    def __init__(self, mode, dwell_delay):
+    def __init__(self, dwell_delay):
         
         self.name="init"
         self.controllers = {}
         self.controllerLoad()
         self.controllerSet("GRBL1")
-        self.MODE = mode
         self.dwell_delay = dwell_delay
         self.current_move_duration = 10
         self.current_feed_speed = 1000
@@ -178,36 +174,36 @@ class grbl_controller:
         self.logger.setLevel(logging.INFO)
         self.serial_device = device
         
-        if self.MODE == self.REAL_MODE:
-            #self.serial = serial.Serial(device, 115200, timeout=0.2)
-            self.serial = serial.serial_for_url(
-                device,
-                baudrate,
-                bytesize=serial.EIGHTBITS,
-                parity=serial.PARITY_NONE,
-                stopbits=serial.STOPBITS_ONE,
-                timeout=SERIAL_TIMEOUT,
-                xonxoff=False,
-                rtscts=False)
-            # Toggle DTR to reset Arduino
-            try:
-                self.serial.setDTR(0)
-            except IOError:
-                self.logger.info("error set DTR0")
-                
-                pass
-            time.sleep(0.2)
+        
+        #self.serial = serial.Serial(device, 115200, timeout=0.2)
+        self.serial = serial.serial_for_url(
+            device,
+            baudrate,
+            bytesize=serial.EIGHTBITS,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
+            timeout=SERIAL_TIMEOUT,
+            xonxoff=False,
+            rtscts=False)
+        # Toggle DTR to reset Arduino
+        try:
+            self.serial.setDTR(0)
+        except IOError:
+            self.logger.info("error set DTR0")
+            
+            pass
+        time.sleep(0.2)
 
-            self.serial.flushInput()
-            try:
-                self.serial.setDTR(1)
-            except IOError:
-                self.logger.info("error set DTR1")
-                pass
-            time.sleep(0.2)
-            self.serial_write(b"\n\n")
-            #soft reset grbl
-            self.serial_write(b"\030")
+        self.serial.flushInput()
+        try:
+            self.serial.setDTR(1)
+        except IOError:
+            self.logger.info("error set DTR1")
+            pass
+        time.sleep(0.2)
+        self.serial_write(b"\n\n")
+        #soft reset grbl
+        self.serial_write(b"\030")
         self._gcount = 0
         self._alarm = True
         self.name=name
@@ -404,23 +400,23 @@ class grbl_controller:
                 t = time.time()
               
                 # Anything to receive?
-                if self.MODE == self.REAL_MODE:
+                
                     
-                    #if self.serial.inWaiting():
-                    try:
-                        line = str(self.serial.readline().decode()).strip()
-                        if (line != ""):
-                            self.logger.info("received serial data: {}".format(line))
-                    except:
-                        self.emptyQueue()
-                        return
+                #if self.serial.inWaiting():
+                try:
+                    line = str(self.serial.readline().decode()).strip()
+                    if (line != ""):
+                        self.logger.info("received serial data: {}".format(line))
+                except:
+                    self.emptyQueue()
+                    return
 
-                    # print "<R<",repr(line)
-                    # print "*-* stack=",sline,"sum=",sum(cline),"wait=",wait,"pause=",self._pause
-                    if not line:
-                        pass
-                    elif self.mcontrol.parseLine(line, cline, sline):
-                        pass
+                # print "<R<",repr(line)
+                # print "*-* stack=",sline,"sum=",sum(cline),"wait=",wait,"pause=",self._pause
+                if not line:
+                    pass
+                elif self.mcontrol.parseLine(line, cline, sline):
+                    pass
 
 
                 # refresh machine position?

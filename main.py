@@ -69,9 +69,8 @@ class RobotCamera(tk.Frame):
         self.create_widgets()
 
     def init_controllers(self):
-        MOCK = 0
-       
-        self.controller=grbl_controller(MOCK,0)
+        
+        self.controller=grbl_controller(0)
         
         if sys.platform == "win32":
             print("connecting to windows com device")
