@@ -177,10 +177,11 @@ class grbl_controller:
         self.logger.addHandler(hdlr) 
         self.logger.setLevel(logging.INFO)
         self.serial_device = device
+        
         if self.MODE == self.REAL_MODE:
             #self.serial = serial.Serial(device, 115200, timeout=0.2)
             self.serial = serial.serial_for_url(
-                device.replace('\\', '\\\\'),  # Escape for windows
+                device,
                 baudrate,
                 bytesize=serial.EIGHTBITS,
                 parity=serial.PARITY_NONE,

@@ -74,8 +74,10 @@ class RobotCamera(tk.Frame):
         self.controller=grbl_controller(MOCK,0)
         
         if sys.platform == "win32":
+            print("connecting to windows com device")
             self.controller.set_device("COM5", 115200,"CameraArm")
         else:
+            print("connecting to linux tty device")
             self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
 
 
