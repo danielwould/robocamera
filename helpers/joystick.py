@@ -60,16 +60,16 @@ class Joystick():
                     if (axis >= self.deadzone ) | (axis <= -self.deadzone):
                         if axis_num == 0:
                             #self.gimbal_inst.rotate_jog(axis)
-                            xjog=axis-0.15
+                            xjog=axis
                         if axis_num == 1:
                             #self.gimbal_inst.tilt_jog(axis)
-                            yjog=axis-0.15
+                            yjog=axis
                         if axis_num == 2:
                             #self.crane_inst.rotate_jog(axis)
-                            ajog=axis-0.15
+                            ajog=axis
                         if axis_num == 3:
                             #self.crane_inst.tilt_jog(axis)
-                            bjog=axis-0.15
+                            bjog=axis
                     
                 #combined jog
                 #
