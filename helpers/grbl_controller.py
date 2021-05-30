@@ -504,10 +504,8 @@ class grbl_controller:
                         self.sio_status = True
                     else:
                         if t-tg > G_POLL:
-                            gcodeToSend = "$G\n" #FIXME: move to controller specific class
-                            sline.append(gcodeToSend)
-                            cline.append(len(gcodeToSend))
-                            tg = t
+                            self.sendGCode("$G\n")
+                            
             except:
                 self.logger.error("Exception in thread for {}".format(name))   
         self.logger.info("########################################")
