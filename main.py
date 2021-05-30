@@ -281,6 +281,10 @@ class RobotCamera(tk.Frame):
                               command=self.controller.reset)
         self.reset.pack(side="bottom", pady=50)
 
+        self.dump_buffer = tk.Button(wayPoint_controls, text="Empty Buffer", fg="red",
+                              command=self.controller.emptybuffer())
+        self.dump_buffer.pack(side="bottom", pady=50)
+
     
         
     def toggle_move_mode(self,value):

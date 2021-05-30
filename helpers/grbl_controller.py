@@ -130,7 +130,7 @@ class grbl_controller:
     all_time_character_count=0
     grbl_status="disconnected"
     lastResponseTime = 0
-
+    reset_buffer = False
     def __init__(self, dwell_delay):
         
         self.name="init"
@@ -407,6 +407,10 @@ class grbl_controller:
     def bufferredCharCount(self):
         return self.buffered_chars
 
+    def emptybuffer(self):
+        self.reset_buffer=True
+
+
     def control_thread(self, name):
         self.logger.info("########################################")
         self.logger.info("Thread start for grbl on :{}".format(name))
@@ -421,8 +425,13 @@ class grbl_controller:
         lastWriteAt = tg = time.time()
         while self.app_running:
             self.update_buffer_info(cline,sline)
+
             try:
-                
+                if self.reset_buffer:
+                    for line in sline:
+                        self.logger.info("dumpping buffered line: {}".format(line) )                
+                    sline=[]    
+                    cline=[]
                 #print ("gcode queue length {}".format(self.queue.qsize()))
 
                 t = time.time()
