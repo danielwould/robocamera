@@ -278,7 +278,7 @@ class RobotCamera(tk.Frame):
         self.reset.pack(side="left", pady=50)
 
         self.dump_buffer = tk.Button(wayPoint_controls, text="EtyBuf", fg="red",
-                              command=self.controller.emptybuffer())
+                              command=self.controller.emptybuffer
         self.dump_buffer.pack(side="right", pady=50)
 
     
