@@ -118,7 +118,7 @@ class Joystick():
                                 # the reset button first for down and up, we only want to register on down
                                 if event.type == pygame.JOYBUTTONDOWN:
                                     if time.time() - control_last_toggled > 0.5:
-                                        if self.parent.MOVE_TOGGLE == self.parent.self.MOVE_TIME:
+                                        if self.parent.MOVE_TOGGLE == self.parent.MOVE_TIME:
                                             self.parent.toggle_control(self.parent.FEED_RATE)
                                             control_last_toggled = time.time()
                                         elif self.parent.MOVE_TOGGLE == self.parent.FEED_RATE:
