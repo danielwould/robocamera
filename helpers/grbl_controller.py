@@ -261,7 +261,7 @@ class grbl_controller:
         jogStep = self.current_feed_speed / 600;
         jogStep = jogStep*multiplier
         self.queue.put("$J=G91 {}{} f{}\n".format(axis,jogStep, self.current_feed_speed))
-        time.sleep(0.2)
+        time.sleep(0.1)
 
     def jog(self, xaxis_multiplier, yaxis_multiplier, aaxis_multiplier, baxis_multiplier):
         jogStep = self.current_feed_speed / 600;
@@ -269,8 +269,10 @@ class grbl_controller:
         yjogStep = jogStep*yaxis_multiplier
         ajogStep = jogStep*aaxis_multiplier
         bjogStep = jogStep*baxis_multiplier
-        self.queue.put("$J=G91 x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep, self.current_feed_speed))
-        time.sleep(0.2)
+        #only jog if the buffer is clear
+        if (self.queue.qsize()==0):
+            self.queue.put("$J=G91 x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep, self.current_feed_speed))
+        time.sleep(0.1)
 
 
     def absolute_move(self, x, y, z, a, b, feedrate, dwell):
