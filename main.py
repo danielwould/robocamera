@@ -323,7 +323,6 @@ class RobotCamera(tk.Frame):
             
         
     def trigger_whole_sequence(self):
-        self.crane_inst.set_command_delay(self.crane_delay.get())
         if len(self.sequence_steps.waypoints) > 0:
             for i in range(len(self.sequence_steps.waypoints)): 
         
@@ -343,7 +342,6 @@ class RobotCamera(tk.Frame):
 
 
     def save_point_move(self,savepoint):
-        self.crane_inst.set_command_delay(self.crane_delay.get())
         
         if self.MOVE_TOGGLE == self.FEED_RATE:
             self.controller.absolute_move(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,savepoint.get_feed_rate(),savepoint.get_dwell_time())

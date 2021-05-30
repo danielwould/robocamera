@@ -26,9 +26,6 @@ class base_control_object:
     def stop(self):
         self.controller.stop()
 
-    def set_command_delay(self, value):
-        self.controller.set_command_delay(value)
-
     def set_small_step_rotate(self, value):
         self.small_step_rotate = value
 
