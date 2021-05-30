@@ -24,12 +24,12 @@ class gimbal(base_control_object):
 
     def zoom_in_large(self):
         if time.time()-self.last_command_sent_at > self.command_throttle_limit:
-            self.controller.relative_move(self.zoom_axis,0.5)
+            self.controller.relative_move(self.zoom_axis,1)
         self.last_command_sent_at = time.time()
 
     def zoom_out_large(self):
         if time.time()-self.last_command_sent_at > self.command_throttle_limit:
-            self.controller.relative_move(self.zoom_axis,0.5)
+            self.controller.relative_move(self.zoom_axis,-1)
         self.last_command_sent_at = time.time()
 
     # override move commands to include the third axis
