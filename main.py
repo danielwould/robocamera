@@ -276,14 +276,14 @@ class RobotCamera(tk.Frame):
         #exit application
         self.quit = tk.Button(wayPoint_controls, text="QUIT", fg="red",
                               command=self.quit)
-        self.quit.pack(side="bottom", pady=50)
+        self.quit.pack(side="left", pady=50)
         self.reset = tk.Button(wayPoint_controls, text="RESET", fg="red",
                               command=self.controller.reset)
-        self.reset.pack(side="bottom", pady=50)
+        self.reset.pack(side="left", pady=50)
 
         self.dump_buffer = tk.Button(wayPoint_controls, text="Empty Buffer", fg="red",
                               command=self.controller.emptybuffer())
-        self.dump_buffer.pack(side="bottom", pady=50)
+        self.dump_buffer.pack(side="left", pady=50)
 
     
         
