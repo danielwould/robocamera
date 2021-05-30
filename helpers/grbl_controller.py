@@ -124,6 +124,12 @@ class grbl_controller:
     dwell_delay = 0
     gcode_sequence = []
     app_running = False
+    buffer_length=0
+    buffered_chars = 0
+    all_time_gcode_lines =0
+    all_time_character_count=0
+    grbl_status="disconnected"
+    lastResponseTime = 0
 
     def __init__(self, dwell_delay):
         
@@ -260,7 +266,10 @@ class grbl_controller:
     def relative_move(self, axis, multiplier):
         jogStep = self.current_feed_speed / 600;
         jogStep = jogStep*multiplier
-        self.queue.put("$J=G91 {}{} f{}\n".format(axis,jogStep, self.current_feed_speed))
+        if (self.buffer_length==0):
+            self.queue.put("$J=G91 {}{} f{}\n".format(axis,jogStep, self.current_feed_speed))
+        else:
+            self.logger.info("throttling jog move queue is {} long".format(self.queue.qsize()))
         time.sleep(0.1)
 
     def jog(self, xaxis_multiplier, yaxis_multiplier, aaxis_multiplier, baxis_multiplier):
@@ -270,7 +279,7 @@ class grbl_controller:
         ajogStep = jogStep*aaxis_multiplier
         bjogStep = jogStep*baxis_multiplier
         #only jog if the buffer is clear
-        if (self.queue.qsize()==0):
+        if (self.buffer_length==0):
             self.queue.put("$J=G91 x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep, self.current_feed_speed))
         else:
             self.logger.info("throttling jog move queue is {} long".format(self.queue.qsize()))
@@ -372,15 +381,31 @@ class grbl_controller:
 
     def status(self):
         self.sio_status=True
+    
+    def get_grbl_status(self):
+        return self.grbl_status
 
+    def get_lastUpdateTime(self):
+        return self.lastResponseTime
    
     def controllerStateChange(self, state):
         self.logger.info("Controller state changed to: %s (Running: %s)" %
               (state, self.running))
+        self.grbl_status = state
         #if state in ("Idle"):
         #    self.mcontrol.viewParameters()
         #    self.mcontrol.viewState()
 
+    def update_buffer_info(self, cline, sline):
+        self.buffer_length = len(sline)
+        self.buffered_chars = sum(cline)
+        
+
+    def bufferedGcodeCount(self):
+        return self.buffer_length
+    
+    def bufferredCharCount(self):
+        return self.buffered_chars
 
     def control_thread(self, name):
         self.logger.info("########################################")
@@ -395,7 +420,7 @@ class grbl_controller:
         gcodeToSend = None			# next string to send
         lastWriteAt = tg = time.time()
         while self.app_running:
-            
+            self.update_buffer_info(cline,sline)
             try:
                 
                 #print ("gcode queue length {}".format(self.queue.qsize()))
@@ -417,6 +442,7 @@ class grbl_controller:
                 if not line:
                     pass
                 elif self.mcontrol.parseLine(line, cline, sline):
+                    self.lastResponseTime = time.strftime('%X')
                     pass
 
 
@@ -431,6 +457,8 @@ class grbl_controller:
                         gcodeToSend = None
                 
                     if gcodeToSend is not None:
+                        self.all_time_gcode_lines = self.all_time_gcode_lines+1
+                        self.all_time_character_count = self.all_time_character_count+len(gcodeToSend)
                         sline.append(gcodeToSend)
                         cline.append(len(gcodeToSend))
                         self.logger.debug("send buffer size {}".format(sum(cline)))

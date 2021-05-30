@@ -74,7 +74,7 @@ class RobotCamera(tk.Frame):
         
         if sys.platform == "win32":
             print("connecting to windows com device")
-            self.controller.set_device("COM3", 115200,"CameraArm")
+            self.controller.set_device("COM7", 115200,"CameraArm")
         else:
             print("connecting to linux tty device")
             self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
@@ -109,13 +109,20 @@ class RobotCamera(tk.Frame):
         
         location_info = Frame(left,relief=tk.RIDGE)
         location_info.pack(side="top") 
-
+        self.status_text = tk.Label(location_info,text="status", relief=tk.RIDGE)
+        self.status_text.config(font=("Courier", 16))
+        self.status_text.pack(side="top", padx=10)
         self.pos_text = tk.Label(location_info,text="Pos", relief=tk.RIDGE)
         self.pos_text.config(font=("Courier", 16))
         self.pos_text.pack(side="left", padx=10)
         
         info = Frame(left,relief=tk.SUNKEN)
         info.pack(side="left")
+        transmission_buffer = Frame(info,relief=tk.RIDGE)
+        transmission_buffer.pack(side="top")
+        self.transbuffer_text = tk.Label(transmission_buffer,text="Pos", relief=tk.RIDGE)
+        self.transbuffer_text.config(font=("Courier", 12))
+        self.transbuffer_text.pack(side="left", padx=10)
         #
         #savepoints
         #
@@ -270,6 +277,9 @@ class RobotCamera(tk.Frame):
         self.quit = tk.Button(wayPoint_controls, text="QUIT", fg="red",
                               command=self.quit)
         self.quit.pack(side="bottom", pady=50)
+        self.reset = tk.Button(wayPoint_controls, text="RESET", fg="red",
+                              command=self.controller.reset)
+        self.reset.pack(side="bottom", pady=50)
 
     
         

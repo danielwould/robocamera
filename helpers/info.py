@@ -1,5 +1,6 @@
 import time
 import threading
+import sys
 
 class info():
     def __init__(self, parent):
@@ -16,7 +17,9 @@ class info():
         while not self.done:
             try:
                 time.sleep(0.3)
-                self.parent.pos_text['text']="GimbalPos:\n{}".format(self.parent.controller.position_str())
+                self.parent.status_text['text']="State:{}, lastUpdated:{}".format(self.parent.controller.get_grbl_status(), self.parent.controller.get_lastUpdateTime())
+                self.parent.pos_text['text']="Pos:\n{}".format(self.parent.controller.position_str())
+                self.parent.transbuffer_text['text']="GcodeLines buff/tot {}/{} chars buff/tot {}/{}".format(self.parent.controller.bufferedGcodeCount(),self.parent.controller.all_time_gcode_lines,self.parent.controller.bufferredCharCount(),self.parent.controller.all_time_character_count)
                 if self.parent.MOVE_TOGGLE == self.parent.MOVE_TIME:
                     self.parent.moveFeedToggle["bg"]="#333333"
                     self.parent.moveTimeToggle["bg"]="#ffcc33"
@@ -28,5 +31,5 @@ class info():
                     self.parent.moveFeedToggle["fg"]="#333333"
                     self.parent.moveTimeToggle["fg"]="#ffcc33"
             except:
-                print("Error in ui thread")
+                print("Unexpected error in ui thread:", sys.exc_info()[0])
                 time.sleep(1)
