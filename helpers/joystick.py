@@ -73,7 +73,7 @@ class Joystick():
                     
                 #combined jog
                 #
-                if ( (xjog > 0) | (yjog > 0) | (ajog > 0) | (bjog > 0) ):
+                if ( (xjog != 0)| (yjog != 0) | (ajog!= 0) | (bjog != 0) ):
                     self.parent.controller.jog(xjog,yjog,ajog,bjog)             
 
 
