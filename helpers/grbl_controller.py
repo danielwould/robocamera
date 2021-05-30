@@ -264,7 +264,7 @@ class grbl_controller:
         time.sleep(0.1)
 
     def jog(self, xaxis_multiplier, yaxis_multiplier, aaxis_multiplier, baxis_multiplier):
-        jogStep = self.current_feed_speed / 600;
+        jogStep = self.current_feed_speed / 800;
         xjogStep = jogStep*xaxis_multiplier
         yjogStep = jogStep*yaxis_multiplier
         ajogStep = jogStep*aaxis_multiplier
