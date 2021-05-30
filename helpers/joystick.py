@@ -49,23 +49,32 @@ class Joystick():
                 joystick = pygame.joystick.Joystick(joystick_num)
                 joystick.init()
                 axes = joystick.get_numaxes()
-                
+                xjog=0
+                yjog=0
+                ajog=0
+                bjog=0
                 for axis_num in range(axes):
 
                     axis = joystick.get_axis(axis_num)
                                         
                     if (axis >= self.deadzone ) | (axis <= -self.deadzone):
                         if axis_num == 0:
-                            self.gimbal_inst.rotate_jog(axis)
+                            #self.gimbal_inst.rotate_jog(axis)
+                            xjog=axis-0.15
                         if axis_num == 1:
-                            self.gimbal_inst.tilt_jog(axis)
+                            #self.gimbal_inst.tilt_jog(axis)
+                            yjog=axis-0.15
                         if axis_num == 2:
-                            self.crane_inst.rotate_jog(axis)
+                            #self.crane_inst.rotate_jog(axis)
+                            ajog=axis-0.15
                         if axis_num == 3:
-                            self.crane_inst.tilt_jog(axis)
+                            #self.crane_inst.tilt_jog(axis)
+                            bjog=axis-0.15
                     
-                   
-                               
+                #combined jog
+                #
+                if (xjog>0 | yjog >0 | ajog>0 | bjog >0):
+                    self.parent.controller.jog(xjog,yjog,ajog,bjog)             
 
 
  
@@ -109,11 +118,11 @@ class Joystick():
                                 # the reset button first for down and up, we only want to register on down
                                 if event.type == pygame.JOYBUTTONDOWN:
                                     if time.time() - control_last_toggled > 0.5:
-                                        if self.parent.CONTROL_TOGGLE == self.parent.GIMBAL_CONTROL:
-                                            self.parent.toggle_control(self.parent.CRANE_CONTROL)
+                                        if self.parent.MOVE_TOGGLE == self.parent.self.MOVE_TIME:
+                                            self.parent.toggle_control(self.parent.FEED_RATE)
                                             control_last_toggled = time.time()
-                                        elif self.parent.CONTROL_TOGGLE == self.parent.CRANE_CONTROL:
-                                            self.parent.toggle_control(self.parent.GIMBAL_CONTROL)
+                                        elif self.parent.MOVE_TOGGLE == self.parent.FEED_RATE:
+                                            self.parent.toggle_control(self.parent.MOVE_TIME)
                                             control_last_toggled = time.time()
 
                         if button_num == 9:

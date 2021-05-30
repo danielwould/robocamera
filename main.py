@@ -210,15 +210,7 @@ class RobotCamera(tk.Frame):
         Toggle_controls = Frame(right_side,relief=tk.GROOVE)
         Toggle_controls.pack(side="top")
 
-        controller_select = Frame(Toggle_controls,relief=tk.GROOVE)
-        controller_select.pack(side="top")
-        button_pairs = Frame(controller_select,relief=tk.GROOVE)
-        button_pairs.pack(side="left")
-        self.gimbalToggle = tk.Button(button_pairs, text="Gimbal", fg="#ffcc33",bg="#333333", command=lambda: self.toggle_control(self.GIMBAL_CONTROL))
-        self.gimbalToggle.pack(side="top", padx=2,pady=2)
-        self.craneToggle = tk.Button(button_pairs, text="Crane", fg="#ffcc33",bg="#333333", command=lambda: self.toggle_control(self.CRANE_CONTROL))
-        self.craneToggle.pack(side="bottom", padx=2,pady=2)
-        move_select = Frame(controller_select,relief=tk.GROOVE)
+        move_select = Frame(Toggle_controls,relief=tk.GROOVE)
         move_select.pack(side="right")
         self.moveFeedToggle = tk.Button(move_select, text="Feed mm/s", fg="#ffcc33",bg="#333333", command=lambda: self.toggle_move_mode(self.FEED_RATE))
         self.moveFeedToggle.pack(side="top", padx=2,pady=2)
@@ -279,10 +271,7 @@ class RobotCamera(tk.Frame):
                               command=self.quit)
         self.quit.pack(side="bottom", pady=50)
 
-    def toggle_control(self,value):
-        print("toggle control to")
-        print(value)
-        self.CONTROL_TOGGLE = value
+    
         
     def toggle_move_mode(self,value):
         print("toggle move mode to")
