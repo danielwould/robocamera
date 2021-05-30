@@ -434,11 +434,12 @@ class grbl_controller:
             self.update_buffer_info(cline,sline)
 
             try:
-                if self.reset_buffer:
+                if self.reset_buffer == True:
                     for line in sline:
                         self.logger.info("dumpping buffered line: {}".format(line) )                
                     sline=[]    
                     cline=[]
+                    self.reset_buffer=False
                 #print ("gcode queue length {}".format(self.queue.qsize()))
 
                 t = time.time()
