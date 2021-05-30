@@ -272,6 +272,8 @@ class grbl_controller:
         #only jog if the buffer is clear
         if (self.queue.qsize()==0):
             self.queue.put("$J=G91 x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep, self.current_feed_speed))
+        else:
+            self.logger.info("throttling jog move queue is {} long".format(self.queue.qsize()))
         time.sleep(0.1)
 
 
