@@ -137,7 +137,7 @@ class grbl_controller:
     yjog_factor=0.6
     ajog_factor=1
     bjog_factor=1
-    
+
     def __init__(self, dwell_delay):
         
         self.name="init"
@@ -281,10 +281,10 @@ class grbl_controller:
 
     def jog(self, xaxis_multiplier, yaxis_multiplier, aaxis_multiplier, baxis_multiplier):
         jogStep = self.current_feed_speed / 800;
-        xjogStep = jogStep*xjog_factor*xaxis_multiplier
-        yjogStep = jogStep*yjog_factor*yaxis_multiplier
-        ajogStep = jogStep*ajog_factor*aaxis_multiplier
-        bjogStep = jogStep*bjog_factor*baxis_multiplier
+        xjogStep = jogStep*self.xjog_factor*xaxis_multiplier
+        yjogStep = jogStep*self.yjog_factor*yaxis_multiplier
+        ajogStep = jogStep*self.ajog_factor*aaxis_multiplier
+        bjogStep = jogStep*self.bjog_factor*baxis_multiplier
         #only jog if the buffer is clear
         if (self.buffer_length==0):
             self.queue.put("$J=G91 x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep, self.current_feed_speed))
