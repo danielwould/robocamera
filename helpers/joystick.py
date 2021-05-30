@@ -4,7 +4,7 @@ import time
 
 class Joystick():
 
-    deadzone = 0.2
+    deadzone = 0.05
     
     
     def __init__(self, parent, gimbal,crane):
