@@ -270,10 +270,6 @@ class RobotCamera(tk.Frame):
         self.move_duration_select = OptionMenu(move, self.move_duration, 2, 5,10,20,30,60,120)
         self.move_duration_select.pack(side="bottom")
         
-        self.crane_delay = Scale(options_controls, from_=0, to=2000, tickinterval=100)
-        self.crane_delay.set(500)
-        self.crane_delay.pack()
-        #exit application
         self.quit = tk.Button(wayPoint_controls, text="QUIT", fg="red",
                               command=self.quit)
         self.quit.pack(side="left", pady=50)
@@ -283,7 +279,7 @@ class RobotCamera(tk.Frame):
 
         self.dump_buffer = tk.Button(wayPoint_controls, text="EtyBuf", fg="red",
                               command=self.controller.emptybuffer())
-        self.dump_buffer.pack(side="bottom", pady=50)
+        self.dump_buffer.pack(side="right", pady=50)
 
     
         
