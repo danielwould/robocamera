@@ -276,22 +276,18 @@ class grbl_controller:
 
 
     def absolute_move(self, x, y, z, a, b, feedrate, dwell):
-        self.sendGCode("g04 P{}".format(self.dwell_delay))
         self.sendGCode("g90")
         self.sendGCode("g94")
         self.sendGCode("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z, a,b,feedrate))
-        self.sendGCode("g4 P{}".format(dwell))
-
+        
     def absolute_move_by_time(self, x, y, z, a, b, seconds, dwell):
         # calculate f value from desired
         # f2 = 60/2 = 30s
         feedval = 60 / seconds
-        self.sendGCode("g04 P{}".format(self.dwell_delay))
         self.sendGCode("g90")
         self.sendGCode("g93")
         self.sendGCode("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z, a,b,feedval))
-        self.sendGCode("g4 P{}".format(dwell))
-
+        
     def add_absolute_move_by_time_to_sequence(self, x, y, z, a, b, seconds, dwell):
         feedval = 60 / seconds
         if len(self.gcode_sequence) == 0:
