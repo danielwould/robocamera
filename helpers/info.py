@@ -17,17 +17,6 @@ class info():
             try:
                 time.sleep(0.3)
                 self.parent.pos_text['text']="GimbalPos:\n{}".format(self.parent.controller.position_str())
-                
-                if self.parent.CONTROL_TOGGLE == self.parent.GIMBAL_CONTROL:
-                    self.parent.gimbalToggle["bg"]="#ffcc33"
-                    self.parent.gimbalToggle["fg"]="#333333"
-                    self.parent.craneToggle["bg"]="#333333"
-                    self.parent.craneToggle["fg"]="#ffcc33"
-                if self.parent.CONTROL_TOGGLE == self.parent.CRANE_CONTROL:
-                    self.parent.gimbalToggle["bg"]="#333333"
-                    self.parent.gimbalToggle["fg"]="#ffcc33"
-                    self.parent.craneToggle["bg"]="#ffcc33"
-                    self.parent.craneToggle["fg"]="#333333"
                 if self.parent.MOVE_TOGGLE == self.parent.MOVE_TIME:
                     self.parent.moveFeedToggle["bg"]="#333333"
                     self.parent.moveTimeToggle["bg"]="#ffcc33"
