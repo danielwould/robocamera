@@ -218,11 +218,11 @@ class RobotCamera(tk.Frame):
         Toggle_controls.pack(side="top")
 
         move_select = Frame(Toggle_controls,relief=tk.GROOVE)
-        move_select.pack(side="right")
+        move_select.pack()
         self.moveFeedToggle = tk.Button(move_select, text="Feed mm/s", fg="#ffcc33",bg="#333333", command=lambda: self.toggle_move_mode(self.FEED_RATE))
-        self.moveFeedToggle.pack(side="top", padx=2,pady=2)
+        self.moveFeedToggle.pack(padx=2,pady=2)
         self.moveTimeToggle = tk.Button(move_select, text="Move Time", fg="#ffcc33",bg="#333333", command=lambda: self.toggle_move_mode(self.MOVE_TIME))
-        self.moveTimeToggle.pack(side="bottom", padx=2,pady=2)
+        self.moveTimeToggle.pack(padx=2,pady=2)
 
         #
         #manipulate waypoints
@@ -235,6 +235,9 @@ class RobotCamera(tk.Frame):
         self.deleteWaypoint = tk.Button(wayPoint_controls, text="Del Waypoint", fg="#333333",bg="#ffcc33",
                               command=self.delete_waypoint)
         self.deleteWaypoint.pack(padx=2,pady=2)
+        self.editWaypoint = tk.Button(wayPoint_controls, text="Edit Waypoint", fg="#333333",bg="#ffcc33",
+                              command=self.edit_waypoint)
+        self.editWaypoint.pack(padx=2,pady=2)
 
         options_controls = Frame(left,relief=tk.GROOVE)
         options_controls.pack(side="right")
@@ -246,7 +249,7 @@ class RobotCamera(tk.Frame):
         self.dwell_label.pack(side="top")
         self.dwell_time = StringVar(dwell)
         self.dwell_time.set(1) # initial value
-        self.dwell_select = OptionMenu(dwell, self.dwell_time, 1, 2,5,10,15,20)
+        self.dwell_select = OptionMenu(dwell, self.dwell_time, 0,1, 2,5,10,15,20,30)
         self.dwell_select.pack(side="bottom")
 
         feed = Frame(options_controls)
@@ -270,17 +273,17 @@ class RobotCamera(tk.Frame):
         self.move_duration_select = OptionMenu(move, self.move_duration, 2, 5,10,20,30,60,120)
         self.move_duration_select.pack(side="bottom")
         
-        self.quit = tk.Button(wayPoint_controls, text="QUIT", fg="red",
-                              command=self.quit)
-        self.quit.pack(side="left", pady=50)
+        
         self.reset = tk.Button(wayPoint_controls, text="RESET", fg="red",
                               command=self.controller.reset)
-        self.reset.pack(side="left", pady=50)
+        self.reset.pack(padx=2, pady=2)
 
         self.dump_buffer = tk.Button(wayPoint_controls, text="EtyBuf", fg="red",
                               command=self.controller.emptybuffer)
-        self.dump_buffer.pack(side="right", pady=50)
-
+        self.dump_buffer.pack(padx=2, pady=2)
+        self.quit = tk.Button(wayPoint_controls, text="QUIT", fg="red",
+                              command=self.quit)
+        self.quit.pack(padx=2, pady=20)
     
         
     def toggle_move_mode(self,value):
@@ -318,10 +321,39 @@ class RobotCamera(tk.Frame):
 
     def delete_waypoint(self):
         # todo allow for deleting specific waypoint item
-        self.sequence_steps.delete_waypoint()
-        self.waypoint_listbox.delete(self.waypoint_listbox.size()-1,self.waypoint_listbox.size())
+        
+        selected = self.waypoint_listbox.curselection()
+        if selected:
+            self.waypoint_listbox.delete(selected)
+            self.sequence_steps.delete_waypoint(index=selected[0])
+        else:
+            self.waypoint_listbox.delete(self.waypoint_listbox.size()-1,self.waypoint_listbox.size())
+            self.sequence_steps.delete_waypoint()
             
         
+    def edit_waypoint(self):
+        selected = self.waypoint_listbox.curselection()
+        if selected:
+            index = selected[0]
+            
+        else:
+            index = self.waypoint_listbox.size()-1
+            
+        waypoint_to_edit = self.sequence_steps.get_step(index)
+        self.editwaypoint=editWaypointPopup(self.master, waypoint_to_edit)
+        self.master.wait_window(self.editwaypoint.top)
+        print("edited waypoint value {} {}".format(self.editwaypoint.value.location_str(),self.editwaypoint.value.get_feed_info()))
+        self.sequence_steps.update_waypoint(index, self.editwaypoint.value)
+        self.waypoint_listbox.insert(index,"{} dwell for:{}".format(self.editwaypoint.value.location_str(),self.editwaypoint.value.get_dwell_time()))
+        self.waypoint_listbox.delete(index+1)
+    
+    def entryValue(self):
+        return self.editwaypoint.value
+        
+
+
+
+
     def trigger_whole_sequence(self):
         if len(self.sequence_steps.waypoints) > 0:
             for i in range(len(self.sequence_steps.waypoints)): 
@@ -427,6 +459,39 @@ class RobotCamera(tk.Frame):
         
         sys.exit(0)
 
+class editWaypointPopup(object):
+    def __init__(self,master, waypointvalue):
+
+        top=self.top=Toplevel(master)
+               
+        self.l=Label(top,text="Edit Waypoint")
+        self.l.pack()
+        x = StringVar(root, value=waypointvalue.xpos)
+        y = StringVar(root, value=waypointvalue.ypos)
+        z = StringVar(root, value=waypointvalue.zpos)
+        a = StringVar(root, value=waypointvalue.apos)
+        b = StringVar(root, value=waypointvalue.bpos)
+        dwell = StringVar(root, value=waypointvalue.dwell_time)
+        self.x=Entry(top,textvariable = x)
+        self.x.pack()
+        self.y=Entry(top,textvariable = y)
+        self.y.pack()
+        self.z=Entry(top,textvariable = z)
+        self.z.pack()
+        self.a=Entry(top,textvariable = a)
+        self.a.pack()
+        self.b=Entry(top,textvariable = b)
+        self.b.pack()
+        self.dwell=Entry(top,textvariable = dwell)
+        self.dwell.pack()
+        
+        self.okbutton=Button(top,text='Ok',command=self.cleanup)
+        self.okbutton.pack()
+    def cleanup(self):
+        editedWaypoint = waypoint(location(self.x.get(), self.y.get(),self.z.get()), location(self.a.get(), self.b.get(), 0))
+        editedWaypoint.set_dwell_time(self.dwell.get())
+        self.value=editedWaypoint
+        self.top.destroy()
 
 if __name__ == "__main__":
     #main()

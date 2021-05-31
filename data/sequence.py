@@ -14,16 +14,24 @@ class sequence:
         
         self.waypoints.append(wp)
 
-
-    def delete_waypoint(self):
+    def update_waypoint(self, index, waypoint):
+        self.waypoints[index]=waypoint
+        
+    def delete_waypoint(self, index=-1):
         print ("delete waypoint")
-        if (len(self.waypoints) > 0):
-            self.waypoints.pop()
+        if (index==-1):
+            if (len(self.waypoints) > 0):
+                self.waypoints.pop()
+        else:
+            del self.waypoints[index]
 
     def start(self):
         print ("starting seuqence")
         self.sequence_running=True
         self.sequnce_started_at= time.time()
+
+    def get_step(self, index):
+        return self.waypoints[index]
 
     def get_next_step(self):
         print ("returning step {} of {}".format(self.current_step+1,len(self.waypoints))) 
