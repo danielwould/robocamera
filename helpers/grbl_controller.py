@@ -502,9 +502,9 @@ class grbl_controller:
                         self.serial_write(b"?")
                         lastWriteAt = t
                         self.sio_status = True
-                    else:
-                        if t-tg > G_POLL:
-                            self.sendGCode("$G\n")
+                    #else:
+                    #    if t-tg > G_POLL:
+                    #        self.sendGCode("$G\n")
                             
             except:
                 self.logger.error("Exception in thread for {}".format(name))   
