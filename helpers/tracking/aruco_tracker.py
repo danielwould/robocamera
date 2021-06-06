@@ -76,16 +76,34 @@ class aruco_tracker:
                             initialPositionX=trackedX
                             initialPositionY=trackedY
                         else:
-                            if ((self.initialPositionX - trackedX) <=-10):
+                            if ((self.initialPositionX - trackedX) <=-10 & (self.initialPositionX - trackedX) >=-100):
+                                #jog x towards initial position
+                                xjog=0.5
+                            if ((self.initialPositionX - trackedX) <=-100):
                                 #jog x towards initial position
                                 xjog=1
-                            if  (self.initialPositionX - trackedX) >=10 ):
+                            
+                            if ((self.initialPositionX - trackedX) >=10 & (self.initialPositionX - tracked X) <=100 ):
+                                xjog=-0.5
+                            if ((self.initialPositionX - trackedX) >=100 ):
                                 xjog=-1
-                            if ((self.initialPositionY - trackedY) <=-10):
+
+                                
+                            if ((self.initialPositionY - trackedY) <=-10 & (self.initialPositionY - trackedY) >=-100):
+                                #jog x towards initial position
+                                yjog=0.5
+                            
+                            if ((self.initialPositionY - trackedY) <=-100):
                                 #jog x towards initial position
                                 yjog=1
-                            if  (self.initialPositionY - trackedY) >=10 ):
+
+                            
+                            if ((self.initialPositionY - trackedY) >=10 & (self.initialPositionY - tracked Y) <=100 ):
+                                yjog=-0.5
+                            if ((self.initialPositionY - trackedY) >=100):
                                 yjog=-1
+
+
                             if ((xjog !=0) | (yjog!=0)):
                                 #move the opposite direction to the delta
                                 self.controller.tracking_jog(jogx,jogy)
