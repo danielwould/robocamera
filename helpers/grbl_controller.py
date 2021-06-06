@@ -292,7 +292,7 @@ class grbl_controller:
             self.logger.info("throttling jog move queue is {} long".format(self.queue.qsize()))
         time.sleep(0.1)
     
-    def tracking_jog(self, xaxis_miltiplier, yaxis_multiplier):
+    def tracking_jog(self, xaxis_multiplier, yaxis_multiplier):
         #only accept tracking jog if controller is idle otherwise jogging should feed into joystick moves
         if self.grbl_status == "Idle":
             jogStep = self.current_feed_speed / 800;
