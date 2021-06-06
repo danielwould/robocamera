@@ -106,7 +106,7 @@ class aruco_tracker:
 
                             if ((xjog !=0) | (yjog!=0)):
                                 #move the opposite direction to the delta
-                                self.controller.tracking_jog(jogx,jogy)
+                                self.controller.tracking_jog(xjog,yjog)
                                 print ("jogging glyph back to starting location {} {}".format(self.deltaX, self.deltaY))
                         lastX=trackedX
                         lastY=trackedY
