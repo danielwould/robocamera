@@ -139,7 +139,7 @@ class aruco_tracker:
                         #print ("tracking tag at x{}y{}".format(trackedX, trackedY))
                     if (self.render_window ==True):
                         # convert each of the (x, y)-coordinate pairs to integers
-                        if (trackedcorners):
+                        if (trackedcorners is not None):
                             (topLeft, topRight, bottomRight, bottomLeft) = trackedcorners
                 
                             topRight = (int(topRight[0]), int(topRight[1]))
