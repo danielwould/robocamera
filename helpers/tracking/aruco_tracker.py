@@ -76,31 +76,31 @@ class aruco_tracker:
                             initialPositionX=trackedX
                             initialPositionY=trackedY
                         else:
-                            if ((self.initialPositionX - trackedX) <=-10 & (self.initialPositionX - trackedX) >=-100):
+                            if ((initialPositionX - trackedX) <=-10 & (initialPositionX - trackedX) >=-100):
                                 #jog x towards initial position
                                 xjog=0.5
-                            if ((self.initialPositionX - trackedX) <=-100):
+                            if ((initialPositionX - trackedX) <=-100):
                                 #jog x towards initial position
                                 xjog=1
                             
-                            if ((self.initialPositionX - trackedX) >=10 & (self.initialPositionX - trackedX) <=100 ):
+                            if ((initialPositionX - trackedX) >=10 & (initialPositionX - trackedX) <=100 ):
                                 xjog=-0.5
-                            if ((self.initialPositionX - trackedX) >=100 ):
+                            if ((initialPositionX - trackedX) >=100 ):
                                 xjog=-1
 
                                 
-                            if ((self.initialPositionY - trackedY) <=-10 & (self.initialPositionY - trackedY) >=-100):
+                            if ((initialPositionY - trackedY) <=-10 & (initialPositionY - trackedY) >=-100):
                                 #jog x towards initial position
                                 yjog=0.5
                             
-                            if ((self.initialPositionY - trackedY) <=-100):
+                            if ((initialPositionY - trackedY) <=-100):
                                 #jog x towards initial position
                                 yjog=1
 
                             
-                            if ((self.initialPositionY - trackedY) >=10 & (self.initialPositionY - trackedY) <=100 ):
+                            if ((initialPositionY - trackedY) >=10 & (initialPositionY - trackedY) <=100 ):
                                 yjog=-0.5
-                            if ((self.initialPositionY - trackedY) >=100):
+                            if ((initialPositionY - trackedY) >=100):
                                 yjog=-1
 
 
