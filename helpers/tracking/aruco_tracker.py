@@ -19,7 +19,7 @@ class aruco_tracker:
     def initialise_video(self):
         # initialize the video stream and allow the camera sensor to warm up
         print("[INFO] starting video stream...")
-        self.vs = VideoStream(src=0).start()
+        self.vs = VideoStream(src=2).start()
         #vs = VideoStream(usePiCamera=True).start()
         time.sleep(2.0)
         self.arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_100)
@@ -67,7 +67,7 @@ class aruco_tracker:
                         self.deltaX = lastX-trackedX
                         self.deltaY = lastY-trackedY
                         if ((self.deltaX) !=0 | (self.deltaY !=0) ):
-                            self.controller.tracking_jog(self.deltaX,self.deltaY)
+                            self.controller.tracking_jog((self.deltaX/10),(self.deltaY/10))
                         print ("tracking delta {} {}".format(self.deltaX,self.deltaY))
                         lastX=trackedX
                         lastY=trackedY
