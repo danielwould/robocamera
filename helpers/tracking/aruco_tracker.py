@@ -9,7 +9,7 @@ import threading
 
 
 class aruco_tracker:
-    small_jog = 0.5
+    small_jog = 0.2
     large_jog = 1.2
 
     def __init__(self, controller):
@@ -86,31 +86,31 @@ class aruco_tracker:
                         else:
                             #print ("calculating jogging instruction to move glyph back to starting location {} {} by delta{} {}".format(initialPositionX, initialPositionY, self.deltaX, self.deltaY))
                                 
-                            if ((self.deltaX <=-8) & (self.deltaX >=-100)):
+                            if ((self.deltaX <=-8) & (self.deltaX >=-50)):
                                 #jog x towards initial position
                                 xjog=self.small_jog
-                            if (self.deltaX <=-100):
+                            if (self.deltaX <=-50):
                                 #jog x towards initial position
                                 xjog=self.large_jog
                             
-                            if ((self.deltaX >=8) & (self.deltaX <=100)):
+                            if ((self.deltaX >=8) & (self.deltaX <=50)):
                                 xjog=-self.small_jog
-                            if (self.deltaX>=100 ):
+                            if (self.deltaX>=50 ):
                                 xjog=-self.large_jog
 
                                 
-                            if ((self.deltaY <=-8) & (self.deltaY >=-100)):
+                            if ((self.deltaY <=-8) & (self.deltaY >=-50)):
                                 #jog x towards initial position
                                 yjog=self.small_jog
                             
-                            if (self.deltaY <=-100):
+                            if (self.deltaY <=-50):
                                 #jog x towards initial position
                                 yjog=self.large_jog
 
                             
-                            if ((self.deltaY >=8) & (self.deltaY <=100) ):
+                            if ((self.deltaY >=8) & (self.deltaY <=50) ):
                                 yjog=-self.small_jog
-                            if (self.deltaY >=100):
+                            if (self.deltaY >=50):
                                 yjog=-self.large_jog
 
                             #print ("xjog {} yjog {}".format(xjog,yjog))
