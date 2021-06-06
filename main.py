@@ -56,6 +56,7 @@ class RobotCamera(tk.Frame):
         self.MOVE_TIME = 1
         self.MOVE_TOGGLE = self.FEED_RATE
         self.TRACKING = False
+        self.TRACKING_RENDER = False
 
         self.save_position_1 = waypoint(location(0, 0, 0), location(0, 0, 0))
         self.save_position_2 = waypoint(location(0, 0, 0), location(0, 0, 0))
@@ -229,6 +230,8 @@ class RobotCamera(tk.Frame):
         self.moveTimeToggle.pack(padx=2,pady=2)
         self.trackingToggle = tk.Button(move_select, text="Tracking", fg="#ffcc33",bg="#333333", command=self.toggle_tracking_mode)
         self.trackingToggle.pack(padx=2,pady=2)
+        self.trackingRenderToggle = tk.Button(move_select, text="TrackRender", fg="#ffcc33",bg="#333333", command=self.toggle_tracking_render)
+        self.trackingRenderToggle.pack(padx=2,pady=2)
         #
         #manipulate waypoints
         #
@@ -304,6 +307,15 @@ class RobotCamera(tk.Frame):
         else:
             self.TRACKING = True
             self.tracker.start_tracking(1)
+
+    def toggle_tracking_render(self):
+        print("toggle tracking render")
+        if (self.TRACKING_RENDER == True):
+            self.TRACKING_RENDER = False
+            self.tracker.render_tracker(False)
+        else:
+            self.TRACKING_RENDER = True
+            self.tracker.render_tracker(True)
 
 
     def set_feed_rate(self, feedval):

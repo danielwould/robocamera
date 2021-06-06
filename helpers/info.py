@@ -36,6 +36,12 @@ class info():
                 else:
                     self.parent.trackingToggle["fg"]="#ffcc33"
                     self.parent.trackingToggle["bg"]="#333333"
+                if self.parent.TRACKING_RENDER == True:
+                    self.parent.trackingRenderToggle["bg"]="#ffcc33"
+                    self.parent.trackingRenderToggle["fg"]="#333333"
+                else:
+                    self.parent.trackingRenderToggle["fg"]="#ffcc33"
+                    self.parent.trackingRenderToggle["bg"]="#333333"
 
             except:
                 print("Unexpected error in ui thread:", sys.exc_info()[0])
