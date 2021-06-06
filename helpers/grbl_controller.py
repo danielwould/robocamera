@@ -303,7 +303,7 @@ class grbl_controller:
             self.queue.put("$J=G91 x{} y{} f{}\n".format(xjogStep,yjogStep,self.current_feed_speed))
         else:
             self.logger.info("throttling tracking jog move queue is {} long".format(self.queue.qsize()))
-    
+        time.sleep(0.1)
 
 
     def absolute_move(self, x, y, z, a, b, feedrate, dwell):
