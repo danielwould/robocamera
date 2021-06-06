@@ -34,6 +34,7 @@ class aruco_tracker:
 
     def start_tracking(self, trackedId):
         self.tracking=True
+        self.track_target_id = trackedId
         self.thread = threading.Thread( 
             target=self.track, args=(trackedId,))
         #self.thread.daemon = True
