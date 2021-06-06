@@ -25,7 +25,7 @@ class aruco_tracker:
         self.arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_100)
         
     def render_tracker(self, status):
-        self.render_tracker= status
+        self.render_window = status
         
 
     def stop_tracking(self):
@@ -115,7 +115,7 @@ class aruco_tracker:
                         lastX=trackedX
                         lastY=trackedY
                         print ("tracking tag at x{}y{}".format(trackedX, trackedY))
-                    if (self.render_tracker ==True):
+                    if (self.render_window ==True):
                         # convert each of the (x, y)-coordinate pairs to integers
                         topRight = (int(topRight[0]), int(topRight[1]))
                         bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
