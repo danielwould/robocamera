@@ -56,5 +56,5 @@ class info():
 
             except Exception as e:
                 print("Unexpected error in ui thread:", sys.exc_info()[0])
-                print str(e) 
+                print sys.exec_info()[2] 
                 time.sleep(1)
