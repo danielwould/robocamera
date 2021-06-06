@@ -68,8 +68,8 @@ class aruco_tracker:
                         (tLeft, tRight, bRight, bLeft) = trackedcorners
                         trackedX = int((tLeft[0] + bRight[0]) / 2.0)
                         trackedY = int((tLeft[1] + bRight[1]) / 2.0)
-                        self.deltaX = (self.initialPositionX - trackedX)
-                        self.deltaY = (self.initialPositionY - trackedY)
+                        self.deltaX = (initialPositionX - trackedX)
+                        self.deltaY = (initialPositionY - trackedY)
                         if (firstTrack == True):
                             #first instruction is always delta from a 0 which is a huge move
                             firstTrack = False
