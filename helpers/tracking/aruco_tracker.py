@@ -112,5 +112,6 @@ class aruco_tracker:
                                 time.sleep(0.2)
                         lastX=trackedX
                         lastY=trackedY
+                        print ("tracking tag at x{}y{}".format(trackedX, trackedY))
 
             
