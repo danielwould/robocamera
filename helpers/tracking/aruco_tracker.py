@@ -75,8 +75,7 @@ class aruco_tracker:
                             self.deltaX = (initialPositionX - trackedX)
                             self.deltaY = (initialPositionY - trackedY)
                         if (trackedId == 2):
-                            width  = self.vs.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)   # float `width`
-                            height = self.vs.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)  # float `height`
+                            height, width = image.shape[:2]
                             #tracker 2 always centres
                             self.deltaX = ((width/2) - trackedX)
                             self.deltaY = ((height/2) - trackedY)
