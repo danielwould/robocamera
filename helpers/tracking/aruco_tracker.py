@@ -83,7 +83,7 @@ class aruco_tracker:
                                 #jog x towards initial position
                                 xjog=1
                             
-                            if ((self.initialPositionX - trackedX) >=10 & (self.initialPositionX - tracked X) <=100 ):
+                            if ((self.initialPositionX - trackedX) >=10 & (self.initialPositionX - trackedX) <=100 ):
                                 xjog=-0.5
                             if ((self.initialPositionX - trackedX) >=100 ):
                                 xjog=-1
@@ -98,7 +98,7 @@ class aruco_tracker:
                                 yjog=1
 
                             
-                            if ((self.initialPositionY - trackedY) >=10 & (self.initialPositionY - tracked Y) <=100 ):
+                            if ((self.initialPositionY - trackedY) >=10 & (self.initialPositionY - trackedY) <=100 ):
                                 yjog=-0.5
                             if ((self.initialPositionY - trackedY) >=100):
                                 yjog=-1
