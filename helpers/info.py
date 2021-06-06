@@ -37,7 +37,7 @@ class info():
                 else:
                     self.parent.trackingToggle["fg"]="#ffcc33"
                     self.parent.trackingToggle["bg"]="#333333"
-                if (self.parent.trackingID == 1):
+                if (self.parent.trackingId == 1):
                     self.parent.trackingToggle1["bg"]="#ffcc33"
                     self.parent.trackingToggle1["fg"]="#333333"
                     self.parent.trackingToggle2["fg"]="#ffcc33"
