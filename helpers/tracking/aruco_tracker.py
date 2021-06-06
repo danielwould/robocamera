@@ -83,7 +83,7 @@ class aruco_tracker:
                         
                             print ("storing initial glyph discovery position x{} y{}".format(initialPositionX,initialPositionY))
                         else:
-                            print ("calculating jogging instruction to move glyph back to starting location {} {} by delta{} {}".format(initialPositionX, initialPositionY, self.deltaX, self.deltaY))
+                            #print ("calculating jogging instruction to move glyph back to starting location {} {} by delta{} {}".format(initialPositionX, initialPositionY, self.deltaX, self.deltaY))
                                 
                             if ((self.deltaX <=-8) & (self.deltaX >=-100)):
                                 #jog x towards initial position
@@ -112,16 +112,16 @@ class aruco_tracker:
                             if (self.deltaY >=100):
                                 yjog=-0.8
 
-                            print ("xjog {} yjog {}".format(xjog,yjog))
+                            #print ("xjog {} yjog {}".format(xjog,yjog))
 
                             if ((xjog !=0) | (yjog!=0)):
                                 #move the opposite direction to the delta
                                 self.controller.tracking_jog(xjog,yjog)
                                 #give the move a chance to be made
-                                time.sleep(0.2)
+                                time.sleep(0.1)
                         lastX=trackedX
                         lastY=trackedY
-                        print ("tracking tag at x{}y{}".format(trackedX, trackedY))
+                        #print ("tracking tag at x{}y{}".format(trackedX, trackedY))
                     if (self.render_window ==True):
                         # convert each of the (x, y)-coordinate pairs to integers
                         (topLeft, topRight, bottomRight, bottomLeft) = trackedcorners
