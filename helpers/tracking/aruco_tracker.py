@@ -115,7 +115,7 @@ class aruco_tracker:
                         lastX=trackedX
                         lastY=trackedY
                         print ("tracking tag at x{}y{}".format(trackedX, trackedY))
-                    if (self.renderTracker ==True):
+                    if (self.render_tracker ==True):
                         # convert each of the (x, y)-coordinate pairs to integers
                         topRight = (int(topRight[0]), int(topRight[1]))
                         bottomRight = (int(bottomRight[0]), int(bottomRight[1]))
