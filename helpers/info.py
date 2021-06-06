@@ -54,7 +54,7 @@ class info():
                     self.parent.trackingRenderToggle["fg"]="#ffcc33"
                     self.parent.trackingRenderToggle["bg"]="#333333"
 
-            except:
+            except Exception,e:
                 print("Unexpected error in ui thread:", sys.exc_info()[0])
-                print traceback.format_exc()
+                print str(e) 
                 time.sleep(1)
