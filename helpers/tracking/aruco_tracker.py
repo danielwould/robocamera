@@ -9,7 +9,8 @@ import threading
 
 
 class aruco_tracker:
-
+    small_jog = 0.5
+    large_jog = 1.2
 
     def __init__(self, controller):
          tracking = False
@@ -87,30 +88,30 @@ class aruco_tracker:
                                 
                             if ((self.deltaX <=-8) & (self.deltaX >=-100)):
                                 #jog x towards initial position
-                                xjog=0.2
+                                xjog=self.small_jog
                             if (self.deltaX <=-100):
                                 #jog x towards initial position
-                                xjog=0.8
+                                xjog=self.large_jog
                             
                             if ((self.deltaX >=8) & (self.deltaX <=100)):
-                                xjog=-0.2
+                                xjog=-self.small_jog
                             if (self.deltaX>=100 ):
-                                xjog=-0.8
+                                xjog=-self.large_jog
 
                                 
                             if ((self.deltaY <=-8) & (self.deltaY >=-100)):
                                 #jog x towards initial position
-                                yjog=0.2
+                                yjog=self.small_jog
                             
                             if (self.deltaY <=-100):
                                 #jog x towards initial position
-                                yjog=0.8
+                                yjog=self.large_jog
 
                             
                             if ((self.deltaY >=8) & (self.deltaY <=100) ):
-                                yjog=-0.2
+                                yjog=-self.small_jog
                             if (self.deltaY >=100):
-                                yjog=-0.8
+                                yjog=-self.large_jog
 
                             #print ("xjog {} yjog {}".format(xjog,yjog))
 
