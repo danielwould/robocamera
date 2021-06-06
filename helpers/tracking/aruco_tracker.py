@@ -1,6 +1,5 @@
 # import the necessary packages
 from imutils.video import VideoStream
-from pyzbar import pyzbar
 import argparse
 import datetime
 import imutils
@@ -75,39 +74,42 @@ class aruco_tracker:
                             firstTrack = False
                             initialPositionX=trackedX
                             initialPositionY=trackedY
+                            print ("storing initial glyph discovery position x{} y{}".format(initialPositionX,initialPositionY))
                         else:
                             if ((initialPositionX - trackedX) <=-10 & (initialPositionX - trackedX) >=-100):
                                 #jog x towards initial position
-                                xjog=0.5
+                                xjog=0.2
                             if ((initialPositionX - trackedX) <=-100):
                                 #jog x towards initial position
-                                xjog=1
+                                xjog=0.8
                             
                             if ((initialPositionX - trackedX) >=10 & (initialPositionX - trackedX) <=100 ):
-                                xjog=-0.5
+                                xjog=-0.2
                             if ((initialPositionX - trackedX) >=100 ):
-                                xjog=-1
+                                xjog=-0.8
 
                                 
                             if ((initialPositionY - trackedY) <=-10 & (initialPositionY - trackedY) >=-100):
                                 #jog x towards initial position
-                                yjog=0.5
+                                yjog=0.2
                             
                             if ((initialPositionY - trackedY) <=-100):
                                 #jog x towards initial position
-                                yjog=1
+                                yjog=0.8
 
                             
                             if ((initialPositionY - trackedY) >=10 & (initialPositionY - trackedY) <=100 ):
-                                yjog=-0.5
+                                yjog=-0.2
                             if ((initialPositionY - trackedY) >=100):
-                                yjog=-1
+                                yjog=-0.8
 
 
                             if ((xjog !=0) | (yjog!=0)):
                                 #move the opposite direction to the delta
                                 self.controller.tracking_jog(xjog,yjog)
-                                print ("jogging glyph back to starting location {} {}".format(self.deltaX, self.deltaY))
+                                print ("jogging glyph back to starting location {} {} by delta{} {}".format(initialPosotionX, initialPositionY, self.deltaX, self.deltaY))
+                                #give the move a chance to be made
+                                time.sleep(0.2)
                         lastX=trackedX
                         lastY=trackedY
 
