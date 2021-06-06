@@ -18,7 +18,7 @@ class aruco_tracker:
     def initialise_video(self):
         # initialize the video stream and allow the camera sensor to warm up
         print("[INFO] starting video stream...")
-        self.vs = VideoStream(src=2).start()
+        self.vs = VideoStream(src=2,resolution=(1920,1080)).start()
         #vs = VideoStream(usePiCamera=True).start()
         time.sleep(2.0)
         self.arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_100)
@@ -76,20 +76,20 @@ class aruco_tracker:
                             initialPositionY=trackedY
                             print ("storing initial glyph discovery position x{} y{}".format(initialPositionX,initialPositionY))
                         else:
-                            if ((initialPositionX - trackedX) <=-10 & (initialPositionX - trackedX) >=-100):
+                            if ((initialPositionX - trackedX) <=-5 & (initialPositionX - trackedX) >=-100):
                                 #jog x towards initial position
                                 xjog=0.2
                             if ((initialPositionX - trackedX) <=-100):
                                 #jog x towards initial position
                                 xjog=0.8
                             
-                            if ((initialPositionX - trackedX) >=10 & (initialPositionX - trackedX) <=100 ):
+                            if ((initialPositionX - trackedX) >=5 & (initialPositionX - trackedX) <=100 ):
                                 xjog=-0.2
                             if ((initialPositionX - trackedX) >=100 ):
                                 xjog=-0.8
 
                                 
-                            if ((initialPositionY - trackedY) <=-10 & (initialPositionY - trackedY) >=-100):
+                            if ((initialPositionY - trackedY) <=-5 & (initialPositionY - trackedY) >=-100):
                                 #jog x towards initial position
                                 yjog=0.2
                             
@@ -98,7 +98,7 @@ class aruco_tracker:
                                 yjog=0.8
 
                             
-                            if ((initialPositionY - trackedY) >=10 & (initialPositionY - trackedY) <=100 ):
+                            if ((initialPositionY - trackedY) >=5 & (initialPositionY - trackedY) <=100 ):
                                 yjog=-0.2
                             if ((initialPositionY - trackedY) >=100):
                                 yjog=-0.8
