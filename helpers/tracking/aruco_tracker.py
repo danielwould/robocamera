@@ -43,6 +43,7 @@ class aruco_tracker:
     def track(self, trackedId):
         lastX=0
         lastY=0
+        firstTrack=True
         while self.tracking:
             
             # grab the frame from the threaded video stream and resize it to
@@ -66,10 +67,14 @@ class aruco_tracker:
                         trackedY = int((tLeft[1] + bRight[1]) / 2.0)
                         self.deltaX = lastX-trackedX
                         self.deltaY = lastY-trackedY
-                        if ((self.deltaX) !=0 | (self.deltaY !=0) ):
-                            #move the opposite direction to the delta
-                            self.controller.tracking_jog(-(self.deltaX/10),-(self.deltaY/10))
-                            print ("tracking delta {} {}".format(self.deltaX,self.deltaY))
+                        if (firstTrack == True):
+                            #first instruction is always delta from a 0 which is a huge move
+                            firstTrack = False
+                        else:
+                            if ((self.deltaX) !=0 | (self.deltaY !=0) ):
+                                #move the opposite direction to the delta
+                                self.controller.tracking_jog(-(self.deltaX/10),-(self.deltaY/10))
+                                print ("tracking delta {} {}".format(self.deltaX,self.deltaY))
                         lastX=trackedX
                         lastY=trackedY
 
