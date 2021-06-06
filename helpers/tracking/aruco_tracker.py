@@ -67,8 +67,9 @@ class aruco_tracker:
                         self.deltaX = lastX-trackedX
                         self.deltaY = lastY-trackedY
                         if ((self.deltaX) !=0 | (self.deltaY !=0) ):
-                            self.controller.tracking_jog((self.deltaX/10),(self.deltaY/10))
-                        print ("tracking delta {} {}".format(self.deltaX,self.deltaY))
+                            #move the opposite direction to the delta
+                            self.controller.tracking_jog(-(self.deltaX/10),-(self.deltaY/10))
+                            print ("tracking delta {} {}".format(self.deltaX,self.deltaY))
                         lastX=trackedX
                         lastY=trackedY
 
