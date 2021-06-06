@@ -83,6 +83,8 @@ class aruco_tracker:
                         
                             print ("storing initial glyph discovery position x{} y{}".format(initialPositionX,initialPositionY))
                         else:
+                            print ("calculating jogging instruction to move glyph back to starting location {} {} by delta{} {}".format(initialPositionX, initialPositionY, self.deltaX, self.deltaY))
+                                
                             if ((initialPositionX - trackedX) <=-5 & (initialPositionX - trackedX) >=-100):
                                 #jog x towards initial position
                                 xjog=0.2
@@ -114,7 +116,6 @@ class aruco_tracker:
                             if ((xjog !=0) | (yjog!=0)):
                                 #move the opposite direction to the delta
                                 self.controller.tracking_jog(xjog,yjog)
-                                print ("jogging glyph back to starting location {} {} by delta{} {}".format(initialPositionX, initialPositionY, self.deltaX, self.deltaY))
                                 #give the move a chance to be made
                                 time.sleep(0.2)
                         lastX=trackedX
