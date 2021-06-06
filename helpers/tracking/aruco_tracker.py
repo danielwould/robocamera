@@ -78,7 +78,7 @@ class aruco_tracker:
                             initialPositionY=trackedY
                             inittopRight = (int(tRight[0]), int(tRight[1]))
                             initbottomRight = (int(bRight[0]), int(bRight[1]))
-                            initbottomLeft = (int(b[0]), int(bLeft[1]))
+                            initbottomLeft = (int(bLeft[0]), int(bLeft[1]))
                             inittopLeft = (int(tLeft[0]), int(tLeft[1]))
                         
                             print ("storing initial glyph discovery position x{} y{}".format(initialPositionX,initialPositionY))
