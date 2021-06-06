@@ -39,16 +39,23 @@ class aruco_tracker:
         #self.thread.daemon = True
         self.thread.start()
 
+    def set_tracking_target(self,id):
+        self.track_target_id=id
+
     def get_deltas(self):
         return self.deltaX,self.deltaY
 
     def track(self, trackedId):
+        
         lastX=0
         lastY=0
         firstTrack=True
         initialPositionX=0
         initialPositionY=0
         while self.tracking:
+            if (trackedId != self.track_target_id):
+                firstTrack=True
+                trackedId=self.track_target_id
             xjog=0
             yjog=0
             # grab the frame from the threaded video stream and resize it to
@@ -72,9 +79,12 @@ class aruco_tracker:
                         trackedY = int((tLeft[1] + bRight[1]) / 2.0)
                         if (trackedId == 1):
                             #tracker 1 always moves to position where it was to start with
+                            
                             self.deltaX = (initialPositionX - trackedX)
                             self.deltaY = (initialPositionY - trackedY)
                         if (trackedId == 2):
+                            height, width = image.shape[:2]
+                            
                             #tracker 2 always centres
                             self.deltaX = ((width/2) - trackedX)
                             self.deltaY = ((height/2) - trackedY)

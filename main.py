@@ -307,6 +307,7 @@ class RobotCamera(tk.Frame):
 
     def set_tracking_id(self,id):
         self.trackingId = id
+        self.tracker.set_tracking_target(id)
 
     def toggle_tracking_mode(self):
         print("toggle tracking")
