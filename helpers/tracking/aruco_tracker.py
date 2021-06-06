@@ -85,20 +85,20 @@ class aruco_tracker:
                         else:
                             print ("calculating jogging instruction to move glyph back to starting location {} {} by delta{} {}".format(initialPositionX, initialPositionY, self.deltaX, self.deltaY))
                                 
-                            if ((initialPositionX - trackedX) <=-5 & (initialPositionX - trackedX) >=-100):
+                            if ((initialPositionX - trackedX) <=-8 & (initialPositionX - trackedX) >=-100):
                                 #jog x towards initial position
                                 xjog=0.2
                             if ((initialPositionX - trackedX) <=-100):
                                 #jog x towards initial position
                                 xjog=0.8
                             
-                            if ((initialPositionX - trackedX) >=5 & (initialPositionX - trackedX) <=100 ):
+                            if ((initialPositionX - trackedX) >=8 & (initialPositionX - trackedX) <=100 ):
                                 xjog=-0.2
                             if ((initialPositionX - trackedX) >=100 ):
                                 xjog=-0.8
 
                                 
-                            if ((initialPositionY - trackedY) <=-5 & (initialPositionY - trackedY) >=-100):
+                            if ((initialPositionY - trackedY) <=-8 & (initialPositionY - trackedY) >=-100):
                                 #jog x towards initial position
                                 yjog=0.2
                             
@@ -107,11 +107,12 @@ class aruco_tracker:
                                 yjog=0.8
 
                             
-                            if ((initialPositionY - trackedY) >=5 & (initialPositionY - trackedY) <=100 ):
+                            if ((initialPositionY - trackedY) >=8 & (initialPositionY - trackedY) <=100 ):
                                 yjog=-0.2
                             if ((initialPositionY - trackedY) >=100):
                                 yjog=-0.8
 
+                            print ("xjog {} yjog {}".format(xjog,yjog))
 
                             if ((xjog !=0) | (yjog!=0)):
                                 #move the opposite direction to the delta
