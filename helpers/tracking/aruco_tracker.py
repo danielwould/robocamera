@@ -92,24 +92,24 @@ class aruco_tracker:
                                 #jog x towards initial position
                                 xjog=0.8
                             
-                            if ((self.deltaX >=8) & (deltaX <=100)):
+                            if ((self.deltaX >=8) & (self.deltaX <=100)):
                                 xjog=-0.2
-                            if (deltaX>=100 ):
+                            if (self.deltaX>=100 ):
                                 xjog=-0.8
 
                                 
-                            if ((deltaY <=-8) & (deltaY >=-100)):
+                            if ((self.deltaY <=-8) & (self.deltaY >=-100)):
                                 #jog x towards initial position
                                 yjog=0.2
                             
-                            if (deltaY <=-100):
+                            if (self.deltaY <=-100):
                                 #jog x towards initial position
                                 yjog=0.8
 
                             
-                            if ((deltaY >=8) & (deltaY <=100) ):
+                            if ((self.deltaY >=8) & (self.deltaY <=100) ):
                                 yjog=-0.2
-                            if (deltaY >=100):
+                            if (self.deltaY >=100):
                                 yjog=-0.8
 
                             print ("xjog {} yjog {}".format(xjog,yjog))
