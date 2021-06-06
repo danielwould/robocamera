@@ -75,13 +75,15 @@ class aruco_tracker:
                             self.deltaX = (initialPositionX - trackedX)
                             self.deltaY = (initialPositionY - trackedY)
                         if (trackedId == 2):
-                            height, width = image.shape[:2]
                             #tracker 2 always centres
                             self.deltaX = ((width/2) - trackedX)
                             self.deltaY = ((height/2) - trackedY)
                         if (firstTrack == True):
                             #first instruction is always delta from a 0 which is a huge move
                             firstTrack = False
+                            height, width = image.shape[:2]
+                            print ("frame size x{} y{}".format(width,height))
+                            
                             initialPositionX=trackedX
                             initialPositionY=trackedY
                             inittopRight = (int(tRight[0]), int(tRight[1]))
@@ -124,8 +126,9 @@ class aruco_tracker:
                         lastX=trackedX
                         lastY=trackedY
                         #print ("tracking tag at x{}y{}".format(trackedX, trackedY))
-                        if (self.render_window ==True):
-                            # convert each of the (x, y)-coordinate pairs to integers
+                    if (self.render_window ==True):
+                        # convert each of the (x, y)-coordinate pairs to integers
+                        if (trackedcorners):
                             (topLeft, topRight, bottomRight, bottomLeft) = trackedcorners
                 
                             topRight = (int(topRight[0]), int(topRight[1]))
@@ -138,23 +141,23 @@ class aruco_tracker:
                             cv2.line(image, bottomRight, bottomLeft, (0, 255, 0), 2)
                             cv2.line(image, bottomLeft, topLeft, (0, 255, 0), 2)
                             # compute and draw the center (x, y)-coordinates of the ArUco
-                            #draw inital location box
-                            cv2.line(image, inittopLeft, inittopRight, (0, 0, 255), 2)
-                            cv2.line(image, inittopRight, initbottomRight, (0, 0, 255), 2)
-                            cv2.line(image, initbottomRight, initbottomLeft, (0, 0, 255), 2)
-                            cv2.line(image, initbottomLeft, inittopLeft, (0, 0, 255), 2)
-                            
-                            # marker
-                            cX = int((topLeft[0] + bottomRight[0]) / 2.0)
-                            cY = int((topLeft[1] + bottomRight[1]) / 2.0)
-                            cv2.circle(image, (cX, cY), 4, (0, 0, 255), -1)
-                            # draw the ArUco marker ID on the image
-                            cv2.putText(image, str(markerID),
-                                (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX,
-                                0.5, (0, 255, 0), 2)
-                            #print("[INFO] ArUco marker ID: {}".format(markerID))
-                            # show the output image
-                            cv2.imshow("Image", image)
-                            key = cv2.waitKey(1) & 0xFF
+                        #draw inital location box
+                        cv2.line(image, inittopLeft, inittopRight, (0, 0, 255), 2)
+                        cv2.line(image, inittopRight, initbottomRight, (0, 0, 255), 2)
+                        cv2.line(image, initbottomRight, initbottomLeft, (0, 0, 255), 2)
+                        cv2.line(image, initbottomLeft, inittopLeft, (0, 0, 255), 2)
+                        
+                        # marker
+                        cX = int((topLeft[0] + bottomRight[0]) / 2.0)
+                        cY = int((topLeft[1] + bottomRight[1]) / 2.0)
+                        cv2.circle(image, (cX, cY), 4, (0, 0, 255), -1)
+                        # draw the ArUco marker ID on the image
+                        cv2.putText(image, str(markerID),
+                            (topLeft[0], topLeft[1] - 15), cv2.FONT_HERSHEY_SIMPLEX,
+                            0.5, (0, 255, 0), 2)
+                        #print("[INFO] ArUco marker ID: {}".format(markerID))
+                        # show the output image
+                        cv2.imshow("Image", image)
+                        key = cv2.waitKey(1) & 0xFF
 
             
