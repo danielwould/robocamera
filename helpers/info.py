@@ -1,6 +1,7 @@
 import time
 import threading
 import sys
+import traceback
 
 class info():
     def __init__(self, parent):
