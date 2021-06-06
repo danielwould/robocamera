@@ -292,12 +292,15 @@ class grbl_controller:
             self.logger.info("throttling jog move queue is {} long".format(self.queue.qsize()))
         time.sleep(0.1)
     
-    def tracking_jog(self, xdelta, ydelta):
+    def tracking_jog(self, xaxis_miltiplier, yaxis_multiplier):
         #only accept tracking jog if controller is idle otherwise jogging should feed into joystick moves
         if self.grbl_status == "Idle":
+            jogStep = self.current_feed_speed / 800;
+            xjogStep = jogStep*self.xjog_factor*xaxis_multiplier
+            yjogStep = jogStep*self.yjog_factor*yaxis_multiplier
             #only jog if the buffer is clear
             if (self.buffer_length==0):
-                self.queue.put("$J=G91 x{} y{} f{}\n".format(xdelta,ydelta,self.current_feed_speed))
+                self.queue.put("$J=G91 x{} y{} f{}\n".format(xjogStep,yjogStep,self.current_feed_speed))
             else:
                 self.logger.info("throttling tracking jog move queue is {} long".format(self.queue.qsize()))
         

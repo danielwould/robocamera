@@ -44,8 +44,11 @@ class aruco_tracker:
         lastX=0
         lastY=0
         firstTrack=True
+        initialPositionX=0
+        initialPositionY=0
         while self.tracking:
-            
+            xjog=0
+            yjog=0
             # grab the frame from the threaded video stream and resize it to
             # have a maximum width of 800 pixels
             image = self.vs.read()
@@ -65,16 +68,28 @@ class aruco_tracker:
                         (tLeft, tRight, bRight, bLeft) = trackedcorners
                         trackedX = int((tLeft[0] + bRight[0]) / 2.0)
                         trackedY = int((tLeft[1] + bRight[1]) / 2.0)
-                        self.deltaX = lastX-trackedX
-                        self.deltaY = lastY-trackedY
+                        self.deltaX = (self.initialPositionX - trackedX)
+                        self.deltaY = (self.initialPositionY - trackedY)
                         if (firstTrack == True):
                             #first instruction is always delta from a 0 which is a huge move
                             firstTrack = False
+                            initialPositionX=trackedX
+                            initialPositionY=trackedY
                         else:
-                            if ((self.deltaX) !=0 | (self.deltaY !=0) ):
+                            if ((self.initialPositionX - trackedX) <=-10):
+                                #jog x towards initial position
+                                xjog=1
+                            if  (self.initialPositionX - trackedX) >=10 ):
+                                xjog=-1
+                            if ((self.initialPositionY - trackedY) <=-10):
+                                #jog x towards initial position
+                                yjog=1
+                            if  (self.initialPositionY - trackedY) >=10 ):
+                                yjog=-1
+                            if ((xjog !=0) | (yjog!=0)):
                                 #move the opposite direction to the delta
-                                self.controller.tracking_jog(-(self.deltaX/10),-(self.deltaY/10))
-                                print ("tracking delta {} {}".format(self.deltaX,self.deltaY))
+                                self.controller.tracking_jog(jogx,jogy)
+                                print ("jogging glyph back to starting location {} {}".format(self.deltaX, self.deltaY))
                         lastX=trackedX
                         lastY=trackedY
 
