@@ -57,6 +57,7 @@ class RobotCamera(tk.Frame):
         self.MOVE_TOGGLE = self.FEED_RATE
         self.TRACKING = False
         self.TRACKING_RENDER = False
+        self.trackingId =1
 
         self.save_position_1 = waypoint(location(0, 0, 0), location(0, 0, 0))
         self.save_position_2 = waypoint(location(0, 0, 0), location(0, 0, 0))
@@ -96,6 +97,7 @@ class RobotCamera(tk.Frame):
         self.controller.reset()
         self.tracker = aruco_tracker(self.controller)
         self.tracker.initialise_video()
+
 
     def init_joysticks(self):
         self.joy = Joystick(self, self.gimbal_inst, self.crane_inst)
@@ -230,6 +232,10 @@ class RobotCamera(tk.Frame):
         self.moveTimeToggle.pack(padx=2,pady=2)
         self.trackingToggle = tk.Button(move_select, text="Tracking", fg="#ffcc33",bg="#333333", command=self.toggle_tracking_mode)
         self.trackingToggle.pack(padx=2,pady=2)
+        self.trackingToggle1 = tk.Button(move_select, text="Track 1", fg="#ffcc33",bg="#333333", command=lambda: self.set_tracking_id(1))
+        self.trackingToggle1.pack(padx=2,pady=2)
+        self.trackingToggle2 = tk.Button(move_select, text="Track 2", fg="#ffcc33",bg="#333333", command=lambda: self.set_tracking_id(2))
+        self.trackingToggle2.pack(padx=2,pady=2)
         self.trackingRenderToggle = tk.Button(move_select, text="TrackRender", fg="#ffcc33",bg="#333333", command=self.toggle_tracking_render)
         self.trackingRenderToggle.pack(padx=2,pady=2)
         #
@@ -299,6 +305,9 @@ class RobotCamera(tk.Frame):
         print(value)
         self.MOVE_TOGGLE = value
 
+    def set_tracking_id(self,id):
+        self.trackingId = id
+
     def toggle_tracking_mode(self):
         print("toggle tracking")
         if (self.TRACKING == True):
@@ -306,7 +315,7 @@ class RobotCamera(tk.Frame):
             self.tracker.stop_tracking()
         else:
             self.TRACKING = True
-            self.tracker.start_tracking(1)
+            self.tracker.start_tracking(self.trackingId)
 
     def toggle_tracking_render(self):
         print("toggle tracking render")

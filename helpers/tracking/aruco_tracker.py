@@ -70,8 +70,16 @@ class aruco_tracker:
                         (tLeft, tRight, bRight, bLeft) = trackedcorners
                         trackedX = int((tLeft[0] + bRight[0]) / 2.0)
                         trackedY = int((tLeft[1] + bRight[1]) / 2.0)
-                        self.deltaX = (initialPositionX - trackedX)
-                        self.deltaY = (initialPositionY - trackedY)
+                        if (trackedId == 1):
+                            #tracker 1 always moves to position where it was to start with
+                            self.deltaX = (initialPositionX - trackedX)
+                            self.deltaY = (initialPositionY - trackedY)
+                        if (trackedId == 2):
+                            width  = image.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)   # float `width`
+                            height = image.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)  # float `height`
+                            #tracker 2 always centres
+                            self.deltaX = ((width/2) - trackedX)
+                            self.deltaY = ((height/2) - trackedY)
                         if (firstTrack == True):
                             #first instruction is always delta from a 0 which is a huge move
                             firstTrack = False
@@ -92,22 +100,16 @@ class aruco_tracker:
                             if (self.deltaX <=-50):
                                 #jog x towards initial position
                                 xjog=self.large_jog
-                            
                             if ((self.deltaX >=8) & (self.deltaX <=50)):
                                 xjog=-self.small_jog
                             if (self.deltaX>=50 ):
                                 xjog=-self.large_jog
-
-                                
                             if ((self.deltaY <=-8) & (self.deltaY >=-50)):
                                 #jog x towards initial position
                                 yjog=self.small_jog
-                            
                             if (self.deltaY <=-50):
                                 #jog x towards initial position
                                 yjog=self.large_jog
-
-                            
                             if ((self.deltaY >=8) & (self.deltaY <=50) ):
                                 yjog=-self.small_jog
                             if (self.deltaY >=50):

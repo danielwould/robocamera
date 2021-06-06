@@ -36,6 +36,16 @@ class info():
                 else:
                     self.parent.trackingToggle["fg"]="#ffcc33"
                     self.parent.trackingToggle["bg"]="#333333"
+                if (self.parent.trackingID ==1):
+                    self.parent.trackingToggle1["bg"]="#ffcc33"
+                    self.parent.trackingToggle1["fg"]="#333333"
+                    self.parent.trackingToggle2["fg"]="#ffcc33"
+                    self.parent.trackingToggle2["bg"]="#333333"
+                else:
+                    self.parent.trackingToggle1["fg"]="#ffcc33"
+                    self.parent.trackingToggle1["bg"]="#333333"
+                    self.parent.trackingToggle2["bg"]="#ffcc33"
+                    self.parent.trackingToggle2["fg"]="#333333"
                 if self.parent.TRACKING_RENDER == True:
                     self.parent.trackingRenderToggle["bg"]="#ffcc33"
                     self.parent.trackingRenderToggle["fg"]="#333333"
