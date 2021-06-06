@@ -18,6 +18,7 @@ from helpers.CNC import CNC
 from helpers.joystick import Joystick
 from helpers.info import info
 from helpers.grbl_controller import grbl_controller
+from helpers.tracking.aruco_tracker import aruco_tracker
 import os
 import sys
 try:
@@ -54,6 +55,7 @@ class RobotCamera(tk.Frame):
         self.FEED_RATE = 0
         self.MOVE_TIME = 1
         self.MOVE_TOGGLE = self.FEED_RATE
+        self.TRACKING = False
 
         self.save_position_1 = waypoint(location(0, 0, 0), location(0, 0, 0))
         self.save_position_2 = waypoint(location(0, 0, 0), location(0, 0, 0))
@@ -91,6 +93,8 @@ class RobotCamera(tk.Frame):
         self.crane_inst.set_small_step_tilt(2)
         self.crane_inst.set_big_step_tilt(10)
         self.controller.reset()
+        self.tracker = aruco_tracker(self.controller)
+        self.tracker.initialise_video()
 
     def init_joysticks(self):
         self.joy = Joystick(self, self.gimbal_inst, self.crane_inst)
@@ -223,7 +227,8 @@ class RobotCamera(tk.Frame):
         self.moveFeedToggle.pack(padx=2,pady=2)
         self.moveTimeToggle = tk.Button(move_select, text="Move Time", fg="#ffcc33",bg="#333333", command=lambda: self.toggle_move_mode(self.MOVE_TIME))
         self.moveTimeToggle.pack(padx=2,pady=2)
-
+        self.trackingToggle = tk.Button(move_select, text="Tracking", fg="#ffcc33",bg="#333333", command=self.toggle_tracking_mode)
+        self.trackingToggle.pack(padx=2,pady=2)
         #
         #manipulate waypoints
         #
@@ -291,7 +296,15 @@ class RobotCamera(tk.Frame):
         print(value)
         self.MOVE_TOGGLE = value
 
-   
+    def toggle_tracking_mode(self):
+        print("toggle tracking")
+        if (self.TRACKING == True):
+            self.TRACKING = False
+            self.tracker.stop_tracking()
+        else:
+            self.TRACKING = True
+            self.tracker.start_tracking(1)
+
 
     def set_feed_rate(self, feedval):
         print("updating feeddefault from {} to {}".format(

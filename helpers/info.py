@@ -30,6 +30,13 @@ class info():
                     self.parent.moveTimeToggle["bg"]="#333333"
                     self.parent.moveFeedToggle["fg"]="#333333"
                     self.parent.moveTimeToggle["fg"]="#ffcc33"
+                if self.parent.TRACKING == True:
+                    self.parent.trackingToggle["bg"]="#ffcc33"
+                    self.parent.trackingToggle["fg"]="#333333"
+                else:
+                    self.parent.trackingToggle["fg"]="#ffcc33"
+                    self.parent.trackingToggle["bg"]="#333333"
+
             except:
                 print("Unexpected error in ui thread:", sys.exc_info()[0])
                 time.sleep(1)
