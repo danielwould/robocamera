@@ -76,6 +76,11 @@ class aruco_tracker:
                             firstTrack = False
                             initialPositionX=trackedX
                             initialPositionY=trackedY
+                            inittopRight = (int(tRight[0]), int(tRight[1]))
+                            initbottomRight = (int(bRight[0]), int(bRight[1]))
+                            initbottomLeft = (int(b[0]), int(bLeft[1]))
+                            inittopLeft = (int(tLeft[0]), int(tLeft[1]))
+                        
                             print ("storing initial glyph discovery position x{} y{}".format(initialPositionX,initialPositionY))
                         else:
                             if ((initialPositionX - trackedX) <=-5 & (initialPositionX - trackedX) >=-100):
@@ -129,6 +134,12 @@ class aruco_tracker:
                         cv2.line(image, bottomRight, bottomLeft, (0, 255, 0), 2)
                         cv2.line(image, bottomLeft, topLeft, (0, 255, 0), 2)
                         # compute and draw the center (x, y)-coordinates of the ArUco
+                        #draw inital location box
+                        cv2.line(image, inittopLeft, inittopRight, (0, 0, 255), 2)
+                        cv2.line(image, inittopRight, initbottomRight, (0, 0, 255), 2)
+                        cv2.line(image, initbottomRight, initbottomLeft, (0, 0, 255), 2)
+                        cv2.line(image, initbottomLeft, inittopLeft, (0, 0, 255), 2)
+                        
                         # marker
                         cX = int((topLeft[0] + bottomRight[0]) / 2.0)
                         cY = int((topLeft[1] + bottomRight[1]) / 2.0)
