@@ -13,6 +13,7 @@ class aruco_tracker:
     large_jog = 1.2
     deltaX = 0
     deltaY = 0
+    staticTracking = True
 
     def __init__(self, controller):
          tracking = False
@@ -30,6 +31,8 @@ class aruco_tracker:
     def render_tracker(self, status):
         self.render_window = status
         
+    def set_static_tracking(self, static_track):
+        self.staticTracking=static_track
 
     def stop_tracking(self):
         self.tracking=False
@@ -45,8 +48,8 @@ class aruco_tracker:
     def set_tracking_target(self,id):
         self.track_target_id=id
 
-    def get_deltas(self):
-        return self.deltaX,self.deltaY
+    def get_jogmultipliers(self):
+        return self.jogX,self.jogY
 
     def track(self, trackedId):
         
@@ -131,11 +134,15 @@ class aruco_tracker:
 
                             #print ("xjog {} yjog {}".format(xjog,yjog))
 
-                            if ((xjog !=0) | (yjog!=0)):
+                            if ((self.staticTracking == True) & ((xjog !=0) | (yjog!=0))):
                                 #move the opposite direction to the delta
                                 self.controller.tracking_jog(xjog,yjog)
                                 #give the move a chance to be made
                                 time.sleep(0.1)
+                            else{
+                                self.jogx = xjog
+                                self.jogy = yjog
+                            }
                         lastX=trackedX
                         lastY=trackedY
                         #print ("tracking tag at x{}y{}".format(trackedX, trackedY))

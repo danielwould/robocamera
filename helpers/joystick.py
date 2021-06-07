@@ -74,15 +74,18 @@ class Joystick():
                 #combined jog
                 #
                 if ( (xjog != 0)| (yjog != 0) | (ajog!= 0) | (bjog != 0) ):
-                    #if ((self.parent.TRACKING == True) & ((xjog==0) & (yjog==0)) ):
+                    self.parent.tracker.set_static_tracking(False)
+                    self.control_last_toggled = time.time()
+                    if ((self.parent.TRACKING == True) & ((xjog==0) & (yjog==0)) ):
                         #if we're tracking allow tracking input to joystick jog
-                    #    (trackingxjog, trackingyjog) = self.parent.tracker.get_jogmultipliers()
-                    #    print("adjusting jog with tracking deltas x{} y{}".format(trackingxjog,trackingyjog))
-                    #    self.parent.controller.jog(trackingxjog,trackingyjog,ajog,bjog)   
-                    #else: 
-                    self.parent.controller.jog(xjog,yjog,ajog,bjog)             
+                        (trackingxjog, trackingyjog) = self.parent.tracker.get_jogmultipliers()
+                        print("adjusting jog with tracking deltas x{} y{}".format(trackingxjog,trackingyjog))
+                        self.parent.controller.jog(trackingxjog,trackingyjog,ajog,bjog)   
+                    else: 
+                        self.parent.controller.jog(xjog,yjog,ajog,bjog)             
 
-
+                if (time.time()-control_last_toggled > 0.5):
+                    self.parent.tracker.set_static_tracking(True)
  
                 buttons = joystick.get_numbuttons()
                 if time.time() - last_command_sent_at > 0.2:
