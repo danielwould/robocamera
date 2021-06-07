@@ -11,6 +11,8 @@ import threading
 class aruco_tracker:
     small_jog = 0.2
     large_jog = 1.2
+    deltaX = 0
+    deltaY = 0
 
     def __init__(self, controller):
          tracking = False
