@@ -74,7 +74,7 @@ class Joystick():
                 #combined jog
                 #
                 if ( (xjog != 0)| (yjog != 0) | (ajog!= 0) | (bjog != 0) ):
-                    if (self.parent.TRACKING == True & (xjog==0) & (yjog==0) ):
+                    if ((self.parent.TRACKING == True) & ((xjog==0) & (yjog==0)) ):
                         #if we're tracking allow tracking input to joystick jog
                         (deltax, deltay) = self.parent.tracker.get_deltas()
                         self.parent.controller.jog(deltax,deltay,ajog,bjog)   
