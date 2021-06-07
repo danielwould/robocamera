@@ -13,6 +13,8 @@ class aruco_tracker:
     large_jog = 1.2
     deltaX = 0
     deltaY = 0
+    jogX=0
+    jogY=0
     staticTracking = True
 
     def __init__(self, controller):
@@ -139,10 +141,10 @@ class aruco_tracker:
                                 self.controller.tracking_jog(xjog,yjog)
                                 #give the move a chance to be made
                                 time.sleep(0.1)
-                            else{
-                                self.jogx = xjog
-                                self.jogy = yjog
-                            }
+                            else:
+                                self.jogX = xjog
+                                self.jogY = yjog
+                            
                         lastX=trackedX
                         lastY=trackedY
                         #print ("tracking tag at x{}y{}".format(trackedX, trackedY))
