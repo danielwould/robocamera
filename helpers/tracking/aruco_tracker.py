@@ -9,8 +9,8 @@ import threading
 
 
 class aruco_tracker:
-    small_jog = 0.2
-    large_jog = 1.2
+    
+    jog_multiplier = 1.5
     deltaX = 0
     deltaY = 0
     jogX=0
@@ -116,11 +116,11 @@ class aruco_tracker:
                             height, width = image.shape[:2]
                             
                             if (abs(self.deltaX) > 20):
-                                xjog = -1*(self.deltaX/width)
+                                xjog = -1*(self.deltaX/width)*self.jog_multiplier
                             else:
                                 xjog=0
                             if (abs(self.deltaY) > 20):                            
-                                yjog = -1*(self.deltaY / height)
+                                yjog = -1*(self.deltaY / height)*self.jog_multiplier
                             else:
                                 yjog=0
                             #print ("xjog {} yjog {}".format(xjog,yjog))
