@@ -117,6 +117,36 @@ MODAL_MODES = {
     "M9": "coolant",
 }
 prgpath = os.path.abspath(os.path.dirname(__file__))
+#steps/mm x,y,z,a,b
+#X $100=80.000
+#Y $101=80.000
+#Z $102=40.000
+#tecnically a/b steps/degree
+#A $103=80.000
+#B $104=40.000
+
+#max rate mm/min
+#X $110=9000.000
+#Y $111=9000.000
+#Z $112=300.000
+#max rate mm/degree
+#A $113=9000.000
+#B $114=9000.000
+
+#accel mm/s2
+#X #$120=10.000
+#Y #$121=10.000
+#Z #$122=10.000
+#accel mm/deg2
+#A $123=100.000
+#B $124=100.000
+
+#max travel mm or degrees
+#X $130=200.000
+#Y $131=200.000
+#Z $132=200.000
+#A $133=360.000
+#B $134=180.000
 
 
 class grbl_controller:
@@ -280,7 +310,8 @@ class grbl_controller:
         time.sleep(0.1)
 
     def jog(self, xaxis_multiplier, yaxis_multiplier, aaxis_multiplier, baxis_multiplier):
-        jogStep = self.current_feed_speed / 800;
+
+        jogStep = self.current_feed_speed / 600;
         xjogStep = jogStep*self.xjog_factor*xaxis_multiplier
         yjogStep = jogStep*self.yjog_factor*yaxis_multiplier
         ajogStep = jogStep*self.ajog_factor*aaxis_multiplier
@@ -292,10 +323,13 @@ class grbl_controller:
             self.logger.info("throttling jog move queue is {} long".format(self.queue.qsize()))
         time.sleep(0.1)
     
+    def jog_cancel(self):
+        self.serial_write("0x85")
+        
     def tracking_jog(self, xaxis_multiplier, yaxis_multiplier):
         #only accept tracking jog if controller is idle otherwise jogging should feed into joystick moves
         #if self.grbl_status == "Idle":
-        jogStep = self.current_feed_speed / 800;
+        jogStep = self.current_feed_speed / 600;
         xjogStep = jogStep*self.xjog_factor*xaxis_multiplier
         yjogStep = jogStep*self.yjog_factor*yaxis_multiplier
         #only jog if the buffer is clear

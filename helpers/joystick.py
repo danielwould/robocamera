@@ -5,6 +5,7 @@ import time
 class Joystick():
 
     deadzone = 0.05
+    joystick_moving = False
     
     
     def __init__(self, parent, gimbal,crane):
@@ -74,6 +75,7 @@ class Joystick():
                 #combined jog
                 #
                 if ( (xjog != 0)| (yjog != 0) | (ajog!= 0) | (bjog != 0) ):
+                    self.joystick_moving=True
                     self.parent.tracker.set_static_tracking(False)
                     self.control_last_toggled = time.time()
                     if ((self.parent.TRACKING == True) & ((xjog==0) & (yjog==0)) ):
@@ -83,6 +85,10 @@ class Joystick():
                         self.parent.controller.jog(trackingxjog,trackingyjog,ajog,bjog)   
                     else: 
                         self.parent.controller.jog(xjog,yjog,ajog,bjog)             
+                else:
+                    if (self.joystick_moving ==True):
+                        self.parent.controller.jog_cancel()
+                        self.joystick_moving=False
 
                 if (time.time()-control_last_toggled > 0.5):
                     self.parent.tracker.set_static_tracking(True)
