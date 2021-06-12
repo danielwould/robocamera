@@ -58,6 +58,7 @@ class aruco_tracker:
         lastX=0
         lastY=0
         seen_waypoint_marker=False
+        marker4=False
         firstTrack=True
         initialPositionX=0
         initialPositionY=0
