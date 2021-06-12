@@ -68,7 +68,8 @@ class aruco_tracker:
             yjog=0
             # grab the frame from the threaded video stream and resize it to
             # have a maximum width of 800 pixels
-            image = self.vs.read()
+            frame = self.vs.read()
+            image = imutils.rotate(frame,180)
             #image = imutils.resize(image, width=800)
             # find the barcodes in the frame and decode each of the barcodes
             arucoParams = cv2.aruco.DetectorParameters_create()
