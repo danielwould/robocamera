@@ -17,10 +17,11 @@ class aruco_tracker:
     jogY=0
     staticTracking = True
 
-    def __init__(self, controller):
+    def __init__(self, controller, ui):
          tracking = False
          self.controller = controller
          self.render_window = False
+         self.parent=ui
 
     def initialise_video(self):
         # initialize the video stream and allow the camera sensor to warm up

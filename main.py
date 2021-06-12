@@ -95,7 +95,7 @@ class RobotCamera(tk.Frame):
         self.crane_inst.set_small_step_tilt(2)
         self.crane_inst.set_big_step_tilt(10)
         self.controller.reset()
-        self.tracker = aruco_tracker(self.controller)
+        self.tracker = aruco_tracker(self.controller,self)
         self.tracker.initialise_video()
 
 
@@ -493,7 +493,7 @@ class RobotCamera(tk.Frame):
         self.info_update.stop()
         self.controller.stop()
         self.master.destroy()
-        
+        self.tracker.stop_tracking()
         sys.exit(0)
 
 class editWaypointPopup(object):
