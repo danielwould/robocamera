@@ -129,7 +129,6 @@ class aruco_tracker:
                                 #move the opposite direction to the delta
                                 self.controller.tracking_jog(xjog,yjog)
                                 #give the move a chance to be made
-                                time.sleep(0.1)
                                 self.jogX=0
                                 self.jogY=0
                             else:
