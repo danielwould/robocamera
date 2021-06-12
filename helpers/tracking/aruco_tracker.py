@@ -82,7 +82,7 @@ class aruco_tracker:
                 # loop over the detected ArUCo corners
                 maker4=False;
                 for (markerCorner, markerID) in zip(corners, ids):
-                    if (markerID == 4 & (seen_waypoint_maker ==False)):
+                    if (markerID == 4 & (seen_waypoint_marker ==False)):
                         #set waypoint
                         self.parent.add_waypoint()
                         #set toggle so we don't add again until we've had at least one frame without this marker
