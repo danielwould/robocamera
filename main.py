@@ -234,8 +234,10 @@ class RobotCamera(tk.Frame):
         self.trackingToggle.pack(padx=2,pady=2)
         self.trackingToggle1 = tk.Button(move_select, text="Track 1", fg="#ffcc33",bg="#333333", command=lambda: self.set_tracking_id(1))
         self.trackingToggle1.pack(padx=2,pady=2)
-        self.trackingToggle2 = tk.Button(move_select, text="Track 2", fg="#ffcc33",bg="#333333", command=lambda: self.set_tracking_id(2))
+        self.trackingToggle2 = tk.Button(move_select, text="Centre Tracker", fg="#ffcc33",bg="#333333", command=lambda: self.set_tracking_id(2))
         self.trackingToggle2.pack(padx=2,pady=2)
+        self.trackingToggle3 = tk.Button(move_select, text="1/3 Tracker", fg="#ffcc33",bg="#333333", command=lambda: self.set_tracking_id(3))
+        self.trackingToggle3.pack(padx=2,pady=2)
         self.trackingRenderToggle = tk.Button(move_select, text="TrackRender", fg="#ffcc33",bg="#333333", command=self.toggle_tracking_render)
         self.trackingRenderToggle.pack(padx=2,pady=2)
         #
@@ -244,7 +246,7 @@ class RobotCamera(tk.Frame):
         wayPoint_controls = Frame(Toggle_controls,relief=tk.RIDGE)
         wayPoint_controls.pack(side="top")
         self.addWaypoint = tk.Button(wayPoint_controls, text="Add Waypoint", fg="#333333",bg="#ffcc33",
-                              command=lambda: self.add_waypoint(self.dwell_time.get()))
+                              command= self.add_waypoint)
         self.addWaypoint.pack(padx=2,pady=2)
         self.deleteWaypoint = tk.Button(wayPoint_controls, text="Del Waypoint", fg="#333333",bg="#ffcc33",
                               command=self.delete_waypoint)
@@ -339,7 +341,7 @@ class RobotCamera(tk.Frame):
         
 
 
-    def add_waypoint(self,dwell_input_text):
+    def add_waypoint(self):
         print("add waypoint")  # (x, y, z,focus, feed), dwell time
         crane_position = self.crane_inst.get_current_location()
         gimbal_position = self.gimbal_inst.get_current_location()

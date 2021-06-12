@@ -42,11 +42,22 @@ class info():
                     self.parent.trackingToggle1["fg"]="#333333"
                     self.parent.trackingToggle2["fg"]="#ffcc33"
                     self.parent.trackingToggle2["bg"]="#333333"
-                else:
+                    self.parent.trackingToggle3["fg"]="#ffcc33"
+                    self.parent.trackingToggle3["bg"]="#333333"
+                elif (self.parent.trackingId == 2):
                     self.parent.trackingToggle1["fg"]="#ffcc33"
                     self.parent.trackingToggle1["bg"]="#333333"
                     self.parent.trackingToggle2["bg"]="#ffcc33"
                     self.parent.trackingToggle2["fg"]="#333333"
+                    self.parent.trackingToggle3["fg"]="#ffcc33"
+                    self.parent.trackingToggle3["bg"]="#333333"
+                elif (self.parent.trackingId == 3):
+                    self.parent.trackingToggle1["fg"]="#ffcc33"
+                    self.parent.trackingToggle1["bg"]="#333333"
+                    self.parent.trackingToggle2["fg"]="#ffcc33"
+                    self.parent.trackingToggle2["bg"]="#333333"
+                    self.parent.trackingToggle3["bg"]="#ffcc33"
+                    self.parent.trackingToggle3["fg"]="#333333"
                 if self.parent.TRACKING_RENDER == True:
                     self.parent.trackingRenderToggle["bg"]="#ffcc33"
                     self.parent.trackingRenderToggle["fg"]="#333333"

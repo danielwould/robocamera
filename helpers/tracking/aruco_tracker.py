@@ -57,6 +57,7 @@ class aruco_tracker:
         
         lastX=0
         lastY=0
+        seen_waypoint_marker=False
         firstTrack=True
         initialPositionX=0
         initialPositionY=0
@@ -79,7 +80,15 @@ class aruco_tracker:
                 # flatten the ArUco IDs list
                 ids = ids.flatten()
                 # loop over the detected ArUCo corners
+                maker4=False;
                 for (markerCorner, markerID) in zip(corners, ids):
+                    if (markerID == 4 & (seen_waypoint_maker ==False)):
+                        #set waypoint
+                        self.parent.add_waypoint()
+                        #set toggle so we don't add again until we've had at least one frame without this marker
+                        seen_waypoint_marker=True
+                        marker4=True
+
                     if markerID == trackedId:
                         self.tracking_tag=True
                         trackedcorners = markerCorner.reshape((4, 2))
@@ -97,6 +106,12 @@ class aruco_tracker:
                             #tracker 2 always centres
                             self.deltaX = ((width/2) - trackedX)
                             self.deltaY = ((height/2) - trackedY)
+                        if (trackedId == 3):
+                            height, width = image.shape[:2]
+                            
+                            #tracker 3 always centres horzontally and puts glyph at lower third
+                            self.deltaX = ((width/2) - trackedX)
+                            self.deltaY = ((height/3) - trackedY)
                         if (firstTrack == True):
                             #first instruction is always delta from a 0 which is a huge move
                             firstTrack = False
@@ -171,5 +186,8 @@ class aruco_tracker:
                         # show the output image
                         cv2.imshow("Image", image)
                         key = cv2.waitKey(1) & 0xFF
+                if (marker4==False):
+                    #if we didn't see marker 4 this time reset the toggle
+                    seen_waypoint_marker=False
 
             
