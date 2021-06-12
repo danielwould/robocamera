@@ -116,11 +116,11 @@ class aruco_tracker:
                             height, width = image.shape[:2]
                             
                             if (abs(self.deltaX) > 20):
-                                NewXJog = ((self.deltaX) / (width/2))
+                                NewXJog = (self.deltaX/width)
                             else:
                                 NewXJog=0
                             if (abs(self.deltaY) > 20):                            
-                                NewYJog = (((self.deltaY) / (height/2)
+                                NewYJog = (self.deltaY / height)
                             else:
                                 NewYJog=0
                             
