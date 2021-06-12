@@ -123,9 +123,6 @@ class aruco_tracker:
                                 yjog = (self.deltaY / height)
                             else:
                                 yjog=0
-                            
-                            print ("calculated jogs on scale x {} y {}".format(NewXJog,NewYJog))
-                            
                             #print ("xjog {} yjog {}".format(xjog,yjog))
 
                             if ((self.staticTracking == True) & ((xjog !=0) | (yjog!=0))):
