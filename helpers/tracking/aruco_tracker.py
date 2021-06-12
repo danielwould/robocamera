@@ -115,13 +115,15 @@ class aruco_tracker:
                             #print ("calculating jogging instruction to move glyph back to starting location {} {} by delta{} {}".format(initialPositionX, initialPositionY, self.deltaX, self.deltaY))
                             height, width = image.shape[:2]
                             
-                            OldXRange = width/2
-                            NewXRange = self.large_jog-self.small_jog  
-                            NewXJog = (((self.deltaX - 10) * NewXRange) / OldXRange) + self.small_jog
+                            if (abs(self.deltaX) > 20):
+                                NewXJog = ((self.deltaX) / (width/2))
+                            else:
+                                NewXJog=0
+                            if (abs(self.deltaY) > 20):                            
+                                NewYJog = (((self.deltaY) / (height/2)
+                            else:
+                                NewYJog=0
                             
-                            OldYRange = height/2
-                            NewYRange = self.large_jog-self.small_jog  
-                            NewYJog = (((self.deltaY - 10) * NewYRange) / OldYRange) + self.small_jog
                             print ("calculated jogs on scale x {} y {}".format(NewXJog,NewYJog))
                             if ((self.deltaX <=-8) & (self.deltaX >=-50)):
                                 #jog x towards initial position
