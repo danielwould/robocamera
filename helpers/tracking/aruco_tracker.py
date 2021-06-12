@@ -10,7 +10,7 @@ import threading
 
 class aruco_tracker:
     
-    jog_multiplier = 1.5
+    jog_multiplier = 5
     deltaX = 0
     deltaY = 0
     jogX=0
