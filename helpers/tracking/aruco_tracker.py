@@ -116,36 +116,16 @@ class aruco_tracker:
                             height, width = image.shape[:2]
                             
                             if (abs(self.deltaX) > 20):
-                                NewXJog = (self.deltaX/width)
+                                xjog = (self.deltaX/width)
                             else:
-                                NewXJog=0
+                                xjog=0
                             if (abs(self.deltaY) > 20):                            
-                                NewYJog = (self.deltaY / height)
+                                yjog = (self.deltaY / height)
                             else:
-                                NewYJog=0
+                                yjog=0
                             
                             print ("calculated jogs on scale x {} y {}".format(NewXJog,NewYJog))
-                            if ((self.deltaX <=-8) & (self.deltaX >=-50)):
-                                #jog x towards initial position
-                                xjog=self.small_jog
-                            if (self.deltaX <=-50):
-                                #jog x towards initial position
-                                xjog=self.large_jog
-                            if ((self.deltaX >=8) & (self.deltaX <=50)):
-                                xjog=-self.small_jog
-                            if (self.deltaX>=50 ):
-                                xjog=-self.large_jog
-                            if ((self.deltaY <=-8) & (self.deltaY >=-50)):
-                                #jog x towards initial position
-                                yjog=self.small_jog
-                            if (self.deltaY <=-50):
-                                #jog x towards initial position
-                                yjog=self.large_jog
-                            if ((self.deltaY >=8) & (self.deltaY <=50) ):
-                                yjog=-self.small_jog
-                            if (self.deltaY >=50):
-                                yjog=-self.large_jog
-
+                            
                             #print ("xjog {} yjog {}".format(xjog,yjog))
 
                             if ((self.staticTracking == True) & ((xjog !=0) | (yjog!=0))):
@@ -153,6 +133,8 @@ class aruco_tracker:
                                 self.controller.tracking_jog(xjog,yjog)
                                 #give the move a chance to be made
                                 time.sleep(0.1)
+                                self.jogX=0
+                                self.jogY=0
                             else:
                                 self.jogX = xjog
                                 self.jogY = yjog
