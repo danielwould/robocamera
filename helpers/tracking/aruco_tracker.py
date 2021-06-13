@@ -108,6 +108,13 @@ class aruco_tracker:
                         seen_sequence_marker=True
                         marker5=True
 
+                    if (markerID == 11):
+                        self.set_tracking_target(1)
+                    if (markerID == 12):
+                        self.set_tracking_target(2)
+                    if (markerID == 13):
+                        self.set_tracking_target(3)
+
                     if markerID == trackedId:
                         self.tracking_tag=True
                         (tLeft, tRight, bRight, bLeft) = trackedcorners
