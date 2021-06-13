@@ -59,7 +59,9 @@ class aruco_tracker:
         lastX=0
         lastY=0
         seen_waypoint_marker=False
+        seen_sequence_marker=False
         waypoint_last_set=time.time()
+        sequence_started=time.time()
         marker4=False
         firstTrack=True
         initialPositionX=0
@@ -83,7 +85,9 @@ class aruco_tracker:
                 # flatten the ArUco IDs list
                 ids = ids.flatten()
                 # loop over the detected ArUCo corners
-                marker4=False;
+                marker4 = False
+                marker5 = False
+
                 for (markerCorner, markerID) in zip(corners, ids):
                     if (markerID == 4 & (seen_waypoint_marker ==False) & ((time.time()-waypoint_last_set)>10)):
                         #set waypoint
@@ -92,6 +96,13 @@ class aruco_tracker:
                         #set toggle so we don't add again until we've had at least one frame without this marker
                         seen_waypoint_marker=True
                         marker4=True
+                    if (markerID == 5 & (seen_sequence_marker ==False) & ((time.time()-sequence_started)>10)):
+                        #set waypoint
+                        self.parent.run_sequence()
+                        sequence_started = time.time()
+                        #set toggle so we don't add again until we've had at least one frame without this marker
+                        seen_sequence_marker=True
+                        marker5=True
 
                     if markerID == trackedId:
                         self.tracking_tag=True
@@ -194,5 +205,8 @@ class aruco_tracker:
                 if (marker4==False):
                     #if we didn't see marker 4 this time reset the toggle
                     seen_waypoint_marker=False
+                if (marker5==False):
+                    #if we didn't see marker 4 this time reset the toggle
+                    seen_sequence_marker=False
 
             

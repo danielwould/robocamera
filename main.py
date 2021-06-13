@@ -352,9 +352,14 @@ class RobotCamera(tk.Frame):
         wp.set_dwell_time(self.dwell_time.get())
         wp.set_feed_rate(self.controller.get_feed_speed())
         wp.set_travel_duration(self.controller.get_move_duration())
-       
-        self.sequence_steps.add_waypoint(wp)
-        self.waypoint_listbox.insert("end","{} dwell for:{}".format(wp.location_str(),self.dwell_time.get()))
+        index = self.waypoint_listbox.size()-1
+        last_waypoint = self.sequence_steps.get_step(index)
+        new_waypoint_str = "{} dwell for:{}".format(wp.location_str(),self.dwell_time.get())
+        if (last_waypoint == new_waypoint_str):
+            print ("skipping duplicate waypoint")
+        else:
+            self.sequence_steps.add_waypoint(wp)
+            self.waypoint_listbox.insert("end",new_waypoint_str)
 
     def delete_waypoint(self):
         # todo allow for deleting specific waypoint item
@@ -392,6 +397,14 @@ class RobotCamera(tk.Frame):
 
 
     def trigger_whole_sequence(self):
+        #turn off tracking if it's on
+        was_tracking = False
+        if (self.TRACKING == True):
+            self.TRACKING = False
+            self.tracker.stop_tracking()
+            was_tracking = True
+        
+        self.tracker.stop_tracking()
         if len(self.sequence_steps.waypoints) > 0:
             for i in range(len(self.sequence_steps.waypoints)): 
         
@@ -403,9 +416,10 @@ class RobotCamera(tk.Frame):
                     
         
         self.controller.print_gcode_sequence()
-        
-
         self.controller.run_sequence()
+        if (was_tracking):
+            self.TRACKING = True
+            self.tracker.start_tracking(self.trackingId)
         
         #set location to last wp
 

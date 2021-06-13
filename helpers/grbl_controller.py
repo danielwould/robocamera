@@ -387,6 +387,11 @@ class grbl_controller:
         for gcode in self.gcode_sequence:
             self.queue.put(gcode+"\n")
         self.reset_gcode_sequence()
+        #wait for idle again
+        time.sleep(2)
+        while (self.grbl_status != "Idle"):
+            time.sleep(0.5)
+
 
     def sendGCode(self, cmd):
         self.logger.info("{} : instruction:\n{}".format(time.ctime(), cmd))
