@@ -317,15 +317,15 @@ class grbl_controller:
 
     def zoom_full_out(self):
         if (self.z_min is not None):
-            self.absolute_move(0,0,self.z_min,0,0,self.get_feed_speed(),0)
+            self.absolute_move(self.mcontrol.cnc_obj.vars["wx"],self.mcontrol.cnc_obj.vars["wy"],self.z_min,self.mcontrol.cnc_obj.vars["wa"],self.mcontrol.cnc_obj.vars["wb"],self.get_feed_speed(),0)
 
     def zoom_full_in(self):
         if (self.z_max is not None):
-            self.absolute_move(0,0,self.z_max,0,0,self.get_feed_speed(),0)
+            self.absolute_move(self.mcontrol.cnc_obj.vars["wx"],self.mcontrol.cnc_obj.vars["wy"],self.z_max,self.mcontrol.cnc_obj.vars["wa"],self.mcontrol.cnc_obj.vars["wb"],self.get_feed_speed(),0)
 
     def zoom_medium(self):
         if (self.z_medium is not None):
-            self.absolute_move(0,0,self.z_medium,0,0,self.get_feed_speed(),0)
+            self.absolute_move(self.mcontrol.cnc_obj.vars["wx"],self.mcontrol.cnc_obj.vars["wy"],self.z_medium,self.mcontrol.cnc_obj.vars["wa"],self.mcontrol.cnc_obj.vars["wb"],self.get_feed_speed(),0)
 
     def relative_move(self, axis, multiplier):
         jogStep = self.current_feed_speed / 600;
