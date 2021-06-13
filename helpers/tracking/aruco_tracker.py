@@ -16,6 +16,7 @@ class aruco_tracker:
     jogX=0
     jogY=0
     staticTracking = True
+    firstTrack = True
 
     def __init__(self, controller, ui):
          tracking = False
@@ -50,6 +51,7 @@ class aruco_tracker:
 
     def set_tracking_target(self,id):
         self.track_target_id=id
+        self.firstTrack = True
 
     def get_jogmultipliers(self):
         return self.jogX,self.jogY
@@ -63,7 +65,6 @@ class aruco_tracker:
         waypoint_last_set=time.time()
         sequence_started=time.time()
         marker4=False
-        firstTrack=True
         initialPositionX=0
         initialPositionY=0
         while self.tracking:
@@ -130,9 +131,9 @@ class aruco_tracker:
                             self.deltaX = ((width/2) - trackedX)
                             self.deltaY = ((height/3) - trackedY)
                         
-                        if (firstTrack == True):
+                        if (self.firstTrack == True):
                             #first instruction is always delta from a 0 which is a huge move
-                            firstTrack = False
+                            self.firstTrack = False
                             height, width = image.shape[:2]
                             print ("frame size x{} y{}".format(width,height))
                             
@@ -186,12 +187,13 @@ class aruco_tracker:
                             cv2.line(image, bottomRight, bottomLeft, (0, 255, 0), 2)
                             cv2.line(image, bottomLeft, topLeft, (0, 255, 0), 2)
                             # compute and draw the center (x, y)-coordinates of the ArUco
-                        #draw inital location box
-                        cv2.line(image, inittopLeft, inittopRight, (0, 0, 255), 2)
-                        cv2.line(image, inittopRight, initbottomRight, (0, 0, 255), 2)
-                        cv2.line(image, initbottomRight, initbottomLeft, (0, 0, 255), 2)
-                        cv2.line(image, initbottomLeft, inittopLeft, (0, 0, 255), 2)
-                        
+                        if (self.firstTrack == False):
+                            #draw inital location box
+                            cv2.line(image, inittopLeft, inittopRight, (0, 0, 255), 2)
+                            cv2.line(image, inittopRight, initbottomRight, (0, 0, 255), 2)
+                            cv2.line(image, initbottomRight, initbottomLeft, (0, 0, 255), 2)
+                            cv2.line(image, initbottomLeft, inittopLeft, (0, 0, 255), 2)
+                            
                         # marker
                         cX = int((topLeft[0] + bottomRight[0]) / 2.0)
                         cY = int((topLeft[1] + bottomRight[1]) / 2.0)
