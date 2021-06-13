@@ -388,9 +388,9 @@ class grbl_controller:
             self.queue.put(gcode+"\n")
         self.reset_gcode_sequence()
         #wait for idle again
-        self.logger.info("sequence written to queue, grbl status = {}".self.grbl_status)
+        self.logger.info("sequence written to queue, grbl status = {}".format(self.grbl_status))
         time.sleep(2)
-        self.logger.info("slept 2 seconds after sequence queued, grbl status = {}".self.grbl_status)
+        self.logger.info("slept 2 seconds after sequence queued, grbl status = {}".format(self.grbl_status))
         while (self.grbl_status != "Idle"):
             time.sleep(0.5)
             self.logger.info("waiting for idle post sequence run")
