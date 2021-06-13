@@ -110,10 +110,13 @@ class aruco_tracker:
 
                     if (markerID == 11):
                         self.set_tracking_target(1)
+                        self.parent.trackingId=1
                     if (markerID == 12):
                         self.set_tracking_target(2)
+                        self.parent.trackingId=2
                     if (markerID == 13):
                         self.set_tracking_target(3)
+                        self.parent.trackingId=3
                     
 
                     if markerID == trackedId:
