@@ -90,6 +90,8 @@ class aruco_tracker:
 
                 for (markerCorner, markerID) in zip(corners, ids):
                     #print ("processing marker {} and corners{}".format(markerID,markerCorner))
+                    trackedcorners = markerCorner.reshape((4, 2))
+                        
                     if ((markerID == 4) & (seen_waypoint_marker ==False) & ((time.time()-waypoint_last_set)>10)):
                         #set waypoint
                         self.parent.add_waypoint()
@@ -107,7 +109,6 @@ class aruco_tracker:
 
                     if markerID == trackedId:
                         self.tracking_tag=True
-                        trackedcorners = markerCorner.reshape((4, 2))
                         (tLeft, tRight, bRight, bLeft) = trackedcorners
                         trackedX = int((tLeft[0] + bRight[0]) / 2.0)
                         trackedY = int((tLeft[1] + bRight[1]) / 2.0)
