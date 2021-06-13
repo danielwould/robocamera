@@ -114,12 +114,26 @@ class aruco_tracker:
                         self.set_tracking_target(2)
                     if (markerID == 13):
                         self.set_tracking_target(3)
+                    
 
                     if markerID == trackedId:
                         self.tracking_tag=True
                         (tLeft, tRight, bRight, bLeft) = trackedcorners
                         trackedX = int((tLeft[0] + bRight[0]) / 2.0)
                         trackedY = int((tLeft[1] + bRight[1]) / 2.0)
+                        height, width = image.shape[:2]
+                        if (self.firstTrack == True):
+                            #first instruction is always delta from a 0 which is a huge move
+                            self.firstTrack = False
+                            
+                            print ("frame size x{} y{}".format(width,height))
+                            initialPositionX=trackedX
+                            initialPositionY=trackedY
+                            inittopRight = (int(tRight[0]), int(tRight[1]))
+                            initbottomRight = (int(bRight[0]), int(bRight[1]))
+                            initbottomLeft = (int(bLeft[0]), int(bLeft[1]))
+                            inittopLeft = (int(tLeft[0]), int(tLeft[1]))
+                            print ("storing initial glyph discovery position x{} y{}".format(initialPositionX,initialPositionY))
                         if (trackedId == 1):
                             #tracker 1 always moves to position where it was to start with
                             
@@ -138,43 +152,26 @@ class aruco_tracker:
                             self.deltaX = ((width/2) - trackedX)
                             self.deltaY = (((height/3)*2) - trackedY)
                         
-                        if (self.firstTrack == True):
-                            #first instruction is always delta from a 0 which is a huge move
-                            self.firstTrack = False
-                            height, width = image.shape[:2]
-                            print ("frame size x{} y{}".format(width,height))
-                            
-                            initialPositionX=trackedX
-                            initialPositionY=trackedY
-                            inittopRight = (int(tRight[0]), int(tRight[1]))
-                            initbottomRight = (int(bRight[0]), int(bRight[1]))
-                            initbottomLeft = (int(bLeft[0]), int(bLeft[1]))
-                            inittopLeft = (int(tLeft[0]), int(tLeft[1]))
-                        
-                            print ("storing initial glyph discovery position x{} y{}".format(initialPositionX,initialPositionY))
+                        #calculate jog scaled based on for far we have to move
+                        if (abs(self.deltaX) > 20):
+                            xjog = -1*(self.deltaX/width)*self.jog_multiplier
                         else:
-                            #print ("calculating jogging instruction to move glyph back to starting location {} {} by delta{} {}".format(initialPositionX, initialPositionY, self.deltaX, self.deltaY))
-                            height, width = image.shape[:2]
-                            
-                            if (abs(self.deltaX) > 20):
-                                xjog = -1*(self.deltaX/width)*self.jog_multiplier
-                            else:
-                                xjog=0
-                            if (abs(self.deltaY) > 20):                            
-                                yjog = -1*(self.deltaY / height)*self.jog_multiplier
-                            else:
-                                yjog=0
-                            #print ("xjog {} yjog {}".format(xjog,yjog))
+                            xjog=0
+                        if (abs(self.deltaY) > 20):                            
+                            yjog = -1*(self.deltaY / height)*self.jog_multiplier
+                        else:
+                            yjog=0
+                        #print ("xjog {} yjog {}".format(xjog,yjog))
 
-                            if ((self.staticTracking == True) & ((xjog !=0) | (yjog!=0))):
-                                #move the opposite direction to the delta
-                                self.controller.tracking_jog(xjog,yjog)
-                                #give the move a chance to be made
-                                self.jogX=0
-                                self.jogY=0
-                            else:
-                                self.jogX = xjog
-                                self.jogY = yjog
+                        if ((self.staticTracking == True) & ((xjog !=0) | (yjog!=0))):
+                            #move the opposite direction to the delta
+                            self.controller.tracking_jog(xjog,yjog)
+                            #give the move a chance to be made
+                            self.jogX=0
+                            self.jogY=0
+                        elif(self.staticTracking == False):
+                            self.jogX = xjog
+                            self.jogY = yjog
                             
                         lastX=trackedX
                         lastY=trackedY
