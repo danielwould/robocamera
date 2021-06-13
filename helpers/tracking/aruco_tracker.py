@@ -89,7 +89,7 @@ class aruco_tracker:
                 marker5 = False
 
                 for (markerCorner, markerID) in zip(corners, ids):
-                    print ("processing marker {} and corners{}".format(markerID,markerCorner))
+                    #print ("processing marker {} and corners{}".format(markerID,markerCorner))
                     if ((markerID == 4) & (seen_waypoint_marker ==False) & ((time.time()-waypoint_last_set)>10)):
                         #set waypoint
                         self.parent.add_waypoint()
