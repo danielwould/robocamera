@@ -353,11 +353,12 @@ class RobotCamera(tk.Frame):
         wp.set_dwell_time(self.dwell_time.get())
         wp.set_feed_rate(self.controller.get_feed_speed())
         wp.set_travel_duration(self.controller.get_move_duration())
+        new_waypoint_str = "{} dwell for:{}".format(wp.location_str(),self.dwell_time.get())
+            
         if (self.waypoint_listbox.size() > 0):
             index = self.waypoint_listbox.size()-1
             
             last_waypoint = self.sequence_steps.get_step(index)
-            new_waypoint_str = "{} dwell for:{}".format(wp.location_str(),self.dwell_time.get())
             if (last_waypoint == new_waypoint_str):
                 skip_waypoint=True
         if (skip_waypoint == False):
