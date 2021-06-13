@@ -162,6 +162,9 @@ class grbl_controller:
     lastResponseTime = 0
     reset_buffer = False
 
+    z_min=None
+    z_max=None
+    z_medium=None
 
     xjog_factor=0.8
     yjog_factor=0.6
@@ -300,9 +303,42 @@ class grbl_controller:
     def get_feed_speed(self):
         return self.current_feed_speed
 
+    def set_zoom_min(self):
+        #set current z as full wide
+        self.z_min = self.mcontrol.cnc_obj.vars["wz"]
+    
+    def set_zoom_max(self):
+        #set current z as full wide
+        self.z_max = self.mcontrol.cnc_obj.vars["wz"]
+    
+    def set_zoom_medium(self):
+        #set current z as full wide
+        self.z_medium = self.mcontrol.cnc_obj.vars["wz"]
+
+    def zoom_full_out(self):
+        if (self.z_min is not None):
+            self.absolute_move(0,0,self.z_min,0,0,self.get_feed_speed,0)
+
+    def zoom_full_in(self):
+        if (self.z_max is not None):
+            self.absolute_move(0,0,self.z_max,0,0,self.get_feed_speed,0)
+
+    def zoom_medium(self):
+        if (self.z_medium is not None):
+            self.absolute_move(0,0,self.z_medium,0,0,self.get_feed_speed,0)
+
     def relative_move(self, axis, multiplier):
         jogStep = self.current_feed_speed / 600;
         jogStep = jogStep*multiplier
+        if (axis == "z"):
+            if (self.z_max is not None):
+                if (jogStep+self.mcontrol.cnc_obj.vars["wz"] > self.z_max):
+                    self.logger.info("detected zoom in too far command")
+                    return
+            if (self.z_min is not None):
+                if (jogStep+self.mcontrol.cnc_obj.vars["wz"] < self.z_min):
+                    self.logger.info("detected zoom out too far command")
+                    return
         if (self.buffer_length==0):
             self.queue.put("$J=G91 {}{} f{}\n".format(axis,jogStep, self.current_feed_speed))
         else:
