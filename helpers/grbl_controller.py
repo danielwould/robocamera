@@ -332,11 +332,12 @@ class grbl_controller:
         jogStep = jogStep*multiplier
         if (axis == "z"):
             if (self.z_max is not None):
-                if (jogStep+self.mcontrol.cnc_obj.vars["wz"] > self.z_max):
+                #current setup has z -negative moves zooming in
+                if (jogStep+self.mcontrol.cnc_obj.vars["wz"] < self.z_max):
                     self.logger.info("detected zoom in too far command")
                     return
             if (self.z_min is not None):
-                if (jogStep+self.mcontrol.cnc_obj.vars["wz"] < self.z_min):
+                if (jogStep+self.mcontrol.cnc_obj.vars["wz"] > self.z_min):
                     self.logger.info("detected zoom out too far command")
                     return
         if (self.buffer_length==0):
