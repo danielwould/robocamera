@@ -342,6 +342,7 @@ class RobotCamera(tk.Frame):
 
 
     def add_waypoint(self):
+        skip_waypoint=False
         print("add waypoint")  # (x, y, z,focus, feed), dwell time
         crane_position = self.crane_inst.get_current_location()
         gimbal_position = self.gimbal_inst.get_current_location()
@@ -352,12 +353,14 @@ class RobotCamera(tk.Frame):
         wp.set_dwell_time(self.dwell_time.get())
         wp.set_feed_rate(self.controller.get_feed_speed())
         wp.set_travel_duration(self.controller.get_move_duration())
-        index = self.waypoint_listbox.size()-1
-        last_waypoint = self.sequence_steps.get_step(index)
-        new_waypoint_str = "{} dwell for:{}".format(wp.location_str(),self.dwell_time.get())
-        if (last_waypoint == new_waypoint_str):
-            print ("skipping duplicate waypoint")
-        else:
+        if (self.waypoint_listbox.size() > 0):
+            index = self.waypoint_listbox.size()-1
+            
+            last_waypoint = self.sequence_steps.get_step(index)
+            new_waypoint_str = "{} dwell for:{}".format(wp.location_str(),self.dwell_time.get())
+            if (last_waypoint == new_waypoint_str):
+                skip_waypoint=True
+        if (skip_waypoint == False):
             self.sequence_steps.add_waypoint(wp)
             self.waypoint_listbox.insert("end",new_waypoint_str)
 
