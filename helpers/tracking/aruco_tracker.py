@@ -27,7 +27,7 @@ class aruco_tracker:
     def initialise_video(self):
         # initialize the video stream and allow the camera sensor to warm up
         print("[INFO] starting video stream...")
-        self.vs = VideoStream(src=2,resolution=(1920,1080)).start()
+        self.vs = VideoStream(src=2,resolution=(1280,720)).start()
         #vs = VideoStream(usePiCamera=True).start()
         time.sleep(2.0)
         self.arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_100)
@@ -67,6 +67,10 @@ class aruco_tracker:
         marker4=False
         initialPositionX=0
         initialPositionY=0
+        inittopLeft = 0
+        inittopRight = 0
+        initbottomRight = 0
+        initbottomLeft = 0
         while self.tracking:
             if (trackedId != self.track_target_id):
                 firstTrack=True
