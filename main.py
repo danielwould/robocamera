@@ -264,7 +264,7 @@ class RobotCamera(tk.Frame):
         self.dwell_label.config(font=("Courier", 12))
         self.dwell_label.pack(side="top")
         self.dwell_time = StringVar(dwell)
-        self.dwell_time.set(1) # initial value
+        self.dwell_time.set(0) # initial value
         self.dwell_select = OptionMenu(dwell, self.dwell_time, 0,1, 2,5,10,15,20,30)
         self.dwell_select.pack(side="bottom")
 
