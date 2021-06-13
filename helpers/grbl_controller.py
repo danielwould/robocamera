@@ -317,7 +317,7 @@ class grbl_controller:
 
     def zoom_full_out(self):
         if (self.z_min is not None):
-            self.absolute_move(0,0,self.z_min,0,0,self.get_feed_speed,0)
+            self.absolute_move(0,0,self.z_min,0,0,self.get_feed_speed(),0)
 
     def zoom_full_in(self):
         if (self.z_max is not None):
