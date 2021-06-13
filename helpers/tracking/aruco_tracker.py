@@ -89,16 +89,17 @@ class aruco_tracker:
                 marker5 = False
 
                 for (markerCorner, markerID) in zip(corners, ids):
-                    if (markerID == 4 & (seen_waypoint_marker ==False) & ((time.time()-waypoint_last_set)>10)):
+                    print ("processing marker {} and corners{}".format(markerID,markerCorner)
+                    if (markerID == 4 & (markerCorner is not None) & (seen_waypoint_marker ==False) & ((time.time()-waypoint_last_set)>10)):
                         #set waypoint
                         self.parent.add_waypoint()
                         waypoint_last_set = time.time()
                         #set toggle so we don't add again until we've had at least one frame without this marker
                         seen_waypoint_marker=True
                         marker4=True
-                    if (markerID == 5 & (seen_sequence_marker ==False) & ((time.time()-sequence_started)>10)):
+                    if (markerID == 5 & (markerCorner is not None) & (seen_sequence_marker ==False) & ((time.time()-sequence_started)>10)):
                         #set waypoint
-                        self.parent.run_sequence()
+                        self.parent.trigger_whole_sequence()
                         sequence_started = time.time()
                         #set toggle so we don't add again until we've had at least one frame without this marker
                         seen_sequence_marker=True
