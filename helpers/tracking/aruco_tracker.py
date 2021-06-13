@@ -129,7 +129,7 @@ class aruco_tracker:
                             
                             #tracker 3 always centres horzontally and puts glyph at lower third
                             self.deltaX = ((width/2) - trackedX)
-                            self.deltaY = ((height/3) - trackedY)
+                            self.deltaY = (((height/3)*2) - trackedY)
                         
                         if (self.firstTrack == True):
                             #first instruction is always delta from a 0 which is a huge move
