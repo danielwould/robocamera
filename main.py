@@ -405,10 +405,9 @@ class RobotCamera(tk.Frame):
         was_tracking = False
         if (self.TRACKING == True):
             self.TRACKING = False
-            self.tracker.stop_tracking()
+            self.tracker.pause_tracking()
             was_tracking = True
         
-        self.tracker.stop_tracking()
         if len(self.sequence_steps.waypoints) > 0:
             for i in range(len(self.sequence_steps.waypoints)): 
         
@@ -423,7 +422,7 @@ class RobotCamera(tk.Frame):
         self.controller.run_sequence()
         if (was_tracking):
             self.TRACKING = True
-            self.tracker.start_tracking(self.trackingId)
+            self.tracker.resume_tracking()
         
         #set location to last wp
 

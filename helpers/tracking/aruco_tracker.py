@@ -17,6 +17,7 @@ class aruco_tracker:
     jogY=0
     staticTracking = True
     firstTrack = True
+    tracking_paused = False
 
     def __init__(self, controller, ui):
          tracking = False
@@ -40,6 +41,12 @@ class aruco_tracker:
 
     def stop_tracking(self):
         self.tracking=False
+
+    def pause_tracking(self):
+        self.tracking_paused = True
+
+    def resume_tracking(self):
+        self.tracking_paused = False
 
     def start_tracking(self, trackedId):
         self.tracking=True
@@ -72,6 +79,7 @@ class aruco_tracker:
         initbottomRight = 0
         initbottomLeft = 0
         while self.tracking:
+            
             if (trackedId != self.track_target_id):
                 firstTrack=True
                 trackedId=self.track_target_id
@@ -92,97 +100,98 @@ class aruco_tracker:
                 # loop over the detected ArUCo corners
                 marker4 = False
                 marker5 = False
-
+                 
                 for (markerCorner, markerID) in zip(corners, ids):
                     #print ("processing marker {} and corners{}".format(markerID,markerCorner))
                     trackedcorners = markerCorner.reshape((4, 2))
+                    if (self.tracking_paused == False):    
+                        if ((markerID == 4) & (seen_waypoint_marker ==False) & ((time.time()-waypoint_last_set)>10)):
+                            #set waypoint
+                            self.parent.add_waypoint()
+                            waypoint_last_set = time.time()
+                            #set toggle so we don't add again until we've had at least one frame without this marker
+                            seen_waypoint_marker=True
+                            marker4=True
+                        if ((markerID == 5) & (seen_sequence_marker ==False) & ((time.time()-sequence_started)>10)):
+                            #set waypoint
+                            self.tracking_paused = True
+                            self.parent.trigger_whole_sequence()
+                            sequence_started = time.time()
+                            #set toggle so we don't add again until we've had at least one frame without this marker
+                            seen_sequence_marker=True
+                            marker5=True
+
+                        if (markerID == 11):
+                            self.set_tracking_target(1)
+                            self.parent.trackingId=1
+                        if (markerID == 12):
+                            self.set_tracking_target(2)
+                            self.parent.trackingId=2
+                        if (markerID == 13):
+                            self.set_tracking_target(3)
+                            self.parent.trackingId=3
                         
-                    if ((markerID == 4) & (seen_waypoint_marker ==False) & ((time.time()-waypoint_last_set)>10)):
-                        #set waypoint
-                        self.parent.add_waypoint()
-                        waypoint_last_set = time.time()
-                        #set toggle so we don't add again until we've had at least one frame without this marker
-                        seen_waypoint_marker=True
-                        marker4=True
-                    if ((markerID == 5) & (seen_sequence_marker ==False) & ((time.time()-sequence_started)>10)):
-                        #set waypoint
-                        self.parent.trigger_whole_sequence()
-                        sequence_started = time.time()
-                        #set toggle so we don't add again until we've had at least one frame without this marker
-                        seen_sequence_marker=True
-                        marker5=True
 
-                    if (markerID == 11):
-                        self.set_tracking_target(1)
-                        self.parent.trackingId=1
-                    if (markerID == 12):
-                        self.set_tracking_target(2)
-                        self.parent.trackingId=2
-                    if (markerID == 13):
-                        self.set_tracking_target(3)
-                        self.parent.trackingId=3
-                    
-
-                    if markerID == trackedId:
-                        self.tracking_tag=True
-                        (tLeft, tRight, bRight, bLeft) = trackedcorners
-                        trackedX = int((tLeft[0] + bRight[0]) / 2.0)
-                        trackedY = int((tLeft[1] + bRight[1]) / 2.0)
-                        height, width = image.shape[:2]
-                        if (self.firstTrack == True):
-                            #first instruction is always delta from a 0 which is a huge move
-                            self.firstTrack = False
-                            
-                            print ("frame size x{} y{}".format(width,height))
-                            initialPositionX=trackedX
-                            initialPositionY=trackedY
-                            inittopRight = (int(tRight[0]), int(tRight[1]))
-                            initbottomRight = (int(bRight[0]), int(bRight[1]))
-                            initbottomLeft = (int(bLeft[0]), int(bLeft[1]))
-                            inittopLeft = (int(tLeft[0]), int(tLeft[1]))
-                            print ("storing initial glyph discovery position x{} y{}".format(initialPositionX,initialPositionY))
-                        if (trackedId == 1):
-                            #tracker 1 always moves to position where it was to start with
-                            
-                            self.deltaX = (initialPositionX - trackedX)
-                            self.deltaY = (initialPositionY - trackedY)
-                        elif (trackedId == 2):
+                        if markerID == trackedId:
+                            self.tracking_tag=True
+                            (tLeft, tRight, bRight, bLeft) = trackedcorners
+                            trackedX = int((tLeft[0] + bRight[0]) / 2.0)
+                            trackedY = int((tLeft[1] + bRight[1]) / 2.0)
                             height, width = image.shape[:2]
+                            if (self.firstTrack == True):
+                                #first instruction is always delta from a 0 which is a huge move
+                                self.firstTrack = False
+                                
+                                print ("frame size x{} y{}".format(width,height))
+                                initialPositionX=trackedX
+                                initialPositionY=trackedY
+                                inittopRight = (int(tRight[0]), int(tRight[1]))
+                                initbottomRight = (int(bRight[0]), int(bRight[1]))
+                                initbottomLeft = (int(bLeft[0]), int(bLeft[1]))
+                                inittopLeft = (int(tLeft[0]), int(tLeft[1]))
+                                print ("storing initial glyph discovery position x{} y{}".format(initialPositionX,initialPositionY))
+                            if (trackedId == 1):
+                                #tracker 1 always moves to position where it was to start with
+                                
+                                self.deltaX = (initialPositionX - trackedX)
+                                self.deltaY = (initialPositionY - trackedY)
+                            elif (trackedId == 2):
+                                height, width = image.shape[:2]
+                                
+                                #tracker 2 always centres
+                                self.deltaX = ((width/2) - trackedX)
+                                self.deltaY = ((height/2) - trackedY)
+                            elif (trackedId == 3):
+                                height, width = image.shape[:2]
+                                
+                                #tracker 3 always centres horzontally and puts glyph at lower third
+                                self.deltaX = ((width/2) - trackedX)
+                                self.deltaY = (((height/3)*2) - trackedY)
                             
-                            #tracker 2 always centres
-                            self.deltaX = ((width/2) - trackedX)
-                            self.deltaY = ((height/2) - trackedY)
-                        elif (trackedId == 3):
-                            height, width = image.shape[:2]
-                            
-                            #tracker 3 always centres horzontally and puts glyph at lower third
-                            self.deltaX = ((width/2) - trackedX)
-                            self.deltaY = (((height/3)*2) - trackedY)
-                        
-                        #calculate jog scaled based on for far we have to move
-                        if (abs(self.deltaX) > 20):
-                            xjog = -1*(self.deltaX/width)*self.jog_multiplier
-                        else:
-                            xjog=0
-                        if (abs(self.deltaY) > 20):                            
-                            yjog = -1*(self.deltaY / height)*self.jog_multiplier
-                        else:
-                            yjog=0
-                        #print ("xjog {} yjog {}".format(xjog,yjog))
+                            #calculate jog scaled based on for far we have to move
+                            if (abs(self.deltaX) > 20):
+                                xjog = -1*(self.deltaX/width)*self.jog_multiplier
+                            else:
+                                xjog=0
+                            if (abs(self.deltaY) > 20):                            
+                                yjog = -1*(self.deltaY / height)*self.jog_multiplier
+                            else:
+                                yjog=0
+                            #print ("xjog {} yjog {}".format(xjog,yjog))
 
-                        if ((self.staticTracking == True) & ((xjog !=0) | (yjog!=0))):
-                            #move the opposite direction to the delta
-                            self.controller.tracking_jog(xjog,yjog)
-                            #give the move a chance to be made
-                            self.jogX=0
-                            self.jogY=0
-                        elif(self.staticTracking == False):
-                            self.jogX = xjog
-                            self.jogY = yjog
-                            
-                        lastX=trackedX
-                        lastY=trackedY
-                        #print ("tracking tag at x{}y{}".format(trackedX, trackedY))
+                            if ((self.staticTracking == True) & ((xjog !=0) | (yjog!=0))):
+                                #move the opposite direction to the delta
+                                self.controller.tracking_jog(xjog,yjog)
+                                #give the move a chance to be made
+                                self.jogX=0
+                                self.jogY=0
+                            elif(self.staticTracking == False):
+                                self.jogX = xjog
+                                self.jogY = yjog
+                                
+                            lastX=trackedX
+                            lastY=trackedY
+                            #print ("tracking tag at x{}y{}".format(trackedX, trackedY))
                     if (self.render_window ==True):
                         # convert each of the (x, y)-coordinate pairs to integers
                         if (trackedcorners is not None):
