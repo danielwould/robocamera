@@ -146,13 +146,10 @@ class aruco_tracker:
                             
 
                         if (markerID == 26):
-                            (zmLeft, zmRight, zmRight, zmLeft) = trackedcorners
-                            ztopRight = (int(zmRight[0]), int(zmRight[1]))
-                            ztopLeft = (int(zmLeft[0]), int(zmLeft[1]))
-                            zbottomRight = (int(zmRight[0]), int(zmRight[1]))
+                            (ztLeft, ztRight, zbRight, zbLeft) = trackedcorners
                                                        
                             #figure out size of zoom marker
-                            zsize = abs(ztopRight-ztopLeft)*abs(ztopRight-zbottomRight)
+                            zsize = abs(ztLeft[0]-ztRight[0])*abs(ztLeft[1]-zbLeft[1])
                             print ("z-token size = {}".format(zsize))
 
                         if markerID == trackedId:
