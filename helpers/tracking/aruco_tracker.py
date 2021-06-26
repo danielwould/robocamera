@@ -145,7 +145,15 @@ class aruco_tracker:
                             self.controller.zoom_full_in()
                             
 
-                        
+                        if (markerID == 26):
+                            (zmLeft, zmRight, zmRight, zmLeft) = trackedcorners
+                            ztopRight = (int(zmRight[0]), int(zmRight[1]))
+                            ztopLeft = (int(zmLeft[0]), int(zmLeft[1]))
+                            zbottomRight = (int(zmRight[0]), int(zmRight[1]))
+                                                       
+                            #figure out size of zoom marker
+                            zsize = abs(ztopRight-ztopLeft)*abs(ztopRight-zbottomRight)
+                            print ("z-token size = {}".format(zsize))
 
                         if markerID == trackedId:
                             self.tracking_tag=True
