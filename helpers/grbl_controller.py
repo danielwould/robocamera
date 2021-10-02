@@ -162,6 +162,12 @@ class grbl_controller:
     lastResponseTime = 0
     reset_buffer = False
 
+    crane_tilt_min=None
+    crane_tilt_max=None
+    crane_pan_middle=None
+    gimbal_tilt_min=None
+    gimbal_tilt_max=None
+    gimbal_pan_middle=None
     z_min=None
     z_max=None
     z_medium=None
@@ -303,6 +309,30 @@ class grbl_controller:
     def get_feed_speed(self):
         return self.current_feed_speed
 
+    def set_crane_tilt_min(self):
+        #set current crane tilt as lowestpoint
+        self.crane_tilt_min = self.mcontrol.cnc_obj.vars["wb"]
+    
+    def set_crane_tilt_max(self):
+        #set current crane tilt as heightpoint
+        self.crane_tilt_max = self.mcontrol.cnc_obj.vars["wb"]
+
+    def set_crane_pan_middle(self):
+        #set current crane pan as centred
+        self.crane_pan_middle = self.mcontrol.cnc_obj.vars["wa"]
+
+    def set_gimbal_tilt_min(self):
+         #set current gimbal tilt as lowestpoint
+        self.gimbal_tilt_min = self.mcontrol.cnc_obj.vars["wy"]
+    
+    def set_gimbal_tilt_max(self):
+         #set current gimbal tilt as hightestpoint
+        self.gimbal_tilt_max = self.mcontrol.cnc_obj.vars["wy"]
+
+    def set_gimbal_pan_middle(self):
+        #set current gimbal pan as centred
+        self.crane_pan_middle = self.mcontrol.cnc_obj.vars["wx"]
+
     def set_zoom_min(self):
         #set current z as full wide
         self.z_min = self.mcontrol.cnc_obj.vars["wz"]
@@ -353,6 +383,20 @@ class grbl_controller:
         yjogStep = jogStep*self.yjog_factor*yaxis_multiplier
         ajogStep = jogStep*self.ajog_factor*aaxis_multiplier
         bjogStep = jogStep*self.bjog_factor*baxis_multiplier
+        #drop any move that takes us outside min/max bounds
+        if (self.crane_tilt_max is not None):
+            if (bjogStep+self.mcontrol.cnc_obj.vars["wb"] > self.crane_tilt_max):
+                bjogStep=0
+        if (self.crane_tilt_min is not None):
+            if (bjogStep-self.mcontrol.cnc_obj.vars["wb"] < self.crane_tilt_min):
+                bjogStep=0
+        if (self.gimbal_tilt_max is not None):
+            if (yjogStep+self.mcontrol.cnc_obj.vars["wy"] > self.crane_tilt_max):
+                yjogStep=0
+        if (self.gimbal_tilt_min is not None):
+            if (yjogStep-self.mcontrol.cnc_obj.vars["wy"] < self.crane_tilt_min):
+                yjogStep=0
+
         #only jog if the buffer is clear
         if (self.buffer_length==0):
             self.queue.put("$J=G91 x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep, self.current_feed_speed))

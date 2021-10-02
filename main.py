@@ -255,6 +255,23 @@ class RobotCamera(tk.Frame):
                               command=self.edit_waypoint)
         self.editWaypoint.pack(padx=2,pady=2)
 
+        self.setCraneTiltMax = tk.Button(wayPoint_controls, text="Crane Tilt Max", fg="#333333",bg="#ffcc33",
+                              command=self.controller.set_crane_tilt_max)
+        self.setCraneTiltMax.pack(padx=2,pady=2)
+        self.setCraneTiltMin = tk.Button(wayPoint_controls, text="Crane Tilt Min", fg="#333333",bg="#ffcc33",
+                              command=self.controller.set_crane_tilt_min)
+        self.setCraneTiltMin.pack(padx=2,pady=2)
+        self.setGimbalTiltMax = tk.Button(wayPoint_controls, text="Gimbal Tilt Max", fg="#333333",bg="#ffcc33",
+                              command=self.controller.set_gimbal_tilt_max)
+        self.setGimbalTiltMax.pack(padx=2,pady=2)
+        self.setGimbalTiltMin = tk.Button(wayPoint_controls, text="Gimabl Tilt Min", fg="#333333",bg="#ffcc33",
+                              command=self.controller.set_gimbal_tilt_min)
+        self.setGimbalTiltMin.pack(padx=2,pady=2)
+
+        self.setInitPosition = tk.Button(wayPoint_controls, text="Init Position", fg="#333333",bg="#ffcc33",
+                              command=self.set_initial_pos)
+        self.setInitPosition.pack(padx=2,pady=2)
+
         options_controls = Frame(left,relief=tk.GROOVE)
         options_controls.pack(side="right")
 
@@ -302,6 +319,14 @@ class RobotCamera(tk.Frame):
         self.quit.pack(padx=2, pady=20)
     
         
+    def set_initial_pos(self):
+        #initial position should be min gimbal tilt, max crane tilt, middle position pan on both, zoom all the way out
+        self.controller.set_crane_pan_middle()
+        self.controller.set_crane_tilt_max()
+        self.controller.set_gimbal_pan_middle()
+        self.controller.set_gimbal_tilt_min()
+        self.controller.set_zoom_min()
+
     def toggle_move_mode(self,value):
         print("toggle move mode to")
         print(value)
