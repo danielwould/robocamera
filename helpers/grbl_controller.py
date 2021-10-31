@@ -391,10 +391,10 @@ class grbl_controller:
             if (bjogStep-self.mcontrol.cnc_obj.vars["wb"] < self.crane_tilt_min):
                 bjogStep=0
         if (self.gimbal_tilt_max is not None):
-            if (yjogStep+self.mcontrol.cnc_obj.vars["wy"] > self.crane_tilt_max):
+            if (yjogStep+self.mcontrol.cnc_obj.vars["wy"] > self.gimbal_tilt_max):
                 yjogStep=0
         if (self.gimbal_tilt_min is not None):
-            if (yjogStep-self.mcontrol.cnc_obj.vars["wy"] < self.crane_tilt_min):
+            if (yjogStep-self.mcontrol.cnc_obj.vars["wy"] < self.gimbal_tilt_min):
                 yjogStep=0
 
         #only jog if the buffer is clear
