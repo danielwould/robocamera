@@ -384,18 +384,18 @@ class grbl_controller:
         ajogStep = jogStep*self.ajog_factor*aaxis_multiplier
         bjogStep = jogStep*self.bjog_factor*baxis_multiplier
         #drop any move that takes us outside min/max bounds
-        if (self.crane_tilt_max is not None):
-            if (bjogStep+self.mcontrol.cnc_obj.vars["wb"] > self.crane_tilt_max):
-                bjogStep=0
-        if (self.crane_tilt_min is not None):
-            if (bjogStep-self.mcontrol.cnc_obj.vars["wb"] < self.crane_tilt_min):
-                bjogStep=0
-        if (self.gimbal_tilt_max is not None):
-            if (yjogStep+self.mcontrol.cnc_obj.vars["wy"] > self.gimbal_tilt_max):
-                yjogStep=0
-        if (self.gimbal_tilt_min is not None):
-            if (yjogStep-self.mcontrol.cnc_obj.vars["wy"] < self.gimbal_tilt_min):
-                yjogStep=0
+        #if (self.crane_tilt_max is not None):
+        #    if (bjogStep+self.mcontrol.cnc_obj.vars["wb"] > self.crane_tilt_max):
+        #        bjogStep=0
+        #if (self.crane_tilt_min is not None):
+        #    if (bjogStep-self.mcontrol.cnc_obj.vars["wb"] < self.crane_tilt_min):
+        #        bjogStep=0
+        #if (self.gimbal_tilt_max is not None):
+        #    if (yjogStep+self.mcontrol.cnc_obj.vars["wy"] > self.gimbal_tilt_max):
+        #        yjogStep=0
+        #if (self.gimbal_tilt_min is not None):
+        #    if (yjogStep-self.mcontrol.cnc_obj.vars["wy"] < self.gimbal_tilt_min):
+        #        yjogStep=0
 
         #only jog if the buffer is clear
         if (self.buffer_length==0):
