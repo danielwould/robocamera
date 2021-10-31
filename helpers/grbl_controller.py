@@ -469,27 +469,27 @@ class grbl_controller:
             z_move=0
             a_move=0
             b_move=0
-            if round(((finishtime-time.now)%x_step_every), 2) == 0:
+            if round(((finishtime-time.time())%x_step_every), 2) == 0:
                 if (self.mcontrol.cnc_obj.vars["wx"]-x) <0:
                     x_move=jogstep
                 else:
                     x_move=-jogstep
-            if round(((finishtime-time.now)%y_step_every), 2) == 0:
+            if round(((finishtime-time.time())%y_step_every), 2) == 0:
                 if (self.mcontrol.cnc_obj.vars["wy"]-y) <0:
                     y_move=jogstep
                 else:
                     y_move=-jogstep
-            if round(((finishtime-time.now)%z_step_every), 2) == 0:
+            if round(((finishtime-time.time())%z_step_every), 2) == 0:
                 if (self.mcontrol.cnc_obj.vars["wz"]-z) <0:
                     z_move=jogstep
                 else:
                     z_move=-jogstep
-            if round(((finishtime-time.now)%a_step_every), 2) == 0:
+            if round(((finishtime-time.time())%a_step_every), 2) == 0:
                 if (self.mcontrol.cnc_obj.vars["wa"]-a) <0:
                     a_move=jogstep
                 else:
                     a_move=-jogstep
-            if round(((finishtime-time.now)%b_step_every), 2) == 0:
+            if round(((finishtime-time.time())%b_step_every), 2) == 0:
                 if (self.mcontrol.cnc_obj.vars["wb"]-b) <0:
                     b_move=jogstep
                 else:
