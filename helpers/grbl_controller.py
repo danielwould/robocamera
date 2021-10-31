@@ -444,6 +444,8 @@ class grbl_controller:
         zdiff = abs(x-self.mcontrol.cnc_obj.vars["wz"])
         adiff = abs(x-self.mcontrol.cnc_obj.vars["wa"])
         bdiff = abs(x-self.mcontrol.cnc_obj.vars["wb"])
+        self.logger.info("timelapse: x_diff {}, y_diff {}, z_diff {}, a_diff {}, b_diff {}".format(xdiff,ydiff,zdiff,adiff,bdiff))
+
         jogstep=0.1
         #example timelapse 10 minutes with frame every 1 second, 
         x_steps = xdiff /jogstep
@@ -451,15 +453,12 @@ class grbl_controller:
         z_steps = zdiff /jogstep
         a_steps = adiff /jogstep
         b_steps = bdiff /jogstep
-        #devide time by the max of the steps to move on any axis
-        list = [x_steps,y_steps,z_steps,a_steps,b_steps]
-        max_move = max(list)
-        step_every_max_resolution = seconds / max_move
         x_step_every = seconds/x_steps
         y_step_every = seconds/y_steps
         z_step_every = seconds/z_steps
         a_step_every = seconds/a_steps
         b_step_every = seconds/b_steps
+        self.logger.info("timelapse: x_step_every {}, y_step_every {}, z_step_every {}, a_step_every {}, b_step_every {}".format(x_step_every,y_step_every,z_step_every,a_step_every,b_step_every))
         step=0
         starttime=time.time()
         finishtime=time.time()+seconds
@@ -495,7 +494,7 @@ class grbl_controller:
                 else:
                     b_move=-jogstep
             if (x_move+y_move+z_move+a_move+b_move !=0):
-                self.logger.info("timelapse jog move")
+                    
                 self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_move,y_move,z_move,a_move,b_move, self.current_feed_speed))
 
 
