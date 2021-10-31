@@ -271,6 +271,10 @@ class RobotCamera(tk.Frame):
         self.setInitPosition = tk.Button(wayPoint_controls, text="Init Position", fg="#333333",bg="#ffcc33",
                               command=self.set_initial_pos)
         self.setInitPosition.pack(padx=2,pady=2)
+        
+        self.timelapse = tk.Button(wayPoint_controls, text="Timelapse", fg="#333333",bg="#ffcc33",
+                              command=self.timelapse)
+        self.timelapse.pack(padx=2,pady=2)
 
         options_controls = Frame(left,relief=tk.GROOVE)
         options_controls.pack(side="right")
@@ -319,6 +323,12 @@ class RobotCamera(tk.Frame):
         self.quit.pack(padx=2, pady=20)
     
         
+    def timelapse(self):
+        #trigger a timelapse from current position to Save position 2
+        timelapse_time=600
+        savepoint = self.save_position_2
+        self.controller.absolute_move_timelapse(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,timelapse_time)
+
     def set_initial_pos(self):
         #initial position should be min gimbal tilt, max crane tilt, middle position pan on both, zoom all the way out
         self.controller.set_crane_pan_middle()

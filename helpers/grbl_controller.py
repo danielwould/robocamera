@@ -434,6 +434,77 @@ class grbl_controller:
         self.sendGCode("g93")
         self.sendGCode("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z, a,b,feedval))
         
+    def absolute_move_timelapse(self, x, y, z, a, b, seconds):
+        #figure out difference between current location and desired location for each axis
+        #figure out smallest incremental step we send to grbl
+        #devide the differences up into an even number of those small increments
+        #devide the desired wait time between those steps
+        xdiff = abs(x-self.mcontrol.cnc_obj.vars["wx"])
+        ydiff = abs(x-self.mcontrol.cnc_obj.vars["wy"])
+        zdiff = abs(x-self.mcontrol.cnc_obj.vars["wz"])
+        adiff = abs(x-self.mcontrol.cnc_obj.vars["wa"])
+        bdiff = abs(x-self.mcontrol.cnc_obj.vars["wb"])
+        jogstep=0.1
+        #example timelapse 10 minutes with frame every 1 second, 
+        x_steps = xdiff /jogstep
+        y_steps = ydiff /jogstep
+        z_steps = zdiff /jogstep
+        a_steps = adiff /jogstep
+        b_steps = bdiff /jogstep
+        #devide time by the max of the steps to move on any axis
+        list = [x_steps,y_steps,z_steps,a_steps,b_steps]
+        max_move = max(list)
+        step_every_max_resolution = seconds / max_move
+        x_step_every = seconds/x_steps
+        y_step_every = seconds/y_steps
+        z_step_every = seconds/z_steps
+        a_step_every = seconds/a_steps
+        b_step_every = seconds/b_steps
+        step=0
+        starttime=time.time()
+        finishtime=time.time()+seconds
+        while time.time() < finishtime:
+            x_move=0
+            y_move=0
+            z_move=0
+            a_move=0
+            b_move=0
+            if round(((finishtime-time.now)%x_step_every), 2) == 0:
+                if (self.mcontrol.cnc_obj.vars["wx"]-x) <0:
+                    x_move=jogstep
+                else:
+                    x_move=-jogstep
+            if round(((finishtime-time.now)%y_step_every), 2) == 0:
+                if (self.mcontrol.cnc_obj.vars["wy"]-y) <0:
+                    y_move=jogstep
+                else:
+                    y_move=-jogstep
+            if round(((finishtime-time.now)%z_step_every), 2) == 0:
+                if (self.mcontrol.cnc_obj.vars["wz"]-z) <0:
+                    z_move=jogstep
+                else:
+                    z_move=-jogstep
+            if round(((finishtime-time.now)%a_step_every), 2) == 0:
+                if (self.mcontrol.cnc_obj.vars["wa"]-a) <0:
+                    a_move=jogstep
+                else:
+                    a_move=-jogstep
+            if round(((finishtime-time.now)%b_step_every), 2) == 0:
+                if (self.mcontrol.cnc_obj.vars["wb"]-b) <0:
+                    b_move=jogstep
+                else:
+                    b_move=-jogstep
+            if (x_move+y_move+z_move+a_move+b_move !=0):
+                self.logger.info("timelapse jog move")
+                self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_move,y_move,z_move,a_move,b_move, self.current_feed_speed))
+
+
+
+
+
+
+        
+
     def add_absolute_move_by_time_to_sequence(self, x, y, z, a, b, seconds, dwell):
         feedval = 60 / seconds
         if len(self.gcode_sequence) == 0:
@@ -453,6 +524,7 @@ class grbl_controller:
         self.gcode_sequence.append("g94")
         self.gcode_sequence.append("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z,a,b, feedrate))
         self.gcode_sequence.append("g4 P{}".format(dwell))
+
 
     def print_gcode_sequence(self):
         seq_num = 0
@@ -476,6 +548,7 @@ class grbl_controller:
             time.sleep(0.5)
             self.logger.info("waiting for idle post sequence run")
 
+    
 
     def sendGCode(self, cmd):
         self.logger.info("{} : instruction:\n{}".format(time.ctime(), cmd))
