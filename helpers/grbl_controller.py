@@ -462,39 +462,48 @@ class grbl_controller:
         step=0
         starttime=time.time()
         finishtime=time.time()+seconds
+        self.logger.info("timelapse starting at {}, targetting finish at {}".format(time.ctime(starttime), time.ctime(finishtime))
         while time.time() < finishtime:
             x_move=0
             y_move=0
             z_move=0
             a_move=0
             b_move=0
-            if round(((finishtime-time.time())%x_step_every), 2) == 0:
+            time_into_timelapse=((finishtime-time.time())
+            time_to_x_step = time_into_timelapse%x_step_every
+            time_to_y_step = time_into_timelapse%y_step_every
+            time_to_z_step = time_into_timelapse%z_step_every
+            time_to_a_step = time_into_timelapse%a_step_every
+            time_to_b_step = time_into_timelapse%b_step_every
+            
+            self.logger.info("diff from multiple x {}, y {}, z {}, a {}, b {}".format(time_to_x_step,time_to_y_step,time_to_z_step,time_to_a_step,time_to_b_step))
+            if round(time_to_x_step, 2) == 0:
                 if (self.mcontrol.cnc_obj.vars["wx"]-x) <0:
                     x_move=jogstep
                 else:
                     x_move=-jogstep
-            if round(((finishtime-time.time())%y_step_every), 2) == 0:
+            if round(time_to_y_step, 2) == 0:
                 if (self.mcontrol.cnc_obj.vars["wy"]-y) <0:
                     y_move=jogstep
                 else:
                     y_move=-jogstep
-            if round(((finishtime-time.time())%z_step_every), 2) == 0:
+            if round(time_to_z_step, 2) == 0:
                 if (self.mcontrol.cnc_obj.vars["wz"]-z) <0:
                     z_move=jogstep
                 else:
                     z_move=-jogstep
-            if round(((finishtime-time.time())%a_step_every), 2) == 0:
+            if round(time_to_a_step, 2) == 0:
                 if (self.mcontrol.cnc_obj.vars["wa"]-a) <0:
                     a_move=jogstep
                 else:
                     a_move=-jogstep
-            if round(((finishtime-time.time())%b_step_every), 2) == 0:
+            if round(time_to_b_step, 2) == 0:
                 if (self.mcontrol.cnc_obj.vars["wb"]-b) <0:
                     b_move=jogstep
                 else:
                     b_move=-jogstep
             if (x_move+y_move+z_move+a_move+b_move !=0):
-                    
+                self.logger.info("timelapse move")
                 self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_move,y_move,z_move,a_move,b_move, self.current_feed_speed))
 
 
