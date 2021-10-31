@@ -462,7 +462,7 @@ class grbl_controller:
         step=0
         starttime=time.time()
         finishtime=time.time()+seconds
-        self.logger.info("timelapse starting at {}, targetting finish at {}".format(time.ctime(starttime), time.ctime(finishtime))
+        self.logger.info("timelapse starting at {}, targetting finish at {}".format(time.ctime(starttime), time.ctime(finishtime)))
         while time.time() < finishtime:
             x_move=0
             y_move=0
