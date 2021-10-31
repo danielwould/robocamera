@@ -469,7 +469,7 @@ class grbl_controller:
             z_move=0
             a_move=0
             b_move=0
-            time_into_timelapse=((finishtime-time.time())
+            time_into_timelapse=finishtime-time.time()
             time_to_x_step = time_into_timelapse%x_step_every
             time_to_y_step = time_into_timelapse%y_step_every
             time_to_z_step = time_into_timelapse%z_step_every
