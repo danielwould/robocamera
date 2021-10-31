@@ -522,7 +522,7 @@ class grbl_controller:
                     b_move=-jogstep
                 last_b_jogged_at=time.time()
             if (x_move+y_move+z_move+a_move+b_move !=0):
-                self.logger.info("timelapse move {} {} {} {} {}".format(x_move,y_move,z_mode,a_move,b_move))
+                self.logger.info("timelapse move {} {} {} {} {}".format(x_move,y_move,z_move,a_move,b_move))
                 self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_move,y_move,z_move,a_move,b_move, self.current_feed_speed))
 
 
