@@ -449,11 +449,11 @@ class grbl_controller:
         jogstep=0.1
         #firgure out how many 0.1 jogs it would take to evenly move through the timelapse time
         #then normalise the step distances to the desired actual time between steps
-        x_steps=calculate_axis_timelapse_step(xdiff, timelapse_duracion_secs, minimum_time_between_steps)
-        y_steps=calculate_axis_timelapse_step(ydiff, timelapse_duracion_secs, minimum_time_between_steps)
-        z_steps=calculate_axis_timelapse_step(zdiff, timelapse_duracion_secs, minimum_time_between_steps)
-        a_steps=calculate_axis_timelapse_step(adiff, timelapse_duracion_secs, minimum_time_between_steps)
-        b_steps=calculate_axis_timelapse_step(bdiff, timelapse_duracion_secs, minimum_time_between_steps)
+        x_steps=self.calculate_axis_timelapse_step(xdiff, timelapse_duracion_secs, minimum_time_between_steps)
+        y_steps=self.calculate_axis_timelapse_step(ydiff, timelapse_duracion_secs, minimum_time_between_steps)
+        z_steps=self.calculate_axis_timelapse_step(zdiff, timelapse_duracion_secs, minimum_time_between_steps)
+        a_steps=self.calculate_axis_timelapse_step(adiff, timelapse_duracion_secs, minimum_time_between_steps)
+        b_steps=self.calculate_axis_timelapse_step(bdiff, timelapse_duracion_secs, minimum_time_between_steps)
             
         self.logger.info("timelapse moves: x {}, y {}, z {}, a {}, b {}".format(x_steps,y_steps,z_steps,a_steps,b_steps))
         step=0
