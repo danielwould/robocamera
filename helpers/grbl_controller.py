@@ -461,7 +461,7 @@ class grbl_controller:
         steps = int(timelapse_duration_secs/minimum_time_between_steps)
         for x in range(1, steps):
             self.logger.info("timelapse move at {}".format(time.time()))
-            self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_steps,y_steps,z_steps,a_steps,b_steps, 250)
+            self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_steps,y_steps,z_steps,a_steps,b_steps, 250))
             time.sleep(minimum_time_between_steps)
 
     def calculate_axis_timelapse_step(self, diff,pos, axis, jogstep, timelapse_duration_secs, minimum_time_between_steps):
