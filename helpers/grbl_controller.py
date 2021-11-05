@@ -449,46 +449,12 @@ class grbl_controller:
         jogstep=0.1
         #firgure out how many 0.1 jogs it would take to evenly move through the timelapse time
         #then normalise the step distances to the desired actual time between steps
-        if (xdiff >0):
-            x_steps = xdiff /jogstep
-            x_step_every_exact = timelapse_duration_secs/x_steps
-            x_steps = jogstep *(minimum_time_between_steps/x_step_every_exact)
-        else:
-            x_steps=0
-            x_step_every=timelapse_duration_secs
-
-        if (ydiff >0):
-            y_steps = ydiff /jogstep
-            y_step_every_exact = timelapse_duration_secs/y_steps
-            y_steps = jogstep *(minimum_time_between_steps/y_step_every_exact)
-        else:
-            y_steps=0
-            y_step_every=timelapse_duration_secs
-
-        if (zdiff >0):
-            z_steps = zdiff /jogstep
-            z_step_every_exact = timelapse_duration_secs/z_steps
-            z_steps = jogstep *(minimum_time_between_steps/z_step_every_exact)
-        else:
-            z_steps=0
-            z_step_every=timelapse_duration_secs
-
-        if (adiff >0):
-            a_steps = adiff /jogstep
-            a_step_every_exact = timelapse_duration_secs/a_steps
-            a_steps = jogstep *(minimum_time_between_steps/a_step_every_exact)
-        else:
-            a_steps=0
-            a_step_every=timelapse_duration_secs
-
-        if (bdiff >0):
-            b_steps = bdiff /jogstep
-            b_step_every_exact = timelapse_duration_secs/b_steps
-            b_steps = jogstep *(minimum_time_between_steps/b_step_every_exact)
-        else:
-            b_steps=0
-            b_step_every=timelapse_duration_secs
-
+        x_steps=calculate_axis_timelapse_step(xdiff, timelapse_duracion_secs, minimum_time_between_steps):
+        y_steps=calculate_axis_timelapse_step(ydiff, timelapse_duracion_secs, minimum_time_between_steps):
+        z_steps=calculate_axis_timelapse_step(zdiff, timelapse_duracion_secs, minimum_time_between_steps):
+        a_steps=calculate_axis_timelapse_step(adiff, timelapse_duracion_secs, minimum_time_between_steps):
+        b_steps=calculate_axis_timelapse_step(bdiff, timelapse_duracion_secs, minimum_time_between_steps):
+            
         self.logger.info("timelapse moves: x {}, y {}, z {}, a {}, b {}".format(x_steps,y_steps,z_steps,a_steps,b_steps))
         step=0
                
@@ -497,6 +463,17 @@ class grbl_controller:
             self.logger.info("timelapse move at {}".format(time.time()))
             self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_steps,y_steps,z_steps,a_steps,b_steps, self.current_feed_speed))
             time.sleep(minimum_time_between_steps)
+
+    def calculate_axis_timelapse_step(self, diff, timelapse_duracion_secs, minimum_time_between_steps):
+        if (diff >0):
+            steps = diff /jogstep
+            step_every_exact = timelapse_duration_secs/steps
+            steps = jogstep *(minimum_time_between_steps/step_every_exact)
+            if (x-self.mcontrol.cnc_obj.vars["wx"]) < 0:
+                steps=steps*-1
+        else:
+            steps=0
+        return steps
 
     def add_absolute_move_by_time_to_sequence(self, x, y, z, a, b, seconds, dwell):
         feedval = 60 / seconds
