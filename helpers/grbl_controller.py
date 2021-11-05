@@ -452,7 +452,7 @@ class grbl_controller:
         if (xdiff >0):
             x_steps = xdiff /jogstep
             x_step_every_exact = timelapse_duration_secs/x_steps
-            x_steps = x_steps *(minimum_time_between_steps/x_step_every_exact)
+            x_steps = jogstep *(minimum_time_between_steps/x_step_every_exact)
         else:
             x_steps=0
             x_step_every=timelapse_duration_secs
@@ -460,7 +460,7 @@ class grbl_controller:
         if (ydiff >0):
             y_steps = ydiff /jogstep
             y_step_every_exact = timelapse_duration_secs/y_steps
-            y_steps = y_steps *(minimum_time_between_steps/y_step_every_exact)
+            y_steps = jogstep *(minimum_time_between_steps/y_step_every_exact)
         else:
             y_steps=0
             y_step_every=timelapse_duration_secs
@@ -468,7 +468,7 @@ class grbl_controller:
         if (zdiff >0):
             z_steps = zdiff /jogstep
             z_step_every_exact = timelapse_duration_secs/z_steps
-            z_steps = z_steps *(minimum_time_between_steps/z_step_every_exact)
+            z_steps = jogstep *(minimum_time_between_steps/z_step_every_exact)
         else:
             z_steps=0
             z_step_every=timelapse_duration_secs
@@ -476,7 +476,7 @@ class grbl_controller:
         if (adiff >0):
             a_steps = adiff /jogstep
             a_step_every_exact = timelapse_duration_secs/a_steps
-            a_steps = a_steps *(minimum_time_between_steps/a_step_every_exact)
+            a_steps = jogstep *(minimum_time_between_steps/a_step_every_exact)
         else:
             a_steps=0
             a_step_every=timelapse_duration_secs
@@ -484,7 +484,7 @@ class grbl_controller:
         if (bdiff >0):
             b_steps = bdiff /jogstep
             b_step_every_exact = timelapse_duration_secs/b_steps
-            b_steps = b_steps *(minimum_time_between_steps/b_step_every_exact)
+            b_steps = jogstep *(minimum_time_between_steps/b_step_every_exact)
         else:
             b_steps=0
             b_step_every=timelapse_duration_secs
