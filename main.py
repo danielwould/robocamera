@@ -81,7 +81,7 @@ class RobotCamera(tk.Frame):
             self.controller.set_device("COM7", 115200,"CameraArm")
         else:
             print("connecting to linux tty device")
-            self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
+            self.controller.set_device("/dev/ttyACM1", 115200,"CameraArm")
 
 
         self.gimbal_inst = gimbal("x","y","z", self.controller)
@@ -326,7 +326,7 @@ class RobotCamera(tk.Frame):
     def timelapse(self):
         #trigger a timelapse from current position to Save position 2
         timelapse_time=600
-        timelapse_step=3
+        timelapse_step=5
         savepoint = self.save_position_2
         self.controller.absolute_move_timelapse(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,timelapse_time, timelapse_step)
 
