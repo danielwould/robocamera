@@ -81,7 +81,7 @@ class RobotCamera(tk.Frame):
             self.controller.set_device("COM7", 115200,"CameraArm")
         else:
             print("connecting to linux tty device")
-            self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
+            self.controller.set_device("/dev/ttyACM1", 115200,"CameraArm")
 
 
         self.gimbal_inst = gimbal("x","y","z", self.controller)
