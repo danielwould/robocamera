@@ -434,7 +434,7 @@ class grbl_controller:
         self.sendGCode("g93")
         self.sendGCode("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z, a,b,feedval))
         
-    def absolute_move_timelapse(self, x, y, z, a, b, seconds):
+    def absolute_move_timelapse(self, x, y, z, a, b, timelapse_duration_secs,minimum_time_between_steps):
         #figure out difference between current location and desired location for each axis
         #figure out smallest incremental step we send to grbl
         #devide the differences up into an even number of those small increments
@@ -447,83 +447,56 @@ class grbl_controller:
         self.logger.info("timelapse: x_diff {}, y_diff {}, z_diff {}, a_diff {}, b_diff {}".format(xdiff,ydiff,zdiff,adiff,bdiff))
 
         jogstep=0.1
-        #example timelapse 10 minutes with frame every 1 second, 
-        x_steps = xdiff /jogstep
-        y_steps = ydiff /jogstep
-        z_steps = zdiff /jogstep
-        a_steps = adiff /jogstep
-        b_steps = bdiff /jogstep
-        x_step_every = seconds/x_steps
-        y_step_every = seconds/y_steps
-        z_step_every = seconds/z_steps
-        a_step_every = seconds/a_steps
-        b_step_every = seconds/b_steps
-        self.logger.info("timelapse: x_step_every {}, y_step_every {}, z_step_every {}, a_step_every {}, b_step_every {}".format(x_step_every,y_step_every,z_step_every,a_step_every,b_step_every))
+        #firgure out how many 0.1 jogs it would take to evenly move through the timelapse time
+        #then normalise the step distances to the desired actual time between steps
+        if (xdiff >0):
+            x_steps = xdiff /jogstep
+            x_step_every_exact = timelapse_duration_secs/x_steps
+            x_steps = x_steps *(minimum_time_between_steps/x_step_every_exact)
+        else:
+            x_steps=0
+            x_step_every=timelapse_duration_secs
+
+        if (ydiff >0):
+            y_steps = ydiff /jogstep
+            y_step_every_exact = timelapse_duration_secs/y_steps
+            y_steps = y_steps *(minimum_time_between_steps/y_step_every_exact)
+        else:
+            y_steps=0
+            y_step_every=timelapse_duration_secs
+
+        if (zdiff >0):
+            z_steps = zdiff /jogstep
+            z_step_every_exact = timelapse_duration_secs/z_steps
+            z_steps = z_steps *(minimum_time_between_steps/z_step_every_exact)
+        else:
+            z_steps=0
+            z_step_every=timelapse_duration_secs
+
+        if (adiff >0):
+            a_steps = adiff /jogstep
+            a_step_every_exact = timelapse_duration_secs/a_steps
+            a_steps = a_steps *(minimum_time_between_steps/a_step_every_exact)
+        else:
+            a_steps=0
+            a_step_every=timelapse_duration_secs
+
+        if (bdiff >0):
+            b_steps = bdiff /jogstep
+            b_step_every_exact = timelapse_duration_secs/b_steps
+            b_steps = b_steps *(minimum_time_between_steps/b_step_every_exact)
+        else:
+            b_steps=0
+            b_step_every=timelapse_duration_secs
+
+        self.logger.info("timelapse moves: x {}, y {}, z {}, a {}, b {}".format(x_steps,y_steps,z_steps,a_steps,b_steps))
         step=0
-        starttime=time.time()
-        finishtime=time.time()+seconds
-        self.logger.info("timelapse starting at {}, targetting finish at {}".format(time.ctime(starttime), time.ctime(finishtime)))
-        last_x_jogged_at=starttime
-        last_y_jogged_at=starttime
-        last_z_jogged_at=starttime
-        last_a_jogged_at=starttime
-        last_b_jogged_at=starttime
-        while time.time() < finishtime:
-            x_move=0
-            y_move=0
-            z_move=0
-            a_move=0
-            b_move=0
-            time_into_timelapse=finishtime-time.time()
-            time_to_x_step = time_into_timelapse%x_step_every
-            time_to_y_step = time_into_timelapse%y_step_every
-            time_to_z_step = time_into_timelapse%z_step_every
-            time_to_a_step = time_into_timelapse%a_step_every
-            time_to_b_step = time_into_timelapse%b_step_every
-            
-            #self.logger.info("diff from multiple x {}, y {}, z {}, a {}, b {}".format(time_to_x_step,time_to_y_step,time_to_z_step,time_to_a_step,time_to_b_step))
-            if (round(time_to_x_step, 2) == 0) & ((time.time()-last_x_jogged_at)>(x_step_every*0.8)) :
-                self.logger.info("time since last x jog was {}, time between jogs should be {}".format((time.time()-last_x_jogged_at), x_step_every))
-                if (self.mcontrol.cnc_obj.vars["wx"]-x) <0:
-                    x_move=jogstep
-                else:
-                    x_move=-jogstep
-                last_x_jogged_at=time.time()
-            if round(time_to_y_step, 2) == 0 & ((time.time()-last_y_jogged_at)>(y_step_every*0.8)):
-                self.logger.info("time since last y jog was {}, time between jogs should be {}".format((time.time()-last_y_jogged_at), y_step_every))
-                
-                if (self.mcontrol.cnc_obj.vars["wy"]-y) <0:
-                    y_move=jogstep
-                else:
-                    y_move=-jogstep
-                last_y_jogged_at=time.time()
-            if round(time_to_z_step, 2) == 0 & ((time.time()-last_z_jogged_at)>(z_step_every*0.8)):
-                self.logger.info("time since last z jog was {}, time between jogs should be {}".format((time.time()-last_z_jogged_at), z_step_every))
-                
-                if (self.mcontrol.cnc_obj.vars["wz"]-z) <0:
-                    z_move=jogstep
-                else:
-                    z_move=-jogstep
-                last_z_jogged_at=time.time()
-            if round(time_to_a_step, 2) == 0 & ((time.time()-last_a_jogged_at)>(a_step_every*0.8)):
-                self.logger.info("time since last a jog was {}, time between jogs should be {}".format((time.time()-last_a_jogged_at), a_step_every))
-                
-                if (self.mcontrol.cnc_obj.vars["wa"]-a) <0:
-                    a_move=jogstep
-                else:
-                    a_move=-jogstep
-                last_a_jogged_at=time.time()
-            if round(time_to_b_step, 2) == 0 & ((time.time()-last_b_jogged_at)>(b_step_every*0.8)):
-                self.logger.info("time since last b jog was {}, time between jogs should be {}".format((time.time()-last_b_jogged_at), b_step_every))
-                
-                if (self.mcontrol.cnc_obj.vars["wb"]-b) <0:
-                    b_move=jogstep
-                else:
-                    b_move=-jogstep
-                last_b_jogged_at=time.time()
-            if (x_move+y_move+z_move+a_move+b_move !=0):
-                self.logger.info("timelapse move {} {} {} {} {}".format(x_move,y_move,z_move,a_move,b_move))
-                self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_move,y_move,z_move,a_move,b_move, self.current_feed_speed))
+               
+        steps = timelapse_duration_secs/minimum_time_between_steps
+        for x in range(1, steps):
+            self.logger.info("timelapse move at {}".format(time.time()))
+            self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_steps,y_steps,z_steps,a_steps,b_steps, self.current_feed_speed))
+            time.sleep(minimum_time_between_steps)
 
 
 

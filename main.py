@@ -326,8 +326,9 @@ class RobotCamera(tk.Frame):
     def timelapse(self):
         #trigger a timelapse from current position to Save position 2
         timelapse_time=600
+        timelapse_step=3
         savepoint = self.save_position_2
-        self.controller.absolute_move_timelapse(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,timelapse_time)
+        self.controller.absolute_move_timelapse(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,timelapse_time, timelapse_step)
 
     def set_initial_pos(self):
         #initial position should be min gimbal tilt, max crane tilt, middle position pan on both, zoom all the way out
