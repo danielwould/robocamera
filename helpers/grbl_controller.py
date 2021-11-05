@@ -464,7 +464,7 @@ class grbl_controller:
             self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_steps,y_steps,z_steps,a_steps,b_steps, (self.current_feed_speed/10)))
             time.sleep(minimum_time_between_steps)
 
-    def calculate_axis_timelapse_step(self, pos,axis,diff, jogstep, timelapse_duration_secs, minimum_time_between_steps):
+    def calculate_axis_timelapse_step(self, diff,pos, axis, jogstep, timelapse_duration_secs, minimum_time_between_steps):
         if (diff >0):
             steps = diff /jogstep
             step_every_exact = timelapse_duration_secs/steps
