@@ -492,18 +492,11 @@ class grbl_controller:
         self.logger.info("timelapse moves: x {}, y {}, z {}, a {}, b {}".format(x_steps,y_steps,z_steps,a_steps,b_steps))
         step=0
                
-        steps = timelapse_duration_secs/minimum_time_between_steps
+        steps = int(timelapse_duration_secs/minimum_time_between_steps)
         for x in range(1, steps):
             self.logger.info("timelapse move at {}".format(time.time()))
             self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_steps,y_steps,z_steps,a_steps,b_steps, self.current_feed_speed))
             time.sleep(minimum_time_between_steps)
-
-
-
-
-
-
-        
 
     def add_absolute_move_by_time_to_sequence(self, x, y, z, a, b, seconds, dwell):
         feedval = 60 / seconds
