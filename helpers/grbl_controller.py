@@ -449,11 +449,11 @@ class grbl_controller:
         jogstep=0.1
         #firgure out how many 0.1 jogs it would take to evenly move through the timelapse time
         #then normalise the step distances to the desired actual time between steps
-        x_steps=self.calculate_axis_timelapse_step(xdiff, jogstep, timelapse_duration_secs, minimum_time_between_steps)
-        y_steps=self.calculate_axis_timelapse_step(ydiff, jogstep, timelapse_duration_secs, minimum_time_between_steps)
-        z_steps=self.calculate_axis_timelapse_step(zdiff, jogstep, timelapse_duration_secs, minimum_time_between_steps)
-        a_steps=self.calculate_axis_timelapse_step(adiff, jogstep, timelapse_duration_secs, minimum_time_between_steps)
-        b_steps=self.calculate_axis_timelapse_step(bdiff, jogstep, timelapse_duration_secs, minimum_time_between_steps)
+        x_steps=self.calculate_axis_timelapse_step(xdiff, x,"wx",jogstep, timelapse_duration_secs, minimum_time_between_steps)
+        y_steps=self.calculate_axis_timelapse_step(ydiff, y,"wy",jogstep, timelapse_duration_secs, minimum_time_between_steps)
+        z_steps=self.calculate_axis_timelapse_step(zdiff, z,"wz",jogstep, timelapse_duration_secs, minimum_time_between_steps)
+        a_steps=self.calculate_axis_timelapse_step(adiff, a,"wa",jogstep, timelapse_duration_secs, minimum_time_between_steps)
+        b_steps=self.calculate_axis_timelapse_step(bdiff, b,"wb",jogstep, timelapse_duration_secs, minimum_time_between_steps)
             
         self.logger.info("timelapse moves: x {}, y {}, z {}, a {}, b {}".format(x_steps,y_steps,z_steps,a_steps,b_steps))
         step=0
@@ -464,12 +464,12 @@ class grbl_controller:
             self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_steps,y_steps,z_steps,a_steps,b_steps, (self.current_feed_speed/10)))
             time.sleep(minimum_time_between_steps)
 
-    def calculate_axis_timelapse_step(self, diff, jogstep, timelapse_duration_secs, minimum_time_between_steps):
+    def calculate_axis_timelapse_step(self, pos,axis,diff, jogstep, timelapse_duration_secs, minimum_time_between_steps):
         if (diff >0):
             steps = diff /jogstep
             step_every_exact = timelapse_duration_secs/steps
             steps = jogstep *(minimum_time_between_steps/step_every_exact)
-            if (x-self.mcontrol.cnc_obj.vars["wx"]) < 0:
+            if (pos-self.mcontrol.cnc_obj.vars[axis]) < 0:
                 steps=steps*-1
         else:
             steps=0
