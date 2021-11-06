@@ -290,7 +290,7 @@ class grbl_controller:
     def set_position(self,x,y,z,a,b):
         self.queue.put("G92 X{} Y{} Z{} A{} B{}".format(x,y,z,a,b))
         self.queue.put("G10 L20 P1 X{} Y{} Z{} A{} B{}".format(x,y,z,a,b))
-        self.mcontrol.viewStatusReport()
+        #self.mcontrol.viewStatusReport()
         
     def stop(self):
         self.app_running=False
