@@ -608,7 +608,7 @@ class RobotCamera(tk.Frame):
                     self.save_position_3 = waypoint(savepoints[sp]['id'],location(savepoints[sp]['x'],savepoints[sp]['y'],savepoints[sp]['z']), location(savepoints[sp]['a'], savepoints[sp]['b'], 0))
                 if (sp==4):
                     self.save_position_4 = waypoint(savepoints[sp]['id'],location(savepoints[sp]['x'],savepoints[sp]['y'],savepoints[sp]['z']), location(savepoints[sp]['a'], savepoints[sp]['b'], 0))
-            current_position = state[0]['Position']
+            current_position = state[0]['Position'][0]
             print (current_position)
             self.controller.set_position(current_position['wx'],current_position['wy'],current_position['wz'],current_position['wa'],current_position['wb'])
 
