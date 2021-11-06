@@ -600,6 +600,8 @@ class RobotCamera(tk.Frame):
             savepoints = state[1]['SavePoints']
             print(savepoints)
             for sp in range(len(savepoints)):
+                print(sp)
+                print (savepoints[sp])
                 if (sp==1):
                     self.save_position_1 = waypoint(savepoints[sp]['id'],location(savepoints[sp]['x'],savepoints[sp]['y'],savepoints[sp]['z']), location(savepoints[sp]['a'], savepoints[sp]['b'], 0))
                 if (sp==2):
