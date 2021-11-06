@@ -595,7 +595,8 @@ class RobotCamera(tk.Frame):
     def load_state_from_file(self):
         with open('RoboCam_state.json') as json_file:
             data = json.load(json_file)
-            for sp in data['SavePoints']:
+            state = data['RoboCam']
+            for sp in state['SavePoints']:
                 if (sp['id']==1):
                     self.save_position_1 = waypoint(sp['id'],location(sp['x'],sp['y'],sp['z']), location(sp['a'], sp['b'], 0))
                 if (sp['id']==2):
@@ -604,7 +605,7 @@ class RobotCamera(tk.Frame):
                     self.save_position_3 = waypoint(sp['id'],location(sp['x'],sp['y'],sp['z']), location(sp['a'], sp['b'], 0))
                 if (sp['id']==4):
                     self.save_position_4 = waypoint(sp['id'],location(sp['x'],sp['y'],sp['z']), location(sp['a'], sp['b'], 0))
-            current_position = data['Position']
+            current_position = state['Position']
             self.controller.set_position(current_position['wx'],current_position['wy'],current_position['wz'],current_position['wa'],current_position['wb'])
 
     
