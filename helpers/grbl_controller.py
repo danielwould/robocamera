@@ -289,6 +289,7 @@ class grbl_controller:
 
     def set_position(self,x,y,z,a,b):
         self.mcontrol._wcsSet(x,y,z,a,b,0)
+        self.mcontrol.viewStatusReport()
         
     def stop(self):
         self.app_running=False
