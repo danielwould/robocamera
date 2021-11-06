@@ -72,6 +72,5 @@ class info():
                     loopcount=0
 
             except Exception as e:
-                print("Unexpected error in ui thread:", sys.exc_info()[0])
-                print (sys.exec_info()[2]) 
+                print("Unexpected error in ui thread:", e
                 time.sleep(1)
