@@ -75,6 +75,7 @@ class Joystick():
                 #combined jog
                 #
                 if ( (xjog != 0)| (yjog != 0) | (ajog!= 0) | (bjog != 0) ):
+                    self.parent.first_move=True
                     self.joystick_moving=True
                     self.parent.tracker.set_static_tracking(False)
                     self.control_last_toggled = time.time()

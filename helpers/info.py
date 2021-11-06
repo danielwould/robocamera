@@ -67,9 +67,11 @@ class info():
                     self.parent.trackingRenderToggle["fg"]="#ffcc33"
                     self.parent.trackingRenderToggle["bg"]="#333333"
                 if loopcount ==10:
-                    #every 3 seconds save position information to a file
-                    self.parent.save_state_to_file()
-                    loopcount=0
+                    if self.parent.first_move==True:
+                        #once we've moved once then start saving position
+                        #every 3 seconds save position information to a file
+                        self.parent.save_state_to_file()
+                        loopcount=0
 
             except Exception as e:
                 print("Unexpected error in ui thread:", e)

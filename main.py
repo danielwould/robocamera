@@ -66,7 +66,7 @@ class RobotCamera(tk.Frame):
         self.save_position_2 = waypoint(2,location(0, 0, 0), location(0, 0, 0))
         self.save_position_3 = waypoint(3,location(0, 0, 0), location(0, 0, 0))
         self.save_position_4 = waypoint(4,location(0, 0, 0), location(0, 0, 0))
-        
+        self.first_move=FALSE
         self.sequence_steps = sequence()
         
         self.init_controllers()
