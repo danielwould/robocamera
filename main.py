@@ -579,15 +579,15 @@ class RobotCamera(tk.Frame):
         current_pos['Position'] = []
         current_pos['Position'].append(self.controller.position_data())
         
-        data['RoboCam'].append(current_pos['Position'])
-        
+        data['RoboCam'].append(current_pos)
+        sp_data = {}
         sp_data['SavePoints'] = []
         sp_data['SavePoints'].append(self.save_position_1.get_waypoint_data())
         sp_data['SavePoints'].append(self.save_position_2.get_waypoint_data())
         sp_data['SavePoints'].append(self.save_position_3.get_waypoint_data())
         sp_data['SavePoints'].append(self.save_position_4.get_waypoint_data())
         
-        data['RoboCam'].append(sp_data['SavePoints'])
+        data['RoboCam'].append(sp_data)
 
         with open('RoboCam_state.json', 'w') as outfile:
             json.dump(data, outfile)
