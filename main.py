@@ -58,7 +58,8 @@ class RobotCamera(tk.Frame):
         self.TRACKING = False
         self.TRACKING_RENDER = False
         self.trackingId =1
-
+        self.timelapse_time = 600
+        self.timelapse_steps = 3
         self.save_position_1 = waypoint(location(0, 0, 0), location(0, 0, 0))
         self.save_position_2 = waypoint(location(0, 0, 0), location(0, 0, 0))
         self.save_position_3 = waypoint(location(0, 0, 0), location(0, 0, 0))
@@ -310,6 +311,29 @@ class RobotCamera(tk.Frame):
         self.move_duration_select = OptionMenu(move, self.move_duration, 2, 5,10,20,30,60,120)
         self.move_duration_select.pack(side="bottom")
         
+        timelapse_total = Frame(options_controls)
+        timelapse_total.pack(side="top")
+        self.timelapse_label = tk.Label(timelapse_total,text="TimelapseDuration", relief=tk.RIDGE)
+        self.timelapse_label.config(font=("Courier", 12))
+        self.timelapse_label.pack(side="top")
+        self.timelapse_duration = StringVar(timelapse_total)
+        self.timelapse_duration.trace("w",self.set_timelapse_time)
+        self.timelapse_duration.set(600) # initial value
+        self.timelapse_duration_select = OptionMenu(move, self.timelapse_duration, 600, 1200,1800,2400)
+        self.timelapse_duration_select.pack(side="bottom")
+        
+        timelapse_interval = Frame(options_controls)
+        timelapse_interval.pack(side="top")
+        self.timelapseInterval_label = tk.Label(timelapse_interval,text="TimelapseInterval", relief=tk.RIDGE)
+        self.timelapseInterval_label.config(font=("Courier", 12))
+        self.timelapseInterval_label.pack(side="top")
+        self.timelapse_stepinterval = StringVar(timelapse_interval)
+        self.timelapse_stepinterval.trace("w",self.set_timelapse_steps)
+        self.timelapse_stepinterval.set(3) # initial value
+        self.timelapse_stepinterval_select = OptionMenu(move, self.timelapse_stepinterval, 1,2,3,4,5,6,7,8,9,10)
+        self.timelapse_stepinterval_select.pack(side="bottom")
+
+
         
         self.reset = tk.Button(wayPoint_controls, text="RESET", fg="red",
                               command=self.controller.reset)
@@ -325,10 +349,8 @@ class RobotCamera(tk.Frame):
         
     def timelapse(self):
         #trigger a timelapse from current position to Save position 2
-        timelapse_time=600
-        timelapse_step=5
         savepoint = self.save_position_2
-        self.controller.absolute_move_timelapse(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,timelapse_time, timelapse_step)
+        self.controller.absolute_move_timelapse(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,self.timelapse_time, self.timelapse_step)
 
     def set_initial_pos(self):
         #initial position should be min gimbal tilt, max crane tilt, middle position pan on both, zoom all the way out
@@ -374,8 +396,12 @@ class RobotCamera(tk.Frame):
 
     def set_move_time(self, *args):
         self.controller.set_move_duration(int(self.move_duration.get()))
-        
 
+    def set_timelapse_time(self, *args):
+        self.timelapse_time = (int(self.timelapse_duration.get()))
+        
+    def set_timelapse_steps(self, *args):
+        self.timelapse_steps = (int(self.timelapse_stepinterval.get()))
 
     def add_waypoint(self):
         skip_waypoint=False
