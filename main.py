@@ -596,15 +596,17 @@ class RobotCamera(tk.Frame):
         with open('RoboCam_state.json') as json_file:
             data = json.load(json_file)
             state = data['RoboCam']
-            for sp in state['SavePoints']:
-                if (sp['id']==1):
-                    self.save_position_1 = waypoint(sp['id'],location(sp['x'],sp['y'],sp['z']), location(sp['a'], sp['b'], 0))
-                if (sp['id']==2):
-                    self.save_position_2 = waypoint(sp['id'],location(sp['x'],sp['y'],sp['z']), location(sp['a'], sp['b'], 0))
-                if (sp['id']==3):
-                    self.save_position_3 = waypoint(sp['id'],location(sp['x'],sp['y'],sp['z']), location(sp['a'], sp['b'], 0))
-                if (sp['id']==4):
-                    self.save_position_4 = waypoint(sp['id'],location(sp['x'],sp['y'],sp['z']), location(sp['a'], sp['b'], 0))
+            savepoints = state['SavePoints']
+            print(savepoints)
+            for sp in range(len(savepoints)):
+                if (sp==1):
+                    self.save_position_1 = waypoint(savepoints[sp]['id'],location(savepoints[sp]['x'],savepoints[sp]['y'],savepoints[sp]['z']), location(savepoints[sp]['a'], savepoints[sp]['b'], 0))
+                if (sp==2):
+                    self.save_position_2 = waypoint(savepoints[sp]['id'],location(savepoints[sp]['x'],savepoints[sp]['y'],savepoints[sp]['z']), location(savepoints[sp]['a'], savepoints[sp]['b'], 0))
+                if (sp==3):
+                    self.save_position_3 = waypoint(savepoints[sp]['id'],location(savepoints[sp]['x'],savepoints[sp]['y'],savepoints[sp]['z']), location(savepoints[sp]['a'], savepoints[sp]['b'], 0))
+                if (sp==4):
+                    self.save_position_4 = waypoint(savepoints[sp]['id'],location(savepoints[sp]['x'],savepoints[sp]['y'],savepoints[sp]['z']), location(savepoints[sp]['a'], savepoints[sp]['b'], 0))
             current_position = state['Position']
             self.controller.set_position(current_position['wx'],current_position['wy'],current_position['wz'],current_position['wa'],current_position['wb'])
 
