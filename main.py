@@ -66,7 +66,7 @@ class RobotCamera(tk.Frame):
         self.save_position_2 = waypoint(2,location(0, 0, 0), location(0, 0, 0))
         self.save_position_3 = waypoint(3,location(0, 0, 0), location(0, 0, 0))
         self.save_position_4 = waypoint(4,location(0, 0, 0), location(0, 0, 0))
-        self.first_move=FALSE
+        self.first_move=False
         self.sequence_steps = sequence()
         
         self.init_controllers()
@@ -615,7 +615,8 @@ class RobotCamera(tk.Frame):
             current_position = state[0]['Position'][0]
             print (current_position)
             #self.controller.set_position(current_position['wx'],current_position['wy'],current_position['wz'],current_position['wa'],current_position['wb'])
-
+        #once we've loaded state we can start saving it again
+        self.first_move=True
     
 
     def quit(self):
