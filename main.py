@@ -21,6 +21,7 @@ from helpers.grbl_controller import grbl_controller
 from helpers.tracking.aruco_tracker import aruco_tracker
 import os
 import sys
+import json
 try:
 	import Tkinter as tk
 	from Queue import *
@@ -566,6 +567,27 @@ class RobotCamera(tk.Frame):
 
     def zoom_out(self):
         self.gimbal_inst.zoom_out_small()
+
+    def save_state_to_file(self):
+        data = {}
+        data['RoboCam'] = []
+        data['Position'] = []
+        data['Position'].append(self.controller.position_data())
+        
+        data['RoboCam'].append(data['Position'])
+        
+        data['SavePoints'] = []
+        data['SavePoints'].append(self.save_position_1.get_waypoint_data())
+        data['SavePoints'].append(self.save_position_2.get_waypoint_data())
+        data['SavePoints'].append(self.save_position_3.get_waypoint_data())
+        data['SavePoints'].append(self.save_position_4.get_waypoint_data())
+        
+        data['RoboCam'].append(data['SavePoints'])
+
+        with open('RoboCam_state.json', 'w') as outfile:
+            json.dump(data, outfile)
+
+    
 
     def quit(self):
         self.joy.stop()
