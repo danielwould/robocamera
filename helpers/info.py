@@ -71,7 +71,7 @@ class info():
                         #once we've moved once then start saving position
                         #every 3 seconds save position information to a file
                         self.parent.save_state_to_file()
-                        loopcount=0
+                    loopcount=0
 
             except Exception as e:
                 print("Unexpected error in ui thread:", e)
