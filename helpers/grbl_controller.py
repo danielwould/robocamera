@@ -532,7 +532,15 @@ class grbl_controller:
         pos_str =  "wx:{},wy:{},wz:{},wa:{},wb:{}\nmx:{},my:{},mz:{},ma:{},mb:{}".format(self.mcontrol.cnc_obj.vars["wx"], self.mcontrol.cnc_obj.vars["wy"], self.mcontrol.cnc_obj.vars["wz"],self.mcontrol.cnc_obj.vars["wa"],self.mcontrol.cnc_obj.vars["wb"],self.mcontrol.cnc_obj.vars["mx"], self.mcontrol.cnc_obj.vars["my"], self.mcontrol.cnc_obj.vars["mz"],self.mcontrol.cnc_obj.vars["ma"],self.mcontrol.cnc_obj.vars["mb"])
         self.logger.debug("returning position: {}".format(pos_str))
         return pos_str
-        
+
+    def position_data(self):   
+        return {
+            "wx":self.mcontrol.cnc_obj.vars["wx"],
+            "wy":self.mcontrol.cnc_obj.vars["wy"],
+            "wz":self.mcontrol.cnc_obj.vars["wz"],
+            "wa":self.mcontrol.cnc_obj.vars["wa"],
+            "wb":self.mcontrol.cnc_obj.vars["wb"]
+        }
     
     
          

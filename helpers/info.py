@@ -15,8 +15,10 @@ class info():
 
     def main(self):
         # Loop until the user clicks the close button.
+        loopcount =0
         while not self.done:
             try:
+                loopcount=loopcount+1
                 time.sleep(0.3)
                 self.parent.status_text['text']="State:{}, lastUpdated:{}".format(self.parent.controller.get_grbl_status(), self.parent.controller.get_lastUpdateTime())
                 self.parent.pos_text['text']="Pos:\n{}".format(self.parent.controller.position_str())
@@ -64,6 +66,10 @@ class info():
                 else:
                     self.parent.trackingRenderToggle["fg"]="#ffcc33"
                     self.parent.trackingRenderToggle["bg"]="#333333"
+                if loopcount ==10:
+                    #every 3 seconds save position information to a file
+                    self.parent.save_state_to_file()
+                    loopcount=0
 
             except Exception as e:
                 print("Unexpected error in ui thread:", sys.exc_info()[0])

@@ -1,6 +1,6 @@
 
 class waypoint:
-
+    id=1
     dwell_time = 10
     feed_rate = 250
     travel_duration = 10
@@ -46,3 +46,15 @@ class waypoint:
         return "Position: x{} y{} z{} a{} b{}".format(self.xpos,self.ypos, self.zpos, self.apos, self.bpos)
     def get_feed_info(self):
         return "dwell {} f:{} td:{}".format(self.dwell_time,self.feed_rate,self.travel_duration)
+    def get_waypoint_data(self):
+        return {
+            'id': self.id,
+            'x': self.xpos,
+            'y': self.ypos,
+            'z': self.zpos,
+            'a': self.apos,
+            'b': self.bpos,
+            'feed': self.feed_rate,
+            'travel_duration': self.travel_duration,
+            'dwell_time': self.dwell_time
+        }
