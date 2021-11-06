@@ -288,7 +288,7 @@ class grbl_controller:
         # Toggle DTR to reset Arduino
 
     def set_position(self,x,y,z,a,b):
-        self.mcontrol._wcsSet(x,y,z,a,b,0)
+        self.queue.put("G92 X{} Y{} Z{} A{} B{}".format(x,y,z,a,b))
         self.mcontrol.viewStatusReport()
         
     def stop(self):
