@@ -236,17 +236,17 @@ class grbl_controller:
 						xonxoff=False,
 						rtscts=False)
 		# Toggle DTR to reset Arduino
-        try:
-            self.serial.setDTR(0)
-        except IOError:
-            pass
+        #try:
+        #    self.serial.setDTR(0)
+        #except IOError:
+        #    pass
         time.sleep(1)
         self.serial.flushInput()
-        try:
-            self.serial.setDTR(1)
-        except IOError:
-            pass
-        time.sleep(1)
+        #try:
+        #    self.serial.setDTR(1)
+        #except IOError:
+        #    pass
+        #time.sleep(1)
         self.serial_write("\n\n")
         self._gcount = 0
         self._alarm  = True

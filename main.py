@@ -614,7 +614,7 @@ class RobotCamera(tk.Frame):
             self.sp4_pos_text['text'] = "A/R1 : {}".format(self.save_position_4.location_str())
             current_position = state[0]['Position'][0]
             print (current_position)
-            self.controller.set_position(current_position['wx'],current_position['wy'],current_position['wz'],current_position['wa'],current_position['wb'])
+            #self.controller.set_position(current_position['wx'],current_position['wy'],current_position['wz'],current_position['wa'],current_position['wb'])
 
     
 
