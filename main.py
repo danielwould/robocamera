@@ -6,6 +6,7 @@
 # step backward/forward through sequence
 
 
+from threading import current_thread
 import time
 from data.waypoint import waypoint
 from data.location import location
@@ -61,10 +62,10 @@ class RobotCamera(tk.Frame):
         self.trackingId =1
         self.timelapse_time = 600
         self.timelapse_steps = 3
-        self.save_position_1 = waypoint(location(0, 0, 0), location(0, 0, 0))
-        self.save_position_2 = waypoint(location(0, 0, 0), location(0, 0, 0))
-        self.save_position_3 = waypoint(location(0, 0, 0), location(0, 0, 0))
-        self.save_position_4 = waypoint(location(0, 0, 0), location(0, 0, 0))
+        self.save_position_1 = waypoint(1,location(0, 0, 0), location(0, 0, 0))
+        self.save_position_2 = waypoint(2,location(0, 0, 0), location(0, 0, 0))
+        self.save_position_3 = waypoint(3,location(0, 0, 0), location(0, 0, 0))
+        self.save_position_4 = waypoint(4,location(0, 0, 0), location(0, 0, 0))
         
         self.sequence_steps = sequence()
         
@@ -335,6 +336,9 @@ class RobotCamera(tk.Frame):
         self.timelapse_stepinterval_select.pack(side="bottom")
 
 
+        self.loadstate = tk.Button(wayPoint_controls, text="Load State", fg="black",
+                              command=self.load_state_from_file)
+        self.loadstate.pack(padx=2, pady=2)
         
         self.reset = tk.Button(wayPoint_controls, text="RESET", fg="red",
                               command=self.controller.reset)
@@ -502,7 +506,7 @@ class RobotCamera(tk.Frame):
         
         crane_position = self.crane_inst.get_current_location()
         gimbal_position = self.gimbal_inst.get_current_location()
-        new_waypoint = waypoint(
+        new_waypoint = waypoint(savepoint,
             location(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()),
             location(crane_position.get_rotation_pos(), crane_position.get_tilt_pos(),0)
             )
@@ -524,10 +528,10 @@ class RobotCamera(tk.Frame):
         self.crane_inst.reset()
         self.gimbal_inst.reset()
 
-        self.save_position_1 = waypoint(location(0, 0,0), location(0, 0, 0))
-        self.save_position_2 = waypoint(location(0, 0,0), location(0, 0, 0))
-        self.save_position_3 = waypoint(location(0, 0,0), location(0, 0, 0))
-        self.save_position_4 = waypoint(location(0, 0,0), location(0, 0, 0))
+        self.save_position_1 = waypoint(1,location(0, 0,0), location(0, 0, 0))
+        self.save_position_2 = waypoint(2,location(0, 0,0), location(0, 0, 0))
+        self.save_position_3 = waypoint(3,location(0, 0,0), location(0, 0, 0))
+        self.save_position_4 = waypoint(4,location(0, 0,0), location(0, 0, 0))
         sp1_pos_text['text'] = "Y/LB : {}".format(new_waypoint.location_str)
         sp1_pos_text['text'] = "B/RB : {}".format(new_waypoint.location_str)
         sp1_pos_text['text'] = "X/L1 : {}".format(new_waypoint.location_str)
@@ -570,22 +574,38 @@ class RobotCamera(tk.Frame):
 
     def save_state_to_file(self):
         data = {}
+        current_pos ={}
         data['RoboCam'] = []
-        data['Position'] = []
-        data['Position'].append(self.controller.position_data())
+        current_pos['Position'] = []
+        current_pos['Position'].append(self.controller.position_data())
         
-        data['RoboCam'].append(data['Position'])
+        data['RoboCam'].append(current_pos['Position'])
         
-        data['SavePoints'] = []
-        data['SavePoints'].append(self.save_position_1.get_waypoint_data())
-        data['SavePoints'].append(self.save_position_2.get_waypoint_data())
-        data['SavePoints'].append(self.save_position_3.get_waypoint_data())
-        data['SavePoints'].append(self.save_position_4.get_waypoint_data())
+        sp_data['SavePoints'] = []
+        sp_data['SavePoints'].append(self.save_position_1.get_waypoint_data())
+        sp_data['SavePoints'].append(self.save_position_2.get_waypoint_data())
+        sp_data['SavePoints'].append(self.save_position_3.get_waypoint_data())
+        sp_data['SavePoints'].append(self.save_position_4.get_waypoint_data())
         
-        data['RoboCam'].append(data['SavePoints'])
+        data['RoboCam'].append(sp_data['SavePoints'])
 
         with open('RoboCam_state.json', 'w') as outfile:
             json.dump(data, outfile)
+
+    def load_state_from_file(self):
+        with open('RoboCam_state.json') as json_file:
+            data = json.load(json_file)
+            for sp in data['SavePoints']:
+                if (sp['id']==1):
+                    self.save_position_1 = waypoint(sp['id'],location(sp['x'],sp['y'],sp['z']), location(sp['a'], sp['b'], 0))
+                if (sp['id']==2):
+                    self.save_position_2 = waypoint(sp['id'],location(sp['x'],sp['y'],sp['z']), location(sp['a'], sp['b'], 0))
+                if (sp['id']==3):
+                    self.save_position_3 = waypoint(sp['id'],location(sp['x'],sp['y'],sp['z']), location(sp['a'], sp['b'], 0))
+                if (sp['id']==4):
+                    self.save_position_4 = waypoint(sp['id'],location(sp['x'],sp['y'],sp['z']), location(sp['a'], sp['b'], 0))
+            current_position = data['Position']
+            self.controller.set_position(current_position['wx'],current_position['wy'],current_position['wz'],current_position['wa'],current_position['wb'])
 
     
 

@@ -11,7 +11,8 @@ class waypoint:
     bpos=0
     
 
-    def __init__(self, xyzpos, abcpos):
+    def __init__(self, id,xyzpos, abcpos):
+        self.id=id
         self.xpos = xyzpos.get_rotation_pos()
         self.ypos = xyzpos.get_tilt_pos()
         self.zpos = xyzpos.get_zoom_pos()
