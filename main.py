@@ -596,7 +596,8 @@ class RobotCamera(tk.Frame):
         with open('RoboCam_state.json') as json_file:
             data = json.load(json_file)
             state = data['RoboCam']
-            savepoints = state['SavePoints']
+            print(state)
+            savepoints = state[0]['SavePoints']
             print(savepoints)
             for sp in range(len(savepoints)):
                 if (sp==1):
