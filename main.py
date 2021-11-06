@@ -532,10 +532,10 @@ class RobotCamera(tk.Frame):
         self.save_position_2 = waypoint(2,location(0, 0,0), location(0, 0, 0))
         self.save_position_3 = waypoint(3,location(0, 0,0), location(0, 0, 0))
         self.save_position_4 = waypoint(4,location(0, 0,0), location(0, 0, 0))
-        sp1_pos_text['text'] = "Y/LB : {}".format(new_waypoint.location_str)
-        sp2_pos_text['text'] = "B/RB : {}".format(new_waypoint.location_str)
-        sp3_pos_text['text'] = "X/L1 : {}".format(new_waypoint.location_str)
-        sp4_pos_text['text'] = "A/R1 : {}".format(new_waypoint.location_str)
+        self.sp1_pos_text['text'] = "Y/LB : {}".format(new_waypoint.location_str)
+        self.sp2_pos_text['text'] = "B/RB : {}".format(new_waypoint.location_str)
+        self.sp3_pos_text['text'] = "X/L1 : {}".format(new_waypoint.location_str)
+        self.sp4_pos_text['text'] = "A/R1 : {}".format(new_waypoint.location_str)
 
     def tilt_up(self):
         if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
@@ -608,10 +608,10 @@ class RobotCamera(tk.Frame):
                     self.save_position_3 = waypoint(savepoints[sp]['id'],location(savepoints[sp]['x'],savepoints[sp]['y'],savepoints[sp]['z']), location(savepoints[sp]['a'], savepoints[sp]['b'], 0))
                 if (sp==4):
                     self.save_position_4 = waypoint(savepoints[sp]['id'],location(savepoints[sp]['x'],savepoints[sp]['y'],savepoints[sp]['z']), location(savepoints[sp]['a'], savepoints[sp]['b'], 0))
-            sp1_pos_text['text'] = "Y/LB : {}".format(self.save_position_1.location_str)
-            sp2_pos_text['text'] = "B/RB : {}".format(self.save_position_2.location_str)
-            sp3_pos_text['text'] = "X/L1 : {}".format(self.save_position_3.location_str)
-            sp4_pos_text['text'] = "A/R1 : {}".format(self.save_position_4.location_str)
+            self.sp1_pos_text['text'] = "Y/LB : {}".format(self.save_position_1.location_str)
+            self.sp2_pos_text['text'] = "B/RB : {}".format(self.save_position_2.location_str)
+            self.sp3_pos_text['text'] = "X/L1 : {}".format(self.save_position_3.location_str)
+            self.sp4_pos_text['text'] = "A/R1 : {}".format(self.save_position_4.location_str)
             current_position = state[0]['Position'][0]
             print (current_position)
             self.controller.set_position(current_position['wx'],current_position['wy'],current_position['wz'],current_position['wa'],current_position['wb'])
