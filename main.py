@@ -97,7 +97,7 @@ class RobotCamera(tk.Frame):
         self.crane_inst.set_big_step_rotate(10)
         self.crane_inst.set_small_step_tilt(2)
         self.crane_inst.set_big_step_tilt(10)
-        self.controller.reset()
+        #self.controller.reset()
         self.tracker = aruco_tracker(self.controller,self)
         self.tracker.initialise_video()
 
