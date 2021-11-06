@@ -321,7 +321,7 @@ class RobotCamera(tk.Frame):
         self.timelapse_duration = StringVar(timelapse_total)
         self.timelapse_duration.trace("w",self.set_timelapse_time)
         self.timelapse_duration.set(600) # initial value
-        self.timelapse_duration_select = OptionMenu(move, self.timelapse_duration, 600, 1200,1800,2400)
+        self.timelapse_duration_select = OptionMenu(timelapse_total, self.timelapse_duration, 600, 1200,1800,2400)
         self.timelapse_duration_select.pack(side="bottom")
         
         timelapse_interval = Frame(options_controls)
@@ -332,7 +332,7 @@ class RobotCamera(tk.Frame):
         self.timelapse_stepinterval = StringVar(timelapse_interval)
         self.timelapse_stepinterval.trace("w",self.set_timelapse_steps)
         self.timelapse_stepinterval.set(3) # initial value
-        self.timelapse_stepinterval_select = OptionMenu(move, self.timelapse_stepinterval, 1,2,3,4,5,6,7,8,9,10)
+        self.timelapse_stepinterval_select = OptionMenu(timelapse_interval, self.timelapse_stepinterval, 1,2,3,4,5,6,7,8,9,10)
         self.timelapse_stepinterval_select.pack(side="bottom")
 
 
@@ -355,7 +355,7 @@ class RobotCamera(tk.Frame):
     def timelapse(self):
         #trigger a timelapse from current position to Save position 2
         savepoint = self.save_position_2
-        self.controller.absolute_move_timelapse(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,self.timelapse_time, self.timelapse_step)
+        self.controller.absolute_move_timelapse(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,self.timelapse_duration.get(), self.timelapse_stepinterval.get())
 
     def set_initial_pos(self):
         #initial position should be min gimbal tilt, max crane tilt, middle position pan on both, zoom all the way out
