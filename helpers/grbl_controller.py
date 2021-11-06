@@ -286,6 +286,10 @@ class grbl_controller:
 
         #self.write_gcode("G10 P0 X0 Y0 Z0")
         # Toggle DTR to reset Arduino
+
+    def set_position(self,x,y,z,a,b,c):
+        self.mcontrol._wcsSet(x,y,z,a,b,c)
+        
     def stop(self):
         self.app_running=False
         
