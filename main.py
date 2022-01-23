@@ -300,8 +300,8 @@ class RobotCamera(tk.Frame):
         self.feed_rate = StringVar(feed)
         self.feed_rate.trace("w",self.set_feed_rate)
         self.feed_rate.set(1000) # initial value
-        self.feed_rate = OptionMenu(feed, self.feed_rate, 100, 200,500,700,1000,1500,2000,2500,3000)
-        self.feed_rate.pack(side="bottom")
+        self.feed_rate_select = OptionMenu(feed, self.feed_rate, 100, 200,500,700,1000,1500,2000,2500,3000)
+        self.feed_rate_select.pack(side="bottom")
 
         move = Frame(options_controls)
         move.pack(side="top")
@@ -397,7 +397,7 @@ class RobotCamera(tk.Frame):
     def set_feed_rate(self, *args):
         print("updating feeddefault from {} to {}".format(
                self.feed_rate.get(), self.controller.get_feed_speed()))
-        self.controller.set_feed_speed(self.feed_rate.get())
+        self.controller.set_feed_speed(int(self.feed_rate.get()))
         
 
     def set_move_time(self, *args):
