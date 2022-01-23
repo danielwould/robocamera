@@ -298,6 +298,7 @@ class RobotCamera(tk.Frame):
         self.feedrate_label.config(font=("Courier", 12))
         self.feedrate_label.pack(side="top")
         self.feed_rate = StringVar(feed)
+        self.feed_rate.trace("w",self.set_feed_rate)
         self.feed_rate.set(1000) # initial value
         self.feed_rate = OptionMenu(feed, self.feed_rate, 100, 200,500,700,1000,1500,2000,2500,3000)
         self.feed_rate.pack(side="bottom")
@@ -510,6 +511,7 @@ class RobotCamera(tk.Frame):
             location(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()),
             location(crane_position.get_rotation_pos(), crane_position.get_tilt_pos(),0)
             )
+        new_waitpoint.set_feed_rate(self.controller.get_feed_speed())
         if savepoint == 1:
             self.save_position_1 = new_waypoint
             self.sp1_pos_text['text'] = "Y/LB : {}".format(new_waypoint.location_str())
