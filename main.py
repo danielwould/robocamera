@@ -498,9 +498,9 @@ class RobotCamera(tk.Frame):
     def save_point_move(self,savepoint):
         
         if self.MOVE_TOGGLE == self.FEED_RATE:
-            self.controller.absolute_move(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,savepoint.get_feed_rate(),savepoint.get_dwell_time())
+            self.controller.absolute_move(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,self.controller.get_feed_speed(),savepoint.get_dwell_time())
         if self.MOVE_TOGGLE == self.MOVE_TIME:
-            self.controller.absolute_move_by_time(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,savepoint.get_travel_duration(),savepoint.get_dwell_time())
+            self.controller.absolute_move_by_time(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,self.controller.get_move_duration(),savepoint.get_dwell_time())
             
 
     def save_position(self,savepoint):
@@ -511,7 +511,7 @@ class RobotCamera(tk.Frame):
             location(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()),
             location(crane_position.get_rotation_pos(), crane_position.get_tilt_pos(),0)
             )
-        new_waitpoint.set_feed_rate(self.controller.get_feed_speed())
+        #new_waitpoint.set_feed_rate(self.controller.get_feed_speed())
         if savepoint == 1:
             self.save_position_1 = new_waypoint
             self.sp1_pos_text['text'] = "Y/LB : {}".format(new_waypoint.location_str())
