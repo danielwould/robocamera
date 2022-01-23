@@ -394,10 +394,10 @@ class RobotCamera(tk.Frame):
             self.tracker.render_tracker(True)
 
 
-    def set_feed_rate(self, feedval):
+    def set_feed_rate(self, *args):
         print("updating feeddefault from {} to {}".format(
                feedval, self.controller.get_feed_speed()))
-        self.controller.set_feed_speed(feedval)
+        self.controller.set_feed_speed(self.feed_rate.get())
         
 
     def set_move_time(self, *args):
