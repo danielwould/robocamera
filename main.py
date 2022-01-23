@@ -299,7 +299,7 @@ class RobotCamera(tk.Frame):
         self.feedrate_label.pack(side="top")
         self.feed_rate = StringVar(feed)
         self.feed_rate.set(1000) # initial value
-        self.feed_rate = OptionMenu(feed, self.feed_rate, 100, 200,500,700,1000,1500)
+        self.feed_rate = OptionMenu(feed, self.feed_rate, 100, 200,500,700,1000,1500,2000,2500,3000)
         self.feed_rate.pack(side="bottom")
 
         move = Frame(options_controls)
