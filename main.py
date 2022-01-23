@@ -396,7 +396,7 @@ class RobotCamera(tk.Frame):
 
     def set_feed_rate(self, *args):
         print("updating feeddefault from {} to {}".format(
-               feedval, self.controller.get_feed_speed()))
+               self.feed_rate.get(), self.controller.get_feed_speed()))
         self.controller.set_feed_speed(self.feed_rate.get())
         
 
