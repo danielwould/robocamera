@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Robot Cameraman</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style type="text/css">
+      .container {
+        max-width: 500px;
+        padding-top: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <p>Status: {{status_text}}</p>
+      
+      <p>Savepoints:</p>
+      <ul>
+        {% for n in savepoints %}
+        <li> <input type = "button" id = "save_waypoint" value = "Save" />{{n.location_str()}}<button>Move</button></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script type=text/javascript> 
+        $(function() { 
+            $("#save_waypoint").click(function (event){ 
+                console.log(event)
+                $.getJSON('/save_waypoint', { },
+            function(data) { }); 
+            return false; 
+            }); 
+        }); 
+        </script> 
+</body>
+</html>

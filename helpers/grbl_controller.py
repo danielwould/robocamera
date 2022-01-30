@@ -177,7 +177,7 @@ class grbl_controller:
     ajog_factor=1
     bjog_factor=1
 
-    def __init__(self, dwell_delay):
+    def __init__(self, dwell_delay,name):
         
         self.name="init"
         self.controllers = {}
@@ -214,16 +214,16 @@ class grbl_controller:
 
         self._onStart = ""
         self._onStop = ""
-        
-        
-
-    def set_device(self, device, baudrate, name):
         self.logger = logging.getLogger(name)
         hdlr = logging.FileHandler('./{}.log'.format(name))
         formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
         hdlr.setFormatter(formatter)
         self.logger.addHandler(hdlr) 
         self.logger.setLevel(logging.INFO)
+        
+        
+
+    def set_device(self, device, baudrate, name):
         self.serial_device = device
         #self.serial = serial.Serial(
         self.serial = serial.serial_for_url(

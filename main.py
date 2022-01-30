@@ -23,16 +23,7 @@ from helpers.tracking.aruco_tracker import aruco_tracker
 import os
 import sys
 import json
-try:
-	import Tkinter as tk
-	from Queue import *
-	from Tkinter import *
-	import tkMessageBox
-except ImportError:
-	import tkinter as tk
-	from queue import *
-	from tkinter import *
-	import tkinter.messagebox as tkMessageBox
+from flask import Flask, render_template
 
 
 PRGPATH=os.path.abspath(os.path.dirname(__file__))
@@ -46,11 +37,11 @@ VALID_CHARS = "`1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./"
 SHIFT_CHARS = '~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?'
 
 
-class RobotCamera(tk.Frame):
+class RobotCamera():
 
-    def __init__(self, master=None):
-        super().__init__(master)
-        self.master = master
+    def __init__(self):
+        #super().__init__(master)
+        #self.master = master
         self.GIMBAL_CONTROL = 1
         self.CRANE_CONTROL = 0
         self.CONTROL_TOGGLE = self.GIMBAL_CONTROL
@@ -66,25 +57,33 @@ class RobotCamera(tk.Frame):
         self.save_position_2 = waypoint(2,location(0, 0, 0), location(0, 0, 0))
         self.save_position_3 = waypoint(3,location(0, 0, 0), location(0, 0, 0))
         self.save_position_4 = waypoint(4,location(0, 0, 0), location(0, 0, 0))
+        self.savepoints = []
+        self.savepoints.append(self.save_position_1)
+        self.savepoints.append(self.save_position_2)
+        self.savepoints.append(self.save_position_3)
+        self.savepoints.append(self.save_position_4)
+        
         self.first_move=False
+        
+        
         self.sequence_steps = sequence()
         
         self.init_controllers()
         self.init_joysticks()
-        self.init_info_updater()
-        self.pack()
-        self.create_widgets()
+        #self.init_info_updater()
+        #self.pack()
+        #self.create_widgets()
 
     def init_controllers(self):
         
-        self.controller=grbl_controller(0)
+        self.controller=grbl_controller(0,"RoboCamera")
         
         if sys.platform == "win32":
             print("connecting to windows com device")
-            self.controller.set_device("COM7", 115200,"CameraArm")
+            #self.controller.set_device("COM7", 115200,"RoboCamera")
         else:
             print("connecting to linux tty device")
-            self.controller.set_device("/dev/ttyACM0", 115200,"CameraArm")
+            self.controller.set_device("/dev/ttyACM0", 115200,"RoboCamera")
 
 
         self.gimbal_inst = gimbal("x","y","z", self.controller)
@@ -109,248 +108,6 @@ class RobotCamera(tk.Frame):
         self.info_update = info(self)
 
 
-    def create_widgets(self):
-
-        #
-        #controller location display
-        #
-        left = Frame(self,relief=tk.SUNKEN)
-        left.pack(side="left")
-        
-        location_info = Frame(left,relief=tk.RIDGE)
-        location_info.pack(side="top") 
-        self.status_text = tk.Label(location_info,text="status", relief=tk.RIDGE)
-        self.status_text.config(font=("Courier", 16))
-        self.status_text.pack(side="top", padx=10)
-        self.pos_text = tk.Label(location_info,text="Pos", relief=tk.RIDGE)
-        self.pos_text.config(font=("Courier", 16))
-        self.pos_text.pack(side="left", padx=10)
-        
-        info = Frame(left,relief=tk.SUNKEN)
-        info.pack(side="left")
-        transmission_buffer = Frame(info,relief=tk.RIDGE)
-        transmission_buffer.pack(side="top")
-        self.transbuffer_text = tk.Label(transmission_buffer,text="Pos", relief=tk.RIDGE)
-        self.transbuffer_text.config(font=("Courier", 12))
-        self.transbuffer_text.pack(side="left", padx=10)
-        #
-        #savepoints
-        #
-        savepoint_info = Frame(info,relief=tk.RIDGE)
-        savepoint_info.pack(side="top")
-        savepoint_saves = Frame (savepoint_info)
-        savepoint_saves.pack(side="left")
-        savepoint_moves = Frame (savepoint_info)
-        savepoint_moves.pack(side="right")
-        self.set_savepoint_1 = tk.Button(savepoint_saves, text="Save", fg="#ffcc33", bg="#333333", command=lambda :self.save_position(1))
-        self.set_savepoint_1.config(font=("Courier", 5))
-        self.set_savepoint_1.pack(side="top", padx=2, pady=2)
-        self.set_savepoint_2 = tk.Button(savepoint_saves, text="Save", fg="#ffcc33", bg="#333333",
-                                         command=lambda: self.save_position(2))
-        self.set_savepoint_2.config(font=("Courier", 5))
-        self.set_savepoint_2.pack(side="top", padx=2, pady=2)
-        self.set_savepoint_3 = tk.Button(savepoint_saves, text="Save", fg="#ffcc33", bg="#333333",
-                                         command=lambda: self.save_position(3))
-        self.set_savepoint_3.config(font=("Courier", 5))
-        self.set_savepoint_3.pack(side="top", padx=2, pady=2)
-        self.set_savepoint_4 = tk.Button(savepoint_saves, text="Save", fg="#ffcc33", bg="#333333",
-                                         command=lambda: self.save_position(4))
-        self.set_savepoint_4.config(font=("Courier", 5))
-        self.set_savepoint_4.pack(side="top", padx=2, pady=2)
-
-        self.sp1_pos_text = tk.Label(savepoint_info,text="Y/LB", relief=tk.RIDGE)
-        self.sp1_pos_text.config(font=("Courier", 8))
-        self.sp1_pos_text.pack(pady=5)
-
-        self.sp2_pos_text = tk.Label(savepoint_info,text="B/RB", relief=tk.RIDGE)
-        self.sp2_pos_text.config(font=("Courier", 8))
-        self.sp2_pos_text.pack(pady=5)
-
-        self.sp3_pos_text = tk.Label(savepoint_info,text="X/L1", relief=tk.RIDGE)
-        self.sp3_pos_text.config(font=("Courier", 8))
-        self.sp3_pos_text.pack(pady=5)
-
-        self.sp4_pos_text = tk.Label(savepoint_info,text="A/R1", relief=tk.RIDGE)
-        self.sp4_pos_text.config(font=("Courier", 8))
-        self.sp4_pos_text.pack(pady=5)
-
-        self.move_savepoint_1 = tk.Button(savepoint_moves, text="Move", fg="#ffcc33", bg="#333333",
-                                        command=lambda: self.save_point_move(self.save_position_1))
-        self.move_savepoint_1.config(font=("Courier", 5))
-        self.move_savepoint_1.pack(side="top", padx=2, pady=2)
-        self.move_savepoint_2 = tk.Button(savepoint_moves, text="Move", fg="#ffcc33", bg="#333333",
-                                         command=lambda: self.save_point_move(self.save_position_2))
-        self.move_savepoint_2.config(font=("Courier", 5))
-        self.move_savepoint_2.pack(side="top", padx=2, pady=2)
-        self.move_savepoint_3 = tk.Button(savepoint_moves, text="Move", fg="#ffcc33", bg="#333333",
-                                         command=lambda: self.save_point_move(self.save_position_3))
-        self.move_savepoint_3.config(font=("Courier", 5))
-        self.move_savepoint_3.pack(side="top", padx=2, pady=2)
-        self.move_savepoint_4 = tk.Button(savepoint_moves, text="Move", fg="#ffcc33", bg="#333333",
-                                         command=lambda: self.save_point_move(self.save_position_4))
-        self.move_savepoint_4.config(font=("Courier", 5))
-        self.move_savepoint_4.pack(side="top", padx=2, pady=2)
-        #waypoints
-
-        self.waypoint_start = tk.Button(info, text="Run", fg="#ffcc33", bg="#333333",
-                                        command=self.trigger_whole_sequence)
-        self.waypoint_start.config(font=("Courier", 5))
-        self.waypoint_start.pack(side="bottom")
-        self.waypoint_listbox = Listbox(info, width=60)
-        self.waypoint_listbox.pack(side="bottom")
-
-
-
-        right_side = Frame(self,relief=tk.RIDGE)
-        right_side.pack(side="right")
-        #
-        #on screen move controls
-        #
-        Motion_controls = Frame(right_side,relief=tk.RIDGE)
-        Motion_controls.pack(side="top")
-        self.up = tk.Button(Motion_controls, text="U", fg="#ffcc33",bg="#333333", command=self.tilt_up)
-        self.up.config(font=("Courier", 22))
-        self.up.pack(side="top", padx=2,pady=2)
-        self.left = tk.Button(Motion_controls, text="L", fg="#ffcc33",bg="#333333", command=self.rotate_left)
-        self.left.config(font=("Courier", 22))
-        self.left.pack(side="left", padx=2,pady=2)
-        self.right = tk.Button(Motion_controls, text="R", fg="#ffcc33",bg="#333333", command=self.rotate_right)
-        self.right.config(font=("Courier", 22))
-        self.right.pack(side="right", padx=2,pady=2)
-        self.down = tk.Button(Motion_controls, text="D", fg="#ffcc33",bg="#333333", command=self.tilt_down)
-        self.down.config(font=("Courier", 22))
-        self.down.pack(side="bottom", padx=2,pady=2)
-
-        #
-        #controls that toggle behaviour
-        #
-        Toggle_controls = Frame(right_side,relief=tk.GROOVE)
-        Toggle_controls.pack(side="top")
-
-        move_select = Frame(Toggle_controls,relief=tk.GROOVE)
-        move_select.pack()
-        self.moveFeedToggle = tk.Button(move_select, text="Feed mm/s", fg="#ffcc33",bg="#333333", command=lambda: self.toggle_move_mode(self.FEED_RATE))
-        self.moveFeedToggle.pack(padx=2,pady=2)
-        self.moveTimeToggle = tk.Button(move_select, text="Move Time", fg="#ffcc33",bg="#333333", command=lambda: self.toggle_move_mode(self.MOVE_TIME))
-        self.moveTimeToggle.pack(padx=2,pady=2)
-        self.trackingToggle = tk.Button(move_select, text="Tracking", fg="#ffcc33",bg="#333333", command=self.toggle_tracking_mode)
-        self.trackingToggle.pack(padx=2,pady=2)
-        self.trackingToggle1 = tk.Button(move_select, text="Track 1", fg="#ffcc33",bg="#333333", command=lambda: self.set_tracking_id(1))
-        self.trackingToggle1.pack(padx=2,pady=2)
-        self.trackingToggle2 = tk.Button(move_select, text="Centre Tracker", fg="#ffcc33",bg="#333333", command=lambda: self.set_tracking_id(2))
-        self.trackingToggle2.pack(padx=2,pady=2)
-        self.trackingToggle3 = tk.Button(move_select, text="1/3 Tracker", fg="#ffcc33",bg="#333333", command=lambda: self.set_tracking_id(3))
-        self.trackingToggle3.pack(padx=2,pady=2)
-        self.trackingRenderToggle = tk.Button(move_select, text="TrackRender", fg="#ffcc33",bg="#333333", command=self.toggle_tracking_render)
-        self.trackingRenderToggle.pack(padx=2,pady=2)
-        #
-        #manipulate waypoints
-        #
-        wayPoint_controls = Frame(Toggle_controls,relief=tk.RIDGE)
-        wayPoint_controls.pack(side="top")
-        self.addWaypoint = tk.Button(wayPoint_controls, text="Add Waypoint", fg="#333333",bg="#ffcc33",
-                              command= self.add_waypoint)
-        self.addWaypoint.pack(padx=2,pady=2)
-        self.deleteWaypoint = tk.Button(wayPoint_controls, text="Del Waypoint", fg="#333333",bg="#ffcc33",
-                              command=self.delete_waypoint)
-        self.deleteWaypoint.pack(padx=2,pady=2)
-        self.editWaypoint = tk.Button(wayPoint_controls, text="Edit Waypoint", fg="#333333",bg="#ffcc33",
-                              command=self.edit_waypoint)
-        self.editWaypoint.pack(padx=2,pady=2)
-
-        self.setCraneTiltMax = tk.Button(wayPoint_controls, text="Crane Tilt Max", fg="#333333",bg="#ffcc33",
-                              command=self.controller.set_crane_tilt_max)
-        self.setCraneTiltMax.pack(padx=2,pady=2)
-        self.setCraneTiltMin = tk.Button(wayPoint_controls, text="Crane Tilt Min", fg="#333333",bg="#ffcc33",
-                              command=self.controller.set_crane_tilt_min)
-        self.setCraneTiltMin.pack(padx=2,pady=2)
-        self.setGimbalTiltMax = tk.Button(wayPoint_controls, text="Gimbal Tilt Max", fg="#333333",bg="#ffcc33",
-                              command=self.controller.set_gimbal_tilt_max)
-        self.setGimbalTiltMax.pack(padx=2,pady=2)
-        self.setGimbalTiltMin = tk.Button(wayPoint_controls, text="Gimabl Tilt Min", fg="#333333",bg="#ffcc33",
-                              command=self.controller.set_gimbal_tilt_min)
-        self.setGimbalTiltMin.pack(padx=2,pady=2)
-
-        self.setInitPosition = tk.Button(wayPoint_controls, text="Init Position", fg="#333333",bg="#ffcc33",
-                              command=self.set_initial_pos)
-        self.setInitPosition.pack(padx=2,pady=2)
-        
-        self.timelapse = tk.Button(wayPoint_controls, text="Timelapse", fg="#333333",bg="#ffcc33",
-                              command=self.timelapse)
-        self.timelapse.pack(padx=2,pady=2)
-
-        options_controls = Frame(left,relief=tk.GROOVE)
-        options_controls.pack(side="right")
-
-        dwell = Frame(options_controls)
-        dwell.pack(side="top")
-        self.dwell_label = tk.Label(dwell,text="DwellTime", relief=tk.RIDGE)
-        self.dwell_label.config(font=("Courier", 12))
-        self.dwell_label.pack(side="top")
-        self.dwell_time = StringVar(dwell)
-        self.dwell_time.set(0) # initial value
-        self.dwell_select = OptionMenu(dwell, self.dwell_time, 0,1, 2,5,10,15,20,30)
-        self.dwell_select.pack(side="bottom")
-
-        feed = Frame(options_controls)
-        feed.pack(side="top")
-        self.feedrate_label = tk.Label(feed,text="FeedRate", relief=tk.RIDGE)
-        self.feedrate_label.config(font=("Courier", 12))
-        self.feedrate_label.pack(side="top")
-        self.feed_rate = StringVar(feed)
-        self.feed_rate.trace("w",self.set_feed_rate)
-        self.feed_rate.set(1000) # initial value
-        self.feed_rate_select = OptionMenu(feed, self.feed_rate, 100, 200,500,700,1000,1500,2000,2500,3000)
-        self.feed_rate_select.pack(side="bottom")
-
-        move = Frame(options_controls)
-        move.pack(side="top")
-        self.movetime_label = tk.Label(move,text="MoveDuration", relief=tk.RIDGE)
-        self.movetime_label.config(font=("Courier", 12))
-        self.movetime_label.pack(side="top")
-        self.move_duration = StringVar(move)
-        self.move_duration.trace("w",self.set_move_time)
-        self.move_duration.set(10) # initial value
-        self.move_duration_select = OptionMenu(move, self.move_duration, 2, 5,10,20,30,60,120)
-        self.move_duration_select.pack(side="bottom")
-        
-        timelapse_total = Frame(options_controls)
-        timelapse_total.pack(side="top")
-        self.timelapse_label = tk.Label(timelapse_total,text="TimelapseDuration", relief=tk.RIDGE)
-        self.timelapse_label.config(font=("Courier", 12))
-        self.timelapse_label.pack(side="top")
-        self.timelapse_duration = StringVar(timelapse_total)
-        self.timelapse_duration.trace("w",self.set_timelapse_time)
-        self.timelapse_duration.set(600) # initial value
-        self.timelapse_duration_select = OptionMenu(timelapse_total, self.timelapse_duration, 600, 1200,1800,2400)
-        self.timelapse_duration_select.pack(side="bottom")
-        
-        timelapse_interval = Frame(options_controls)
-        timelapse_interval.pack(side="top")
-        self.timelapseInterval_label = tk.Label(timelapse_interval,text="TimelapseInterval", relief=tk.RIDGE)
-        self.timelapseInterval_label.config(font=("Courier", 12))
-        self.timelapseInterval_label.pack(side="top")
-        self.timelapse_stepinterval = StringVar(timelapse_interval)
-        self.timelapse_stepinterval.trace("w",self.set_timelapse_steps)
-        self.timelapse_stepinterval.set(3) # initial value
-        self.timelapse_stepinterval_select = OptionMenu(timelapse_interval, self.timelapse_stepinterval, 1,2,3,4,5,6,7,8,9,10)
-        self.timelapse_stepinterval_select.pack(side="bottom")
-
-
-        self.loadstate = tk.Button(wayPoint_controls, text="Load State", fg="black",
-                              command=self.load_state_from_file)
-        self.loadstate.pack(padx=2, pady=2)
-        
-        self.reset = tk.Button(wayPoint_controls, text="RESET", fg="red",
-                              command=self.controller.reset)
-        self.reset.pack(padx=2, pady=2)
-
-        self.dump_buffer = tk.Button(wayPoint_controls, text="EtyBuf", fg="red",
-                              command=self.controller.emptybuffer)
-        self.dump_buffer.pack(padx=2, pady=2)
-        self.quit = tk.Button(wayPoint_controls, text="QUIT", fg="red",
-                              command=self.quit)
-        self.quit.pack(padx=2, pady=20)
     
         
     def timelapse(self):
@@ -463,10 +220,6 @@ class RobotCamera(tk.Frame):
     
     def entryValue(self):
         return self.editwaypoint.value
-        
-
-
-
 
     def trigger_whole_sequence(self):
         #turn off tracking if it's on
@@ -525,20 +278,7 @@ class RobotCamera(tk.Frame):
             self.save_position_4 = new_waypoint
             self.sp4_pos_text['text'] = "A/R1 : {}".format(new_waypoint.location_str())
 
-    def reset():
-        
-        self.crane_inst.reset()
-        self.gimbal_inst.reset()
-
-        self.save_position_1 = waypoint(1,location(0, 0,0), location(0, 0, 0))
-        self.save_position_2 = waypoint(2,location(0, 0,0), location(0, 0, 0))
-        self.save_position_3 = waypoint(3,location(0, 0,0), location(0, 0, 0))
-        self.save_position_4 = waypoint(4,location(0, 0,0), location(0, 0, 0))
-        self.sp1_pos_text['text'] = "Y/LB : {}".format(new_waypoint.location_str())
-        self.sp2_pos_text['text'] = "B/RB : {}".format(new_waypoint.location_str())
-        self.sp3_pos_text['text'] = "X/L1 : {}".format(new_waypoint.location_str())
-        self.sp4_pos_text['text'] = "A/R1 : {}".format(new_waypoint.location_str())
-
+    
     def tilt_up(self):
         if self.CONTROL_TOGGLE == self.GIMBAL_CONTROL:
             self.gimbal_inst.tilt_jog(1)
@@ -622,12 +362,11 @@ class RobotCamera(tk.Frame):
         #once we've loaded state we can start saving it again
         self.first_move=True
     
-
     def quit(self):
         self.joy.stop()
-        self.info_update.stop()
+        #self.info_update.stop()
         self.controller.stop()
-        self.master.destroy()
+        #self.master.destroy()
         self.tracker.stop_tracking()
         sys.exit(0)
 
@@ -665,12 +404,22 @@ class editWaypointPopup(object):
         self.value=editedWaypoint
         self.top.destroy()
 
+
+app = Flask(__name__)
+server = RobotCamera()
+
+@app.route("/")
+def index():
+    status="State:{}, lastUpdated:{}".format(server.controller.get_grbl_status(), server.controller.get_lastUpdateTime())
+    return render_template('index.html', status_text=status, savepoints=server.savepoints)
+
+@app.route("/quit")
+def quit():
+    server.quit()
+
+
 if __name__ == "__main__":
-    #main()
-    root = tk.Tk()
-    #root.withdraw()
-    #root.geometry("800x400")
-    #app = RobotCamera(master=root)
-    app = RobotCamera(root)
-    app.mainloop()
-    sys.exit(0)
+    
+    app.run(host="127.0.0.1", port=8080, debug=True)
+
+
