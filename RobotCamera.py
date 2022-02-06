@@ -432,7 +432,7 @@ def response(socket,message):
     print("sent response {}".format(message))
 
 def handle_request(request, rc):
-    print ("request is for {}".format(request["request"]))
+    print ("request is for {}".format(request))
     response={"response":"pong"}
     if ("request" in request):
         if request["request"] == "status":
