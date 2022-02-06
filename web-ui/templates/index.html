@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Robot Cameraman</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/toggles.css') }}">
+    <style type="text/css">
+      .container {
+        max-width: 500px;
+        padding-top: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <p>Status: {{status_text}}</p>
+      
+      <p>Savepoints:</p>
+      <ul>
+        {% for n in savepoints %}
+        <li> <input type = "button" id = "save_savepoint_{{loop.index0}}" value = "Save" onclick='save_savepoint({{loop.index0}})'/>{{savepoints[n]}}<input type = "button" id = "move_to_savepoint_{{loop.index0}}" value = "Move" onclick='move_to_savepoint({{loop.index0}})'/></li>
+        {% endfor %}
+      </ul>
+      
+    </div>
+    <div class=container id=toggles>
+      <!-- Rounded switch -->
+      <label class="switch">
+        <input type="checkbox">
+         <label for="movetype">Move By</label>
+         <div class="slider round">
+          <!--ADDED HTML -->
+          <span class="on">TIME</span>
+          <span class="off">FEED</span>
+          <!--END-->
+         </div>
+      </label>
+    </div>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script type=text/javascript> 
+        function save_savepoint(id) { 
+            const response = fetch('/save_savepoint', {
+                method: 'post',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "savepoint_id": id
+                })
+            });
+            console.log('Completed!', response);
+        }; 
+        function move_to_savepoint(id) { 
+            const response = fetch('/move_to_savepoint', {
+                method: 'post',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "savepoint_id": id
+                })
+            });
+            console.log('Completed!', response);
+        }; 
+        </script> 
+</body>
+</html>
