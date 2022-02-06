@@ -8,7 +8,7 @@ import socket
 import select
 import json
 
-HOST = '192.168.86.238' 
+HOST = '192.168.86.37' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
@@ -23,7 +23,15 @@ def index():
     print("homepage")
     status=send_camera_request(json.dumps({"request":"status"}))
     savepoints= send_camera_request(json.dumps({"request":"savepoints"}))
-    return render_template('index.html', status_text=status, savepoints=savepoints)
+    toggle_state = send_camera_request(json.dumps({"request":"toggles"}))
+
+    print(toggle_state)
+    if toggle_state["move_mode"] == 1:
+        move_state="checked"
+    else:
+        move_state=""
+    values = send_camera_request(json.dumps({"request":"values"}))
+    return render_template('index.html', status_text=status, savepoints=savepoints, move_toggle=move_state, tracking_toggle="")
 
 
 @app.route("/save_savepoint" , methods = ['POST'])
@@ -33,11 +41,20 @@ def save_waypoint():
     response = send_camera_request(json.dumps({"update":"storepoint","savepoint_id":savepoint_id}))
     return response
 
-@app.route("/move_to_savepoint" , methods = ['POST'])
-def move_to_waypoint():
+@app.route("/toggle_moveby" , methods = ['POST'])
+def toggle_move_mode():
     data = request.get_json()
-    savepoint_id = data['savepoint_id']
-    response = send_camera_request(json.dumps({"action":"movepoint","savepoint_id":savepoint_id}))
+    state = data['state']
+    print("toggle state {}".format(state))
+    response = send_camera_request(json.dumps({"toggle":"move_mode"}))
+    return response
+
+@app.route("/toggle_tracking" , methods = ['POST'])
+def toggle_tracking():
+    data = request.get_json()
+    state = data['state']
+    print("toggle state {}".format(state))
+    response = send_camera_request(json.dumps({"toggle":"tracking_mode"}))
     return response
 
  

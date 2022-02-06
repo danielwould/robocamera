@@ -14,7 +14,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ca2222;
+    background-color: #333333;
     -webkit-transition: .4s;
     transition: .4s;
   }
@@ -32,7 +32,7 @@
   }
   
   input:checked + .slider {
-    background-color: #2ab934;
+    background-color: #ffcc33;
   }
   
   input:focus + .slider {
@@ -62,6 +62,11 @@
     font-family: Verdana, sans-serif;
   }
   
+  .label-block {
+    display: block;
+    margin-bottom: 5px;
+  }
+
   input:checked+ .slider .on
   {display: block;}
   

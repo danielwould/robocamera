@@ -434,71 +434,75 @@ def response(socket,message):
 def handle_request(request, rc):
     print ("request is for {}".format(request["request"]))
     response={"response":"pong"}
-    if request["request"] == "status":
-        response = {"status":rc.controller.get_grbl_status(), "last_update":rc.controller.get_lastUpdateTime(),"position":rc.controller.position_str()}
-    elif request["request"] == "savepoints":
-        response = {"savepoint_1": rc.save_position_1.location_str(),"savepoint_2": rc.save_position_2.location_str(),"savepoint_3": rc.save_position_3.location_str(),"savepoint_4": rc.save_position_4.location_str()}
-    elif request["request"] == "toggles":
-        response = {"move_mode":rc.MOVE_TOGGLE,"tracking_mode": rc.TRACKING}
-    elif request["request"] == "values":
-        response = {"feed_rate":rc.controller.get_feed_speed(),"move_time": rc.controller.get_move_duration(),"timelapse_time":rc.timelapse_time,"timelapse_steps":rc.timelapse_steps}
-
-    elif request["update"] == "storepoint":
-        #save current location as savepoint
-        rc.save_position(request["savepoint_id"])
-        response = {"result":"savepoint_stored"}
-    elif request["action"] == "movepoint":
-        #save current location as savepoint
-        rc.save_point_move(request["savepoint_id"])
-        response = {"result":"moved_to_savepoint"}
-    elif request["action"] == "zoom_in":
-        rc.zoom_in()
-        response = {"result":"zoomed_in"}
-    elif request["action"] == "zoom_out":
-        rc.zoom_out()
-        response = {"result":"zoomed_out"}
-    elif request["action"] == "gimbal_rotate_left":
-        rc.gimbal_rotate_left()
-        response = {"result":"gimbal_rotate_left"}
-    elif request["action"] == "gimbal_rotate_right":
-        rc.gimbal_rotate_right()
-        response = {"result":"gimbal_rotate_right"}
-    elif request["action"] == "gimbal_tilt_up":
-        rc.gimbal_tilt_up()
-        response = {"result":"gimbal_tilt_up"}
-    elif request["action"] == "gimbal_tilt_down":
-        rc.gimbal_tilt_down()
-        response = {"result":"gimbal_tilt_down"}
-    elif request["action"] == "gimbal_rotate_left":
-        rc.gimbal_rotate_left()
-        response = {"result":"crane_rotate_left"}
-    elif request["action"] == "crane_rotate_right":
-        rc.crane_rotate_right()
-        response = {"result":"crane_rotate_right"}
-    elif request["action"] == "crane_tilt_up":
-        rc.crane_tilt_up()
-        response = {"result":"crane_tilt_up"}
-    elif request["action"] == "crane_tilt_down":
-        rc.crane_tilt_down()
-        response = {"result":"crane_tilt_down"}
-    elif request["toggle"]=="move_mode":
-        rc.toggle_move_mode()
-        response = {"result": rc.MOVE_TOGGLE}
-    elif request["toggle"]=="tracking_mode":
-        rc.toggle_tracking_mode()
-        response = {"result": rc.TRACKING}
-    elif request["update"]=="feed_rate":
-        rc.set_feed_rate(request["feed_rate"])
-        response = {"result": "OK"}
-    elif request["update"]=="move_time":
-        rc.set_move_time(request["move_time"])
-        response = {"result": "OK"}
-    elif request["update"]=="time_lapse_time":    
-        rc.set_timelapse_time(request["timelapse_time"])
-        response = {"result": "OK"}
-    elif request["update"]=="time_lapse_steps":    
-        rc.set_timelapse_steps(request["timelapse_steps"])
-        response = {"result": "OK"}
+    if ("request" in request):
+        if request["request"] == "status":
+            response = {"status":rc.controller.get_grbl_status(), "last_update":rc.controller.get_lastUpdateTime(),"position":rc.controller.position_str()}
+        elif request["request"] == "savepoints":
+            response = {"savepoint_1": rc.save_position_1.location_str(),"savepoint_2": rc.save_position_2.location_str(),"savepoint_3": rc.save_position_3.location_str(),"savepoint_4": rc.save_position_4.location_str()}
+        elif request["request"] == "toggles":
+            response = {"move_mode":rc.MOVE_TOGGLE,"tracking_mode": rc.TRACKING}
+        elif request["request"] == "values":
+            response = {"feed_rate":rc.controller.get_feed_speed(),"move_time": rc.controller.get_move_duration(),"timelapse_time":rc.timelapse_time,"timelapse_steps":rc.timelapse_steps}
+    elif("update" in request):
+        if request["update"] == "storepoint":
+            #save current location as savepoint
+            rc.save_position(request["savepoint_id"])
+            response = {"result":"savepoint_stored"}
+        elif request["update"]=="feed_rate":
+            rc.set_feed_rate(request["feed_rate"])
+            response = {"result": "OK"}
+        elif request["update"]=="move_time":
+            rc.set_move_time(request["move_time"])
+            response = {"result": "OK"}
+        elif request["update"]=="time_lapse_time":    
+            rc.set_timelapse_time(request["timelapse_time"])
+            response = {"result": "OK"}
+        elif request["update"]=="time_lapse_steps":    
+            rc.set_timelapse_steps(request["timelapse_steps"])
+            response = {"result": "OK"}
+    elif("action" in request):
+        if request["action"] == "movepoint":
+            #save current location as savepoint
+            rc.save_point_move(request["savepoint_id"])
+            response = {"result":"moved_to_savepoint"}
+        elif request["action"] == "zoom_in":
+            rc.zoom_in()
+            response = {"result":"zoomed_in"}
+        elif request["action"] == "zoom_out":
+            rc.zoom_out()
+            response = {"result":"zoomed_out"}
+        elif request["action"] == "gimbal_rotate_left":
+            rc.gimbal_rotate_left()
+            response = {"result":"gimbal_rotate_left"}
+        elif request["action"] == "gimbal_rotate_right":
+            rc.gimbal_rotate_right()
+            response = {"result":"gimbal_rotate_right"}
+        elif request["action"] == "gimbal_tilt_up":
+            rc.gimbal_tilt_up()
+            response = {"result":"gimbal_tilt_up"}
+        elif request["action"] == "gimbal_tilt_down":
+            rc.gimbal_tilt_down()
+            response = {"result":"gimbal_tilt_down"}
+        elif request["action"] == "gimbal_rotate_left":
+            rc.gimbal_rotate_left()
+            response = {"result":"crane_rotate_left"}
+        elif request["action"] == "crane_rotate_right":
+            rc.crane_rotate_right()
+            response = {"result":"crane_rotate_right"}
+        elif request["action"] == "crane_tilt_up":
+            rc.crane_tilt_up()
+            response = {"result":"crane_tilt_up"}
+        elif request["action"] == "crane_tilt_down":
+            rc.crane_tilt_down()
+            response = {"result":"crane_tilt_down"}
+    elif "toggle" in request:
+        if request["toggle"]=="move_mode":
+            rc.toggle_move_mode()
+            response = {"result": rc.MOVE_TOGGLE}
+        elif request["toggle"]=="tracking_mode":
+            rc.toggle_tracking_mode()
+            response = {"result": rc.TRACKING}
+    
 
     return response
 

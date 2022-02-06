@@ -26,13 +26,25 @@
     </div>
     <div class=container id=toggles>
       <!-- Rounded switch -->
-      <label class="switch">
-        <input type="checkbox">
-         <label for="movetype">Move By</label>
+      <label class="label-block" for="moveby">Move by</label>
+      <label class="switch" id="moveby">
+        <input type="checkbox" onclick='handleMoveBy(this);' {{ move_toggle }}>
+        
          <div class="slider round">
           <!--ADDED HTML -->
           <span class="on">TIME</span>
           <span class="off">FEED</span>
+          <!--END-->
+         </div>
+      </label>
+      <label class="label-block" for="tracking">Tracking</label>
+      <label class="switch" id="tracking">
+        <input type="checkbox" onclick='handleTracking(this);' {{ tracking_toggle }}>
+        
+         <div class="slider round">
+          <!--ADDED HTML -->
+          <span class="on">ON</span>
+          <span class="off">OFF</span>
           <!--END-->
          </div>
       </label>
@@ -65,7 +77,33 @@
                 })
             });
             console.log('Completed!', response);
-        }; 
+        };
+        function handleMoveBy(cb) {
+           console.log("move toggled  "+cb.checked)
+           const response = fetch('/toggle_moveby', {
+                method: 'post',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "state": cb.checked
+                })
+            });
+        }
+        function handleTracking(cb) {
+           console.log("tracking toggled  "+cb.checked)
+           const response = fetch('/toggle_tracking', {
+                method: 'post',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "state": cb.checked
+                })
+            });
+        }
         </script> 
 </body>
 </html>
