@@ -2,9 +2,11 @@
 <html>
   <head>
     <title>Robot Cameraman</title>
+    <!--<meta http-equiv="refresh" content="30" >-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/toggles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns.css') }}">
     <style type="text/css">
       .container {
         max-width: 500px;
@@ -23,6 +25,17 @@
         {% endfor %}
       </ul>
       
+    </div>
+    <label for="standard-select">Feed Rate</label>
+    <div class="select">
+      <select id="standard-select">
+        {% for n in feed_rate_values %}
+          <option value="{{ n }}" {{ n.selected_value }}>n</option>
+        {% endfor %}
+      </select>
+      <span class="focus"></span>
+    </div>
+          
     </div>
     <div class=container id=toggles>
       <!-- Rounded switch -->

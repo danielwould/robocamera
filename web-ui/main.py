@@ -30,8 +30,12 @@ def index():
         move_state="checked"
     else:
         move_state=""
+    if toggle_state["tracking_mode"] == True:
+        tracking_state="checked"
+    else:
+        tracking_state=""
     values = send_camera_request(json.dumps({"request":"values"}))
-    return render_template('index.html', status_text=status, savepoints=savepoints, move_toggle=move_state, tracking_toggle="")
+    return render_template('index.html', status_text=status, savepoints=savepoints, move_toggle=move_state, tracking_toggle=tracking_state, feed_rate=values['feed_rate'])
 
 
 @app.route("/save_savepoint" , methods = ['POST'])
@@ -39,6 +43,13 @@ def save_waypoint():
     data = request.get_json()
     savepoint_id = data['savepoint_id']
     response = send_camera_request(json.dumps({"update":"storepoint","savepoint_id":savepoint_id}))
+    return response
+
+@app.route("/move_to_savepoint" , methods = ['POST'])
+def moveto_waypoint():
+    data = request.get_json()
+    savepoint_id = data['savepoint_id']
+    response = send_camera_request(json.dumps({"action":"movepoint","savepoint_id":savepoint_id}))
     return response
 
 @app.route("/toggle_moveby" , methods = ['POST'])
