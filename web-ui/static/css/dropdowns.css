@@ -1,7 +1,7 @@
  
 
 .select {
-  display: grid;
+  /*display: grid;*/
   grid-template-areas: "select";
   align-items: center;
   position: relative;
@@ -10,7 +10,7 @@
   max-width: 30ch;
 
   border: 1px solid var(--select-border);
-  border-radius: 0.40em;
+  border-radius: 0.2em;
   padding: 0.25em 0.5em;
 
   font-size: 1.25rem;
@@ -33,3 +33,14 @@ select:focus + .focus {
  
 }
 
+
+.form-inline {  
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+  }
+  
+.form-inline label {
+margin: 5px 10px 5px 0;
+}
+  

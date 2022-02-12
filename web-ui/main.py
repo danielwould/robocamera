@@ -112,7 +112,7 @@ def send_camera_request(request_message):
     print("returning")
     return "no data"
 
-app.run(host="127.0.0.1", port=8080, debug=True)
+app.run(host="192.168.86.238", port=8080, debug=True)
 
 
 

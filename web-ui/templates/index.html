@@ -10,7 +10,15 @@
     <style type="text/css">
       .container {
         max-width: 500px;
-        padding-top: 100px;
+        padding-top: 10px;
+      }
+      .controlcontainer {
+        max-width: 500px;
+        padding-top: 1px;
+      }
+      .dropdowncontainer {
+        max-width: 500px;
+        padding-right: 40px;
       }
     </style>
   </head>
@@ -27,41 +35,47 @@
       
     </div>
     
-    <div class=container id=dropdowns>
-      <div id="feed-selector" {% if move_toggle%}style="display: none;"{% endif %}>
-        <label for="feed-select">Feed Rate</label>
-        <select id="feed-select">
-          {% for n in feed_rate_values %}
-            <option value="{{ n }}" {% if n == feed_rate %}selected{% endif %}>{{ n }}</option>
-          {% endfor %}
-        </select>
-        <span class="focus"></span>
-      </div>
-      <div id="time-selector" {% if not move_toggle%}style="display: none;"{% endif %}>
-        <label for="time-select">Move Seconds</label>
-        <select id="time-select">
-          {% for n in move_time_values %}
-            <option value="{{ n }}" {% if n == move_time %}selected{% endif %}>{{ n }}</option>
-          {% endfor %}
-        </select>
-        <span class="focus"></span>
-      </div>
-    </div>
+    
           
     </div>
-    <div class=container id=toggles>
-      <!-- Rounded switch -->
-      <label class="label-block" for="moveby">Move by</label>
-      <label class="switch" id="moveby">
-        <input type="checkbox" onclick='handleMoveBy(this);' onchange="showHideForm(this,'feed-selector', 'time-selector')" {{ move_toggle }}>
-        
-         <div class="slider round">
-          <!--ADDED HTML -->
-          <span class="on">TIME</span>
-          <span class="off">FEED</span>
-          <!--END-->
-         </div>
-      </label>
+    <div class=controlcontainer id=toggles>
+      <form class="form-inline">
+        <!-- Rounded switch -->
+        <label class="label-block" for="moveby">Move by</label>
+        <label class="switch" id="moveby">
+          <input type="checkbox" onclick='handleMoveBy(this);' onchange="showHideForm(this,'feed-selector', 'time-selector')" {{ move_toggle }}>
+          
+          <div class="slider round">
+            <!--ADDED HTML -->
+            <span class="on">TIME</span>
+            <span class="off">FEED</span>
+            
+            <!--END-->
+          </div>
+          
+        </label>
+        <div class=dropdowncontainer id=dropdowns>
+          <div id="feed-selector" {% if move_toggle%}style="display: none;"{% endif %}>
+            <label for="feed-select">Rate</label>
+            <select id="feed-select">
+              {% for n in feed_rate_values %}
+                <option value="{{ n }}" {% if n == feed_rate %}selected{% endif %}>{{ n }}</option>
+              {% endfor %}
+            </select>
+            <span class="focus"></span>
+          </div>
+          <div id="time-selector" {% if not move_toggle%}style="display: none;"{% endif %}>
+            <label for="time-select">Seconds</label>
+            <select id="time-select">
+              {% for n in move_time_values %}
+                <option value="{{ n }}" {% if n == move_time %}selected{% endif %}>{{ n }}</option>
+              {% endfor %}
+            </select>
+            <span class="focus"></span>
+          </div>
+        </div>
+      </form> 
+      <form class="form-inline">
       <label class="label-block" for="tracking">Tracking</label>
       <label class="switch" id="tracking">
         <input type="checkbox" onclick='handleTracking(this);' {{ tracking_toggle }}>
@@ -73,6 +87,7 @@
           <!--END-->
          </div>
       </label>
+      </form>
     </div>
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
