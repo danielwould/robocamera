@@ -77,7 +77,7 @@ class RobotCamera():
         
         if sys.platform == "win32":
             print("connecting to windows com device")
-            self.controller.set_device("COM1", 115200,"RoboCamera")
+            self.controller.set_device("COM3", 115200,"RoboCamera")
         else:
             print("connecting to linux tty device")
             self.controller.set_device("/dev/ttyACM0", 115200,"RoboCamera")
@@ -442,7 +442,7 @@ def handle_request(request, rc):
         elif request["request"] == "toggles":
             response = {"move_mode":rc.MOVE_TOGGLE,"tracking_mode": rc.TRACKING}
         elif request["request"] == "values":
-            response = {"feed_rate":rc.controller.get_feed_speed(),"move_time": rc.controller.get_move_duration(),"timelapse_time":rc.timelapse_time,"timelapse_steps":rc.timelapse_steps}
+            response = {"feed_rate":rc.controller.get_feed_speed(),"feed_rate_values":{100,200,500,100},"move_time": rc.controller.get_move_duration(),"timelapse_time":rc.timelapse_time,"timelapse_steps":rc.timelapse_steps}
     elif("update" in request):
         if request["update"] == "storepoint":
             #save current location as savepoint
