@@ -26,14 +26,26 @@
       </ul>
       
     </div>
-    <label for="standard-select">Feed Rate</label>
-    <div class="select">
-      <select id="standard-select">
-        {% for n in feed_rate_values %}
-          <option value="{{ n }}" {{ n.selected_value }}>n</option>
-        {% endfor %}
-      </select>
-      <span class="focus"></span>
+    
+    <div class=container id=dropdowns>
+      <div id="feed-selector">
+        <label for="feed-select">Feed Rate</label>
+        <select id="feed-select">
+          {% for n in feed_rate_values %}
+            <option value="{{ n }}" {% if n == feed_rate %}selected{% endif %}>{{ n }}</option>
+          {% endfor %}
+        </select>
+        <span class="focus"></span>
+      </div>
+      <div id="time-selector">
+        <label for="time-select">Move Seconds</label>
+        <select id="time-select">
+          {% for n in move_time_values %}
+            <option value="{{ n }}" {% if n == move_time %}selected{% endif %}>{{ n }}</option>
+          {% endfor %}
+        </select>
+        <span class="focus"></span>
+      </div>
     </div>
           
     </div>
@@ -41,7 +53,7 @@
       <!-- Rounded switch -->
       <label class="label-block" for="moveby">Move by</label>
       <label class="switch" id="moveby">
-        <input type="checkbox" onclick='handleMoveBy(this);' {{ move_toggle }}>
+        <input type="checkbox" onclick='handleMoveBy(this);' onchange="showHideForm(this,'feed-selector', 'time-selector')" {{ move_toggle }}>
         
          <div class="slider round">
           <!--ADDED HTML -->
@@ -116,6 +128,17 @@
                     "state": cb.checked
                 })
             });
+        }
+        function showHideForm(box, id,id_2) {
+            var elm = document.getElementById(id);
+            var secondelem = document.getElementById(id_2);
+            if(box.checked){
+                elm.style.display = "none";
+                secondelem.style.display ="";
+            } else {
+                elm.style.display = "";
+                secondelem.style.display ="none";
+            }
         }
         </script> 
 </body>
