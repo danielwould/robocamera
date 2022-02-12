@@ -28,7 +28,7 @@
     </div>
     
     <div class=container id=dropdowns>
-      <div id="feed-selector">
+      <div id="feed-selector" {% if move_toggle%}style="display: none;"{% endif %}>
         <label for="feed-select">Feed Rate</label>
         <select id="feed-select">
           {% for n in feed_rate_values %}
@@ -37,7 +37,7 @@
         </select>
         <span class="focus"></span>
       </div>
-      <div id="time-selector">
+      <div id="time-selector" {% if not move_toggle%}style="display: none;"{% endif %}>
         <label for="time-select">Move Seconds</label>
         <select id="time-select">
           {% for n in move_time_values %}

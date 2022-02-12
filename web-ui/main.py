@@ -41,7 +41,7 @@ def index():
                         feed_rate=values['feed_rate'],
                         feed_rate_values=values['feed_rate_values'],
                         move_time=values['move_time'],
-                        move_time_values=['move_time_values']])
+                        move_time_values=values['move_time_values'])
 
 
 @app.route("/save_savepoint" , methods = ['POST'])
