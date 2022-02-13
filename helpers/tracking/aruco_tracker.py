@@ -60,6 +60,25 @@ class aruco_tracker:
         self.track_target_id=id
         self.firstTrack = True
 
+    def get_tracking_mode(self):
+        if self.track_target_id==1:
+            return "TrackFirstPosition"
+        elif self.track_target_id==2:
+            return "TrackCentre"
+        elif self.track_traget_id==3:
+            return "TrackLowerThird"
+
+    def set_tracking_mode(self,tracking_mode):
+        if tracking_mode == "TrackFirstPosition":
+            self.set_tracking_target(1)
+        elif tracking_mode == "TrackCentre":
+            self.set_tracking_target(2)
+        elif tracking_mode == "TrackLowerThird":
+            self.set_tracking_target(3)
+
+    def get_tracking_modes(self):
+        return ["TrackFirstPosition","TrackCentre","TrackLowerThird"]
+        
     def get_jogmultipliers(self):
         return self.jogX,self.jogY
 
