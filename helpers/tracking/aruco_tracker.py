@@ -18,6 +18,7 @@ class aruco_tracker:
     staticTracking = True
     firstTrack = True
     tracking_paused = False
+    track_target_id=1
 
     def __init__(self, controller, ui):
          tracking = False
@@ -78,7 +79,7 @@ class aruco_tracker:
 
     def get_tracking_modes(self):
         return ["TrackFirstPosition","TrackCentre","TrackLowerThird"]
-        
+
     def get_jogmultipliers(self):
         return self.jogX,self.jogY
 
