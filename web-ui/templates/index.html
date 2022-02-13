@@ -9,23 +9,17 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns.css') }}">
     <style type="text/css">
       .container {
-        max-width: 500px;
+        max-width: 600px;
         padding-top: 10px;
-      }
-      .controlcontainer {
-        max-width: 500px;
-        padding-top: 1px;
-      }
-      .dropdowncontainer {
-        max-width: 500px;
-        padding-right: 40px;
-      }
+        
+        }
     </style>
   </head>
   <body>
-    <div class="container">
+    <div class="container" id=status>
       <p>Status: {{status_text}}</p>
-      
+    </div>
+    <div class="container" id=savepoints>
       <p>Savepoints:</p>
       <ul>
         {% for n in savepoints %}
@@ -38,7 +32,7 @@
     
           
     </div>
-    <div class=controlcontainer id=toggles>
+    <div class=container id=toggles>
       <form class="form-inline">
         <!-- Rounded switch -->
         <label class="label-block" for="moveby">Move by</label>
@@ -54,10 +48,10 @@
           </div>
           
         </label>
-        <div class=dropdowncontainer id=dropdowns>
+        <div id=dropdowns>
           <div id="feed-selector" {% if move_toggle%}style="display: none;"{% endif %}>
             <label for="feed-select">Rate</label>
-            <select id="feed-select">
+            <select id="feed-select" onchange="feed_select()">
               {% for n in feed_rate_values %}
                 <option value="{{ n }}" {% if n == feed_rate %}selected{% endif %}>{{ n }}</option>
               {% endfor %}
@@ -66,7 +60,7 @@
           </div>
           <div id="time-selector" {% if not move_toggle%}style="display: none;"{% endif %}>
             <label for="time-select">Seconds</label>
-            <select id="time-select">
+            <select id="time-select" onchange="time_select()">
               {% for n in move_time_values %}
                 <option value="{{ n }}" {% if n == move_time %}selected{% endif %}>{{ n }}</option>
               {% endfor %}
@@ -154,6 +148,32 @@
                 elm.style.display = "";
                 secondelem.style.display ="none";
             }
+        }
+        function feed_select(){
+          var value = document.getElementById("feed-select").value;
+          const response = fetch('/feed_rate', {
+                method: 'post',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "feed_rate":value
+                })
+            });
+        }
+        function time_select(){
+          var value = document.getElementById("time-select").value;
+          const response = fetch('/move_time', {
+                method: 'post',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "move_time":value
+                })
+            });
         }
         </script> 
 </body>

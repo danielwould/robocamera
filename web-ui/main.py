@@ -74,7 +74,22 @@ def toggle_tracking():
     response = send_camera_request(json.dumps({"toggle":"tracking_mode"}))
     return response
 
- 
+@app.route("/feed_rate" , methods = ['POST'])
+def feed_rate():
+    data = request.get_json()
+    value = data['feed_rate']
+    print("toggle feedrate {}".format(value))
+    response = send_camera_request(json.dumps({"update":"feed_rate", "feed_rate": int(value) }))
+    return response
+
+@app.route("/move_time" , methods = ['POST'])
+def move_time():
+    data = request.get_json()
+    value = data['move_time']
+    print("toggle movetime {}".format(value))
+    response = send_camera_request(json.dumps({"update":"move_time", "move_time": int(value) }))
+    return response 
+
 def send_camera_request(request_message):
    
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
