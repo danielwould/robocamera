@@ -41,7 +41,9 @@ def index():
                         feed_rate=values['feed_rate'],
                         feed_rate_values=values['feed_rate_values'],
                         move_time=values['move_time'],
-                        move_time_values=values['move_time_values'])
+                        move_time_values=values['move_time_values'],
+                        tracking_mode=values["tracking_mode"],
+                        tracking_modes=values["tracking_modes"])
 
 
 @app.route("/save_savepoint" , methods = ['POST'])
@@ -88,6 +90,14 @@ def move_time():
     value = data['move_time']
     print("toggle movetime {}".format(value))
     response = send_camera_request(json.dumps({"update":"move_time", "move_time": int(value) }))
+    return response 
+
+@app.route("/tracking_mode" , methods = ['POST'])
+def tracking_mode():
+    data = request.get_json()
+    value = data['tracking_mode']
+    print("toggle tracking mode {}".format(value))
+    response = send_camera_request(json.dumps({"update":"tracking_mode", "tracking_mode": value }))
     return response 
 
 def send_camera_request(request_message):
