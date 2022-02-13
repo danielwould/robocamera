@@ -82,13 +82,16 @@
          </div>
       </label>
       <div id="tracking-selector" >
-        <label for="tracking-select">Seconds</label>
+        <label for="tracking-select">Mode</label>
         <select id="tracking-select" onchange="track_select()">
           {% for n in tracking_modes %}
             <option value="{{ n }}" {% if n == tracking_mode %}selected{% endif %}>{{ n }}</option>
           {% endfor %}
         </select>
         <span class="focus"></span>
+      </div>
+      <div>
+        <a href="/tracker_glyph">Show Glyph</a>
       </div>
       </form>
     </div>
@@ -185,7 +188,7 @@
             });
         }
         function track_select(){
-          var value = document.getElementById("track-select").value;
+          var value = document.getElementById("tracking-select").value;
           const response = fetch('/tracking_mode', {
                 method: 'post',
                 headers: {

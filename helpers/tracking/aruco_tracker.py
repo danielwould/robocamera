@@ -66,7 +66,7 @@ class aruco_tracker:
             return "TrackFirstPosition"
         elif self.track_target_id==2:
             return "TrackCentre"
-        elif self.track_traget_id==3:
+        elif self.track_target_id==3:
             return "TrackLowerThird"
 
     def set_tracking_mode(self,tracking_mode):

@@ -45,6 +45,10 @@ def index():
                         tracking_mode=values["tracking_mode"],
                         tracking_modes=values["tracking_modes"])
 
+@app.route("/tracker_glyph")
+def tracker_glyph():
+    values = send_camera_request(json.dumps({"request":"values"}))
+    return render_template('aruco_tracker.html',tracking_mode=values["tracking_mode"], aruco_glyph="")
 
 @app.route("/save_savepoint" , methods = ['POST'])
 def save_waypoint():

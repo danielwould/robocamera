@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Robot Cameraman</title>
+    <!--<meta http-equiv="refresh" content="30" >-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style>
+        .fill-horizontal {
+            width: 100%;
+        }
+        .centerImage {
+            display: block;
+            overflow: hidden;
+            position: relative;
+            text-align: center;
+        }
+        .centerImage img {
+            bottom: 0;
+            left: 0;
+            margin: auto;
+            max-height: 100%;
+            max-width: 100%;
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="container centreImage" id=glyph>
+        <p>Active Tracker Glyph</p>
+        <img class="fill-horizontal" src="{{ url_for('static', filename='images/' +tracking_mode+'.png') }}" alt="{{ tracking_mode }}">
+        
+      </div>
+    <div class="container">
+        <a href="/">Home</a>
+    </div>
+      
+  </body>
+</html>
