@@ -95,7 +95,7 @@ class RobotCamera():
         self.crane_inst.set_big_step_tilt(10)
         #self.controller.reset()
         #TODO re-enable
-        #self.tracker = aruco_tracker(self.controller,self)
+        self.tracker = aruco_tracker(self.controller,self)
         #self.tracker.initialise_video()
 
 
