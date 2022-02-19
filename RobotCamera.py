@@ -448,11 +448,11 @@ def handle_request(request, rc):
             #save current location as savepoint
             rc.save_position(request["savepoint_id"])
             response = {"result":"savepoint_stored"}
-        elif request["update"]=="feed_rate":
-            rc.set_feed_rate(request["feed_rate"])
+        elif request["update"]=="feed-select":
+            rc.set_feed_rate(request["feed-select"])
             response = {"result": "OK"}
-        elif request["update"]=="move_time":
-            rc.set_move_time(request["move_time"])
+        elif request["update"]=="time-select":
+            rc.set_move_time(request["time-select"])
             response = {"result": "OK"}
         elif request["update"]=="time_lapse_time":    
             rc.set_timelapse_time(request["timelapse_time"])
@@ -460,8 +460,8 @@ def handle_request(request, rc):
         elif request["update"]=="time_lapse_steps":    
             rc.set_timelapse_steps(request["timelapse_steps"])
             response = {"result": "OK"}
-        elif request["update"]=="tracking_mode":    
-            rc.tracker.set_tracking_mode(request["tracking_mode"])
+        elif request["update"]=="ttracking-select":    
+            rc.tracker.set_tracking_mode(request["tracking-select"])
             response = {"result": "OK"}
     elif("action" in request):
         if request["action"] == "movepoint":

@@ -64,44 +64,20 @@ def moveto_waypoint():
     response = send_camera_request(json.dumps({"action":"movepoint","savepoint_id":savepoint_id}))
     return response
 
-@app.route("/toggle_moveby" , methods = ['POST'])
-def toggle_move_mode():
-    data = request.get_json()
-    state = data['state']
-    print("toggle state {}".format(state))
-    response = send_camera_request(json.dumps({"toggle":"move_mode"}))
-    return response
 
-@app.route("/toggle_tracking" , methods = ['POST'])
-def toggle_tracking():
+@app.route("/toggle/<id>" , methods = ['POST'])
+def toggle_flip(id):
     data = request.get_json()
-    state = data['state']
-    print("toggle state {}".format(state))
-    response = send_camera_request(json.dumps({"toggle":"tracking_mode"}))
-    return response
-
-@app.route("/feed_rate" , methods = ['POST'])
-def feed_rate():
-    data = request.get_json()
-    value = data['feed_rate']
-    print("toggle feedrate {}".format(value))
-    response = send_camera_request(json.dumps({"update":"feed_rate", "feed_rate": int(value) }))
-    return response
-
-@app.route("/move_time" , methods = ['POST'])
-def move_time():
-    data = request.get_json()
-    value = data['move_time']
-    print("toggle movetime {}".format(value))
-    response = send_camera_request(json.dumps({"update":"move_time", "move_time": int(value) }))
+    
+    response = send_camera_request(json.dumps({"toggle":id}))
     return response 
 
-@app.route("/tracking_mode" , methods = ['POST'])
-def tracking_mode():
+@app.route("/update/<id>" , methods = ['POST'])
+def dropdown_select(id):
     data = request.get_json()
-    value = data['tracking_mode']
-    print("toggle tracking mode {}".format(value))
-    response = send_camera_request(json.dumps({"update":"tracking_mode", "tracking_mode": value }))
+    value = data[id]
+    print("toggle {} {}".format(id,value))
+    response = send_camera_request(json.dumps({"update":id, id: value }))
     return response 
 
 def send_camera_request(request_message):

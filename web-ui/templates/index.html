@@ -37,7 +37,7 @@
         <!-- Rounded switch -->
         <label class="label-block" for="moveby">Move by</label>
         <label class="switch" id="moveby">
-          <input type="checkbox" onclick='handleMoveBy(this);' onchange="showHideForm(this,'feed-selector', 'time-selector')" {{ move_toggle }}>
+          <input id="moveby_switch" type="checkbox" onclick='toggle_flip(this);' onchange="showHideForm(this,'feed-selector', 'time-selector')" {{ move_toggle }}>
           
           <div class="slider round">
             <!--ADDED HTML -->
@@ -51,7 +51,7 @@
         <div id=dropdowns>
           <div id="feed-selector" {% if move_toggle%}style="display: none;"{% endif %}>
             <label for="feed-select">Rate</label>
-            <select id="feed-select" onchange="feed_select()">
+            <select id="feed-select" onchange="drop_down_select(this.id)">
               {% for n in feed_rate_values %}
                 <option value="{{ n }}" {% if n == feed_rate %}selected{% endif %}>{{ n }}</option>
               {% endfor %}
@@ -60,7 +60,7 @@
           </div>
           <div id="time-selector" {% if not move_toggle%}style="display: none;"{% endif %}>
             <label for="time-select">Seconds</label>
-            <select id="time-select" onchange="time_select()">
+            <select id="time-select" onchange="drop_down_select(this.id)">
               {% for n in move_time_values %}
                 <option value="{{ n }}" {% if n == move_time %}selected{% endif %}>{{ n }}</option>
               {% endfor %}
@@ -72,7 +72,7 @@
       <form class="form-inline">
       <label class="label-block" for="tracking">Tracking</label>
       <label class="switch" id="tracking">
-        <input type="checkbox" onclick='handleTracking(this);' {{ tracking_toggle }}>
+        <input id="tracking_switch" type="checkbox" onclick='toggle_flip(this);' {{ tracking_toggle }}>
         
          <div class="slider round">
           <!--ADDED HTML -->
@@ -83,7 +83,7 @@
       </label>
       <div id="tracking-selector" >
         <label for="tracking-select">Mode</label>
-        <select id="tracking-select" onchange="track_select()">
+        <select id="tracking-select" onchange="drop_down_select(this.id)">
           {% for n in tracking_modes %}
             <option value="{{ n }}" {% if n == tracking_mode %}selected{% endif %}>{{ n }}</option>
           {% endfor %}
@@ -124,32 +124,7 @@
             });
             console.log('Completed!', response);
         };
-        function handleMoveBy(cb) {
-           console.log("move toggled  "+cb.checked)
-           const response = fetch('/toggle_moveby', {
-                method: 'post',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "state": cb.checked
-                })
-            });
-        }
-        function handleTracking(cb) {
-           console.log("tracking toggled  "+cb.checked)
-           const response = fetch('/toggle_tracking', {
-                method: 'post',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "state": cb.checked
-                })
-            });
-        }
+        
         function showHideForm(box, id,id_2) {
             var elm = document.getElementById(id);
             var secondelem = document.getElementById(id_2);
@@ -161,43 +136,31 @@
                 secondelem.style.display ="none";
             }
         }
-        function feed_select(){
-          var value = document.getElementById("feed-select").value;
-          const response = fetch('/feed_rate', {
-                method: 'post',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "feed_rate":value
-                })
-            });
+        function toggle_flip(cb){
+          console.log(cb)
+            var idAttr = $(cb).prop('id');
+            console.log(idAttr +" toggled  "+cb.checked)
+            
+            post_command('/toggle/'+idAttr, '{"state": '+cb.checked+'}')
+            
         }
-        function time_select(){
-          var value = document.getElementById("time-select").value;
-          const response = fetch('/move_time', {
-                method: 'post',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "move_time":value
-                })
-            });
+        function drop_down_select(elem_id){
+          var value = document.getElementById(elem_id).value;
+          if (isNaN(value)){
+            payload = '{"'+elem_id+'":"'+value+'"}'
+          }else{
+            payload = '{"'+elem_id+'":'+value+'}'
+          }
+          post_command('/update/'+elem_id, payload);
         }
-        function track_select(){
-          var value = document.getElementById("tracking-select").value;
-          const response = fetch('/tracking_mode', {
+        function post_command(url,payload){
+          const response = fetch(url, {
                 method: 'post',
                 headers: {
                   'Accept': 'application/json',
                   'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    "tracking_mode":value
-                })
+                body: payload
             });
         }
         </script> 
