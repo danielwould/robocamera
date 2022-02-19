@@ -460,7 +460,7 @@ def handle_request(request, rc):
         elif request["update"]=="time_lapse_steps":    
             rc.set_timelapse_steps(request["timelapse_steps"])
             response = {"result": "OK"}
-        elif request["update"]=="ttracking-select":    
+        elif request["update"]=="tracking-select":    
             rc.tracker.set_tracking_mode(request["tracking-select"])
             response = {"result": "OK"}
     elif("action" in request):
@@ -499,10 +499,10 @@ def handle_request(request, rc):
             rc.crane_tilt_down()
             response = {"result":"crane_tilt_down"}
     elif "toggle" in request:
-        if request["toggle"]=="move_mode":
+        if request["toggle"]=="moveby_switch":
             rc.toggle_move_mode()
             response = {"result": rc.MOVE_TOGGLE}
-        elif request["toggle"]=="tracking_mode":
+        elif request["toggle"]=="tracking_switch":
             rc.toggle_tracking_mode()
             response = {"result": rc.TRACKING}
     
