@@ -98,11 +98,17 @@
     </div>
     <div class="waypointpane">
       <h2>Waypoints</h2>
-      <select name="waypoints" size=" {{ len(waypoints) }} ">  
+      <select name="waypoints" size=" {{ waypoints|length }} ">  
         {% for w in waypoints %}
         <option value="{{ w.location_str() }}"> {{ w.location_str() }} </option>  
         {% endfor %} 
-    </select>  
+        
+      </select>  
+      <select id="dwell-time">
+        {% for n in dwell_time_values %}
+          <option value="{{ n }}" {% if n == dwell_time %}selected{% endif %}>{{ n }}</option>
+        {% endfor %}
+      </select>
       <input type = "button" id = "add-waypoint" value = "Save" onclick='add_waypoint()'/>
     </div>
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
@@ -128,8 +134,8 @@
             console.log('Completed!', response);
         }; 
         function add_waypoint(){
-
-            post_command('/add_waypoint',JSON.stringify({"waypoint": "add"});
+            var value = document.getElementById("dwell-time").value;
+            post_command('/add_waypoint',JSON.stringify({"waypoint": "add","dwell_time":value}));
         }
         function move_to_savepoint(id) { 
             const response = fetch('/move_to_savepoint', {

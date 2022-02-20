@@ -164,29 +164,19 @@ class RobotCamera():
     def set_timelapse_steps(self, value):
         self.timelapse_steps = value
 
-    def add_waypoint(self):
-        skip_waypoint=False
+    def add_waypoint(self,dwell_time):
         print("add waypoint")  # (x, y, z,focus, feed), dwell time
         crane_position = self.crane_inst.get_current_location()
         gimbal_position = self.gimbal_inst.get_current_location()
-        wp = waypoint(
+        wp = waypoint(len(self.sequence_steps.waypoints),
             location(gimbal_position.get_rotation_pos(), gimbal_position.get_tilt_pos(), gimbal_position.get_zoom_pos()),
             location(crane_position.get_rotation_pos(), crane_position.get_tilt_pos(),crane_position.get_zoom_pos())
             )
-        wp.set_dwell_time(self.dwell_time.get())
+        wp.set_dwell_time(dwell_time)
         wp.set_feed_rate(self.controller.get_feed_speed())
         wp.set_travel_duration(self.controller.get_move_duration())
-        new_waypoint_str = "{} dwell for:{}".format(wp.location_str(),self.dwell_time.get())
-            
-        if (self.waypoint_listbox.size() > 0):
-            index = self.waypoint_listbox.size()-1
-            
-            last_waypoint = self.sequence_steps.get_step(index)
-            if (last_waypoint == new_waypoint_str):
-                skip_waypoint=True
-        if (skip_waypoint == False):
-            self.sequence_steps.add_waypoint(wp)
-            self.waypoint_listbox.insert("end",new_waypoint_str)
+               
+        self.sequence_steps.add_waypoint(wp)
 
     def delete_waypoint(self):
         # todo allow for deleting specific waypoint item
@@ -466,9 +456,9 @@ def handle_request(request, rc):
         elif request["update"]=="tracking-select":    
             rc.tracker.set_tracking_mode(request["tracking-select"])
             response = {"result": "OK"}
-    elif("add" in request):
+     elif("add" in request):
         if request["add"] == "waypoint":
-            rc.add_waypoint()
+            rc.add_waypoint(request["dwell-time"])
     elif("action" in request):
         if request["action"] == "movepoint":
             #save current location as savepoint
