@@ -456,9 +456,9 @@ def handle_request(request, rc):
         elif request["update"]=="tracking-select":    
             rc.tracker.set_tracking_mode(request["tracking-select"])
             response = {"result": "OK"}
-     elif("add" in request):
-        if request["add"] == "waypoint":
-            rc.add_waypoint(request["dwell-time"])
+        elif("add" in request):
+            if request["add"] == "waypoint":
+                rc.add_waypoint(request["dwell-time"])
     elif("action" in request):
         if request["action"] == "movepoint":
             #save current location as savepoint
