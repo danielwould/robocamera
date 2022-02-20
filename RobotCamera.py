@@ -234,16 +234,16 @@ class RobotCamera():
             location(crane_position.get_rotation_pos(), crane_position.get_tilt_pos(),0)
             )
         #new_waitpoint.set_feed_rate(self.controller.get_feed_speed())
-        if savepoint == 1:
+        if savepoint == 0:
             self.save_position_1 = new_waypoint
             
-        if savepoint == 2:
+        if savepoint == 1:
             self.save_position_2 = new_waypoint
             
-        if savepoint == 3:
+        if savepoint == 2:
             self.save_position_3 = new_waypoint
             
-        if savepoint == 4:
+        if savepoint == 3:
             self.save_position_4 = new_waypoint
             
 

@@ -18,7 +18,7 @@
   </head>
   <body>
     <div class="container" id=status>
-      <p>Status: {{status_text}}</p>
+      <p id=status-text>Status: {{status_text}}</p>
       <input type = "button" class="waypointtoggle" id = "waypoint-view" value="Waypoints"/>
     </div>
     <div class="container" id=savepoints>
@@ -122,6 +122,30 @@
         button.addEventListener('click', () => {
           pane.classList.toggle('open');
         });
+        (async function polling(){
+            
+            const response = await fetch('/refresh/status', {
+                method: 'post',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({"refresh": "status"})
+            });
+            response.json().then(data =>{
+              console.log(data); // JSON data parsed by `data.json()` call
+              update_status(JSON.stringify(data));
+            });
+            
+            
+                                  
+            // periodically refresh
+            setTimeout(polling, 10000);
+        })();
+        function update_status(text){
+            var element = document.getElementById("status-text");           
+            element.innerHTML = "Status:"+text;
+        }
         function save_savepoint(id) { 
             const response = fetch('/save_savepoint', {
                 method: 'post',
@@ -189,7 +213,8 @@
                   'Content-Type': 'application/json'
                 },
                 body: payload
-            });
+          });
+          return response
         }
         </script> 
 </body>

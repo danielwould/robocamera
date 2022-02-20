@@ -103,31 +103,31 @@ class Joystick():
 
                             if button == 1:
                                 # save position 1 when prssing
-                                self.parent.save_position(1)
+                                self.parent.save_position(0)
                         if button_num == 1:
                             if button == 1:
-                                self.parent.save_position(2)
+                                self.parent.save_position(1)
                         if button_num == 2:
                             if button == 1:
-                                self.parent.save_position(3)
+                                self.parent.save_position(2)
                         if button_num == 3:
                             if button == 1:
-                                self.parent.save_position(4)
+                                self.parent.save_position(3)
                         if button_num == 4:
                             if button == 1:
-                                self.parent.save_point_move(self.parent.save_position_1)
+                                self.parent.save_point_move(0)
                                 last_command_sent_at=time.time()                        
                         if button_num == 5:
                             if button == 1:
-                                self.parent.save_point_move(self.parent.save_position_2)
+                                self.parent.save_point_move(1)
                                 last_command_sent_at=time.time()
                         if button_num == 6:
                             if button == 1:
-                                self.parent.save_point_move(self.parent.save_position_3)
+                                self.parent.save_point_move(2)
                                 last_command_sent_at=time.time()
                         if button_num == 7:
                             if button == 1:
-                                self.parent.save_point_move(self.parent.save_position_4)
+                                self.parent.save_point_move(3)
                                 last_command_sent_at=time.time()
                         if button_num == 8:
                             if button == 1:

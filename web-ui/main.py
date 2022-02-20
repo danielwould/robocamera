@@ -49,6 +49,11 @@ def index():
                         dwell_time_values=[10,20,30,60],
                         waypoints = waypoints)
 
+@app.route("/refresh/<id>" , methods = ['POST'])
+def refresh_info(id):
+    response=send_camera_request(json.dumps({"request":id}))
+    return response
+
 @app.route("/tracker_glyph")
 def tracker_glyph():
     values = send_camera_request(json.dumps({"request":"values"}))
