@@ -142,16 +142,23 @@
             // periodically refresh
             setTimeout(polling, 10000);
         })();
-        function update_status(text){
+        async function update_status(text){
             var element = document.getElementById("status-text");           
             element.innerHTML = "Status:"+text;
         }
-        function update_waypoints(wp){
+        async function update_waypoints(wp){
              var element = document.getElementById("waypoint-list"); 
              element.options.length = 0;
-             wp.forEach(child => element.appendChild(child));
+             console.log(wp)
+             wp.forEach(child => {
+                console.log(child);
+                var opt = document.createElement('option');
+                opt.value = child;
+                opt.innerHTML = JSON.stringify(child);
+                element.appendChild(opt)
+               });
         }
-        function save_savepoint(id) { 
+        async function save_savepoint(id) { 
             const response = fetch('/save_savepoint', {
                 method: 'post',
                 headers: {
@@ -164,13 +171,16 @@
             });
             console.log('Completed!', response);
         }; 
-        function add_waypoint(){
+        async function add_waypoint(){
             var value = document.getElementById("dwell-time").value;
-            waypoints = post_command('/add_waypoint',JSON.stringify({"waypoint": "add","dwell_time":value}));
-            update_waypoints(waypoints);
+            response = post_command('/add_waypoint',JSON.stringify({"waypoint": "add","dwell_time":value}));
+            response.then(data =>{
+              console.log(data); // JSON data parsed by `data.json()` call
+              update_waypoints(data);
+            });
             
         }
-        function move_to_savepoint(id) { 
+        async function move_to_savepoint(id) { 
             const response = fetch('/move_to_savepoint', {
                 method: 'post',
                 headers: {
@@ -184,7 +194,7 @@
             console.log('Completed!', response);
         };
         
-        function showHideForm(box, id,id_2) {
+        async function showHideForm(box, id,id_2) {
             var elm = document.getElementById(id);
             var secondelem = document.getElementById(id_2);
             if(box.checked){
@@ -195,7 +205,7 @@
                 secondelem.style.display ="none";
             }
         }
-        function toggle_flip(cb){
+        async function toggle_flip(cb){
           console.log(cb)
             var idAttr = $(cb).prop('id');
             console.log(idAttr +" toggled  "+cb.checked)
@@ -203,7 +213,7 @@
             post_command('/toggle/'+idAttr, '{"state": '+cb.checked+'}')
             
         }
-        function drop_down_select(elem_id){
+        async function drop_down_select(elem_id){
           var value = document.getElementById(elem_id).value;
           if (isNaN(value)){
             payload = '{"'+elem_id+'":"'+value+'"}'
@@ -212,8 +222,8 @@
           }
           post_command('/update/'+elem_id, payload);
         }
-        function post_command(url,payload){
-          const response = fetch(url, {
+        async function post_command(url,payload){
+          const response = await fetch(url, {
                 method: 'post',
                 headers: {
                   'Accept': 'application/json',
@@ -221,7 +231,7 @@
                 },
                 body: payload
           });
-          return response
+          return response.json()
         }
         </script> 
 </body>
