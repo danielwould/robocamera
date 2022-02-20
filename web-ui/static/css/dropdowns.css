@@ -22,6 +22,28 @@
 
 }
 
+.waypoint_selector {
+  /*display: grid;*/
+  grid-template-areas: "select";
+  align-items: left;
+  position: relative;
+
+  min-width: 15ch;
+  max-width: 100%;
+
+  border: 1px solid var(--select-border);
+  border-radius: 0.2em;
+  padding: 0.25em 0.5em;
+
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 1.1;
+
+  background-color: #333333;
+  background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+
+}
+
 select:focus + .focus {
   position: absolute;
   top: -1px;

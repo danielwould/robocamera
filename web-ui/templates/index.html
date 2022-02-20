@@ -11,7 +11,7 @@
     <style type="text/css">
       .container {
         max-width: 600px;
-        padding-top: 10px;
+        padding-top: 50px;
         
         }
     </style>
@@ -19,6 +19,7 @@
   <body>
     <div class="container" id=status>
       <p>Status: {{status_text}}</p>
+      <input type = "button" class="waypointtoggle" id = "waypoint-view" value="Waypoints"/>
     </div>
     <div class="container" id=savepoints>
       <p>Savepoints:</p>
@@ -27,7 +28,7 @@
         <li> <input type = "button" id = "save_savepoint_{{loop.index0}}" value = "Save" onclick='save_savepoint({{loop.index0}})'/>{{savepoints[n]}}<input type = "button" id = "move_to_savepoint_{{loop.index0}}" value = "Move" onclick='move_to_savepoint({{loop.index0}})'/></li>
         {% endfor %}
       </ul>
-      <input type = "button" class="waypointtoggle" id = "waypoint-view" value="Waypoints"/>
+      
     </div>
     
     
@@ -98,12 +99,13 @@
     </div>
     <div class="waypointpane">
       <h2>Waypoints</h2>
-      <select name="waypoints" size=" {{ waypoints|length }} ">  
+      <select class="waypoint_selector" name="waypoints" size=" {{ waypoints|length }} ">  
         {% for w in waypoints %}
-        <option value="{{ w.location_str() }}"> {{ w.location_str() }} </option>  
+        <option value="{{ w }}" {% if loop.index0 == 0 %}selected{% endif %}> {{ w }} </option>  
         {% endfor %} 
         
       </select>  
+      <label for="time-select">Waypoint Dwell</label>
       <select id="dwell-time">
         {% for n in dwell_time_values %}
           <option value="{{ n }}" {% if n == dwell_time %}selected{% endif %}>{{ n }}</option>
