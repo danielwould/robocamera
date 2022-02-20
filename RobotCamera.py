@@ -211,13 +211,13 @@ class RobotCamera():
 
 
     def save_point_move(self,savepoint_id):
-        if savepoint_id == 1:
+        if savepoint_id == 0:
             savepoint=self.save_position_1
-        if savepoint_id == 2:
+        if savepoint_id == 1:
             savepoint=self.save_position_2
-        if savepoint_id == 3:
+        if savepoint_id == 2:
             savepoint=self.save_position_3
-        if savepoint_id == 4:
+        if savepoint_id == 3:
             savepoint=self.save_position_4
         if self.MOVE_TOGGLE == self.FEED_RATE:
             self.controller.absolute_move(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,self.controller.get_feed_speed(),savepoint.get_dwell_time())
