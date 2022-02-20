@@ -33,6 +33,7 @@ def index():
     else:
         tracking_state=""
     values = send_camera_request(json.dumps({"request":"values"}))
+    waypoints = send_camera_request(json.dumps({"request":"waypoints"}))
     return render_template('index.html', 
                         status_text=status,
                         savepoints=savepoints,
@@ -43,7 +44,8 @@ def index():
                         move_time=values['move_time'],
                         move_time_values=values['move_time_values'],
                         tracking_mode=values["tracking_mode"],
-                        tracking_modes=values["tracking_modes"])
+                        tracking_modes=values["tracking_modes"],
+                        waypoints = waypoints)
 
 @app.route("/tracker_glyph")
 def tracker_glyph():
@@ -55,6 +57,11 @@ def save_waypoint():
     data = request.get_json()
     savepoint_id = data['savepoint_id']
     response = send_camera_request(json.dumps({"update":"storepoint","savepoint_id":savepoint_id}))
+    return response
+
+@app.route("/add_waypoint" , methods = ['POST'])
+def add_waypoint():
+    response = send_camera_request(json.dumps({"add":"waypoint"}))
     return response
 
 @app.route("/move_to_savepoint" , methods = ['POST'])
