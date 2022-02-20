@@ -178,36 +178,10 @@ class RobotCamera():
                
         self.sequence_steps.add_waypoint(wp)
 
-    def delete_waypoint(self):
+    def delete_waypoint(self, id):
         # todo allow for deleting specific waypoint item
-        
-        selected = self.waypoint_listbox.curselection()
-        if selected:
-            self.waypoint_listbox.delete(selected)
-            self.sequence_steps.delete_waypoint(index=selected[0])
-        else:
-            self.waypoint_listbox.delete(self.waypoint_listbox.size()-1,self.waypoint_listbox.size())
-            self.sequence_steps.delete_waypoint()
+        self.sequence_steps.delete_waypoint(index=id)
             
-        
-    def edit_waypoint(self):
-        selected = self.waypoint_listbox.curselection()
-        if selected:
-            index = selected[0]
-            
-        else:
-            index = self.waypoint_listbox.size()-1
-            
-        waypoint_to_edit = self.sequence_steps.get_step(index)
-        self.editwaypoint=editWaypointPopup(self.master, waypoint_to_edit)
-        self.master.wait_window(self.editwaypoint.top)
-        print("edited waypoint value {} {}".format(self.editwaypoint.value.location_str(),self.editwaypoint.value.get_feed_info()))
-        self.sequence_steps.update_waypoint(index, self.editwaypoint.value)
-        self.waypoint_listbox.insert(index,"{} dwell for:{}".format(self.editwaypoint.value.location_str(),self.editwaypoint.value.get_dwell_time()))
-        self.waypoint_listbox.delete(index+1)
-    
-    def entryValue(self):
-        return self.editwaypoint.value
 
     def trigger_whole_sequence(self):
         #turn off tracking if it's on
@@ -262,16 +236,16 @@ class RobotCamera():
         #new_waitpoint.set_feed_rate(self.controller.get_feed_speed())
         if savepoint == 1:
             self.save_position_1 = new_waypoint
-            self.sp1_pos_text['text'] = "Y/LB : {}".format(new_waypoint.location_str())
+            
         if savepoint == 2:
             self.save_position_2 = new_waypoint
-            self.sp2_pos_text['text'] = "B/RB : {}".format(new_waypoint.location_str())
+            
         if savepoint == 3:
             self.save_position_3 = new_waypoint
-            self.sp3_pos_text['text'] = "X/L1 : {}".format(new_waypoint.location_str())
+            
         if savepoint == 4:
             self.save_position_4 = new_waypoint
-            self.sp4_pos_text['text'] = "A/R1 : {}".format(new_waypoint.location_str())
+            
 
     
     def crane_tilt_up(self):
@@ -346,10 +320,7 @@ class RobotCamera():
                     self.save_position_3 = waypoint(savepoints[sp]['id'],location(savepoints[sp]['x'],savepoints[sp]['y'],savepoints[sp]['z']), location(savepoints[sp]['a'], savepoints[sp]['b'], 0))
                 if (sp==4):
                     self.save_position_4 = waypoint(savepoints[sp]['id'],location(savepoints[sp]['x'],savepoints[sp]['y'],savepoints[sp]['z']), location(savepoints[sp]['a'], savepoints[sp]['b'], 0))
-            self.sp1_pos_text['text'] = "Y/LB : {}".format(self.save_position_1.location_str())
-            self.sp2_pos_text['text'] = "B/RB : {}".format(self.save_position_2.location_str())
-            self.sp3_pos_text['text'] = "X/L1 : {}".format(self.save_position_3.location_str())
-            self.sp4_pos_text['text'] = "A/R1 : {}".format(self.save_position_4.location_str())
+            
             current_position = state[0]['Position'][0]
             print (current_position)
             #self.controller.set_position(current_position['wx'],current_position['wy'],current_position['wz'],current_position['wa'],current_position['wb'])
