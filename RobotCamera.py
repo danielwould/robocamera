@@ -96,7 +96,7 @@ class RobotCamera():
         #self.controller.reset()
         #TODO re-enable
         self.tracker = aruco_tracker(self.controller,self)
-        #self.tracker.initialise_video()
+        self.tracker.initialise_video()
 
 
     def init_joysticks(self):
