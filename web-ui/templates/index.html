@@ -7,6 +7,7 @@
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/toggles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/slidepanel.css') }}">
     <style type="text/css">
       .container {
         max-width: 600px;
@@ -26,7 +27,7 @@
         <li> <input type = "button" id = "save_savepoint_{{loop.index0}}" value = "Save" onclick='save_savepoint({{loop.index0}})'/>{{savepoints[n]}}<input type = "button" id = "move_to_savepoint_{{loop.index0}}" value = "Move" onclick='move_to_savepoint({{loop.index0}})'/></li>
         {% endfor %}
       </ul>
-      
+      <input type = "button" class="waypointtoggle" id = "waypoint-view" value="Waypoints"/>
     </div>
     
     
@@ -95,9 +96,24 @@
       </div>
       </form>
     </div>
+    <div class="waypointpane">
+      <h2>Waypoints</h2>
+      <select name="waypoints" size=" {{ len(waypoints) }} ">  
+        {% for w in waypoints %}
+        <option value="{{ w.location_str() }}"> {{ w.location_str() }} </option>  
+        {% endfor %} 
+    </select>  
+      <input type = "button" id = "add-waypoint" value = "Save" onclick='add_waypoint()'/>
+    </div>
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     <script type=text/javascript> 
+        const button = document.querySelector('.waypointtoggle');
+        const pane = document.querySelector('.waypointpane');
+
+        button.addEventListener('click', () => {
+          pane.classList.toggle('open');
+        });
         function save_savepoint(id) { 
             const response = fetch('/save_savepoint', {
                 method: 'post',
@@ -111,6 +127,10 @@
             });
             console.log('Completed!', response);
         }; 
+        function add_waypoint(){
+
+            post_command('/add_waypoint',JSON.stringify({"waypoint": "add"});
+        }
         function move_to_savepoint(id) { 
             const response = fetch('/move_to_savepoint', {
                 method: 'post',

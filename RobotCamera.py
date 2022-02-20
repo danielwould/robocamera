@@ -443,6 +443,9 @@ def handle_request(request, rc):
             response = {"move_mode":rc.MOVE_TOGGLE,"tracking_mode": rc.TRACKING}
         elif request["request"] == "values":
             response = {"feed_rate":rc.controller.get_feed_speed(),"feed_rate_values":[100,200,500,1000,1500,2000],"move_time": rc.controller.get_move_duration(),"move_time_values":[1,2,5,10,15,30,60,120],"timelapse_time":rc.timelapse_time,"timelapse_steps":rc.timelapse_steps,"tracking_mode":rc.tracker.get_tracking_mode(),"tracking_modes": rc.tracker.get_tracking_modes()}
+        elif request["request"] == "waypoints":
+            response = json.dump(rc.sequence_steps.waypoints)
+        
     elif("update" in request):
         if request["update"] == "storepoint":
             #save current location as savepoint
@@ -463,6 +466,9 @@ def handle_request(request, rc):
         elif request["update"]=="tracking-select":    
             rc.tracker.set_tracking_mode(request["tracking-select"])
             response = {"result": "OK"}
+    elif("add" in request):
+        if request["add"] == "waypoint":
+            rc.add_waypoint()
     elif("action" in request):
         if request["action"] == "movepoint":
             #save current location as savepoint
