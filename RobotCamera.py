@@ -433,6 +433,10 @@ def handle_request(request, rc):
     elif("add" in request):
         if request["add"] == "waypoint":
             rc.add_waypoint(request["dwell-time"])
+            waypoint_payload =[]
+            for wp in rc.sequence_steps.waypoints:
+                waypoint_payload.append(wp.get_waypoint_data())
+            response = json.dumps(waypoint_payload)
     elif("action" in request):
         if request["action"] == "movepoint":
             #save current location as savepoint

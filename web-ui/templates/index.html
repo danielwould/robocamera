@@ -99,7 +99,7 @@
     </div>
     <div class="waypointpane">
       <h2>Waypoints</h2>
-      <select class="waypoint_selector" name="waypoints" size=" {{ waypoints|length }} ">  
+      <select class="waypoint_selector" id=waypoint-list name="waypoints" size=" {{ waypoints|length }} ">  
         {% for w in waypoints %}
         <option value="{{ w }}" {% if loop.index0 == 0 %}selected{% endif %}> {{ w }} </option>  
         {% endfor %} 
@@ -146,6 +146,11 @@
             var element = document.getElementById("status-text");           
             element.innerHTML = "Status:"+text;
         }
+        function update_waypoints(wp){
+             var element = document.getElementById("waypoint-list"); 
+             element.options.length = 0;
+             wp.forEach(child => element.appendChild(child));
+        }
         function save_savepoint(id) { 
             const response = fetch('/save_savepoint', {
                 method: 'post',
@@ -161,7 +166,9 @@
         }; 
         function add_waypoint(){
             var value = document.getElementById("dwell-time").value;
-            post_command('/add_waypoint',JSON.stringify({"waypoint": "add","dwell_time":value}));
+            waypoints = post_command('/add_waypoint',JSON.stringify({"waypoint": "add","dwell_time":value}));
+            update_waypoints(waypoints);
+            
         }
         function move_to_savepoint(id) { 
             const response = fetch('/move_to_savepoint', {

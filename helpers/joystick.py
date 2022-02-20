@@ -91,8 +91,8 @@ class Joystick():
                         self.parent.controller.jog_cancel()
                         self.joystick_moving=False
 
-#TODO                if (time.time()-control_last_toggled > 0.5):
-#                    self.parent.tracker.set_static_tracking(True)
+                if (time.time()-control_last_toggled > 0.5):
+                    self.parent.tracker.set_static_tracking(True)
  
                 buttons = joystick.get_numbuttons()
                 if time.time() - last_command_sent_at > 0.2:
