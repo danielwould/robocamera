@@ -139,7 +139,7 @@
             });
             response.json().then(data =>{
               console.log(data); // JSON data parsed by `data.json()` call
-              update_status(JSON.stringify(data));
+              update_status(data);
             });
             
             
@@ -147,9 +147,18 @@
             // periodically refresh
             setTimeout(polling, 30000);
         })();
-        async function update_status(text){
-            var element = document.getElementById("status-text");           
-            element.innerHTML = "Status:"+text;
+        async function update_status(status){
+            var element = document.getElementById("status-text");  
+            
+            state = status.status;
+            update_time = status.last_update;
+            position = status.position;
+            pos_values = position.split(',')
+            pos_string="";
+            pos_values.forEach(pos => {
+              pos_string=pos_string+pos+" : "
+            })
+            element.innerHTML = "Status:<b>"+state + "</b> Updated:<b>"+update_time+"</b></br>Position:"+pos_string;
         }
         async function update_waypoints(wp){
              var element = document.getElementById("waypoint-list"); 
