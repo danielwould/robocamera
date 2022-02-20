@@ -112,14 +112,19 @@
         {% endfor %}
       </select>
       <input type = "button" id = "add-waypoint" value = "Save" onclick='add_waypoint()'/>
+      <input type = "button" class="waypointtoggle" id = "waypoint-view-close" value="Close"/>
     </div>
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     <script type=text/javascript> 
         const button = document.querySelector('.waypointtoggle');
+        const close_button = document.querySelector('#waypoint-view-close');
         const pane = document.querySelector('.waypointpane');
 
         button.addEventListener('click', () => {
+          pane.classList.toggle('open');
+        });
+        close_button.addEventListener('click', () => {
           pane.classList.toggle('open');
         });
         (async function polling(){
@@ -140,7 +145,7 @@
             
                                   
             // periodically refresh
-            setTimeout(polling, 10000);
+            setTimeout(polling, 30000);
         })();
         async function update_status(text){
             var element = document.getElementById("status-text");           
