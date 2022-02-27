@@ -152,13 +152,9 @@
             
             state = status.status;
             update_time = status.last_update;
-            position = status.position;
-            pos_values = position.split(',')
-            pos_string="";
-            pos_values.forEach(pos => {
-              pos_string=pos_string+pos+" : "
-            })
-            element.innerHTML = "Status:<b>"+state + "</b> Updated:<b>"+update_time+"</b></br>Position:"+pos_string;
+            work_position = status.work_pos;
+            machine_position = status.machine_pos;
+            element.innerHTML = "Status:<b>"+state + "</b> Updated:<b>"+update_time+"</b></br>Work position:"+work_string+"</br>Machine position:"+machine_string;
         }
         async function update_waypoints(wp){
              var element = document.getElementById("waypoint-list"); 

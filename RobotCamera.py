@@ -397,7 +397,7 @@ def handle_request(request, rc):
     response={"response":"pong"}
     if ("request" in request):
         if request["request"] == "status":
-            response = {"status":rc.controller.get_grbl_status(), "last_update":rc.controller.get_lastUpdateTime(),"position":rc.controller.position_str()}
+            response = {"status":rc.controller.get_grbl_status(), "last_update":rc.controller.get_lastUpdateTime(),"work_pos":rc.controller.work_position_str(),"machine_pos":rc.controller.machine_position_str()}
         elif request["request"] == "savepoints":
             response = {"savepoint_1": rc.save_position_1.location_str(),"savepoint_2": rc.save_position_2.location_str(),"savepoint_3": rc.save_position_3.location_str(),"savepoint_4": rc.save_position_4.location_str()}
         elif request["request"] == "toggles":
