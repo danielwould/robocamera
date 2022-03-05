@@ -162,7 +162,7 @@ class grbl_controller:
     lastResponseTime = 0
     reset_buffer = False
     #dynamic limits configuration
-    gimbal_tilt_min=0.0
+    crane_tilt_min=0.0
     crane_tilt_min_locked=False
     crane_tilt_max=0.0
     crane_tilt_max_locked=False
