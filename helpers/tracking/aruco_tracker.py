@@ -151,16 +151,14 @@ class aruco_tracker:
                             self.set_tracking_target(3)
                             self.parent.trackingId=3
                         
-                        if (markerID == 20):
-                            self.controller.set_zoom_min()
+                        
                         if (markerID == 21)    :
                             self.controller.zoom_full_out()
                         if (markerID == 22):
                             self.controller.set_zoom_medium()
                         if (markerID == 23):
                             self.controller.zoom_medium()
-                        if (markerID == 24):
-                            self.controller.set_zoom_max()
+                        
                         if (markerID == 25):
                             self.controller.zoom_full_in()
                             

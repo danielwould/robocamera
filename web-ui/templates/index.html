@@ -130,14 +130,15 @@
           <div class='range-slider__progress'></div>
         </div>
       <div><p style="margin: 20px 5px 30px;">Minimum time between steps</p></div>
-        <div class="range-slider" style='--min:0; --max:60; --step:1; --value:60; --text-value:"10";'>
+        <div class="range-slider" style='--min:1; --max:30; --step:1; --value:1; --text-value:"1";'>
           
-          <input type="range" id="tl-steptime" min="0" max="60" step="1" value="50" oninput="this.parentNode.style.setProperty('--value',this.value); this.parentNode.style.setProperty('--text-value', JSON.stringify(this.value))">
+          <input type="range" id="tl-steptime" min="1" max="30" step="1" value="1" oninput="this.parentNode.style.setProperty('--value',this.value); this.parentNode.style.setProperty('--text-value', JSON.stringify(this.value))">
           <output></output>
           <div class='range-slider__progress'></div>
         </div>
       </div>
-      <input type = "button" class="timelapsestart" id = "timelapse-start" value="Go" onclick='start_timelapse()'/>
+    </br>
+      <input type = "button" class="myButton" id = "timelapse-start" value="Go" onclick='start_timelapse()'/>
       <input type = "button" class="timelapsetoggle" id = "timelapse-view-close" value="Close"/>
     </div>
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>

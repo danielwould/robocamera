@@ -1,7 +1,7 @@
 
 import os
 import sys
-from flask import Flask, render_template, request, g
+from flask import Flask, render_template, request, g,send_from_directory
 import socket
 import select
 import json
@@ -142,8 +142,12 @@ def send_camera_request(request_message):
     print("returning")
     return "no data"
 
-app.run(host="192.168.86.238", port=8080, debug=True)
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static/images'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
+app.run(host="192.168.86.238", port=8080, debug=True)
 
 
 

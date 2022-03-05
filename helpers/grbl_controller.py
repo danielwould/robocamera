@@ -161,15 +161,29 @@ class grbl_controller:
     grbl_status="disconnected"
     lastResponseTime = 0
     reset_buffer = False
-
-    crane_tilt_min=None
-    crane_tilt_max=None
-    crane_pan_middle=None
+    #dynamic limits configuration
     gimbal_tilt_min=None
+    crane_tilt_min_locked=False
+    crane_tilt_max=None
+    crane_tilt_max_locked=False
+    crane_pan_middle=None
+    crane_pan_min_locked=False
+    crane_pan_max_locked=False
+    crane_pan_min=None
+    crane_pan_max=None
+    gimbal_tilt_min=None
+    gimbal_tilt_min_locked=False
     gimbal_tilt_max=None
+    gimbal_tilt_max_locked=False
     gimbal_pan_middle=None
+    gimbal_pan_min=None
+    gimbal_pan_max=None
+    gimbal_pan_min_locked=False
+    gimbal_pan_max_locked=False
     z_min=None
+    z_min_locked=False
     z_max=None
+    z_max_locked=False
     z_medium=None
 
     xjog_factor=0.8
@@ -315,40 +329,40 @@ class grbl_controller:
     def get_feed_speed(self):
         return self.current_feed_speed
 
-    def set_crane_tilt_min(self):
-        #set current crane tilt as lowestpoint
-        self.crane_tilt_min = self.mcontrol.cnc_obj.vars["wb"]
+    def set_crane_tilt_min_locked(self, is_locked):
+        
+        self.crane_tilt_min_locked=is_locked
     
-    def set_crane_tilt_max(self):
-        #set current crane tilt as heightpoint
-        self.crane_tilt_max = self.mcontrol.cnc_obj.vars["wb"]
+    def set_crane_tilt_max_locked(self, is_locked):
+        
+        self.crane_tilt_maxlocked=is_locked
 
     def set_crane_pan_middle(self):
-        #set current crane pan as centred
+        
         self.crane_pan_middle = self.mcontrol.cnc_obj.vars["wa"]
 
-    def set_gimbal_tilt_min(self):
-         #set current gimbal tilt as lowestpoint
-        self.gimbal_tilt_min = self.mcontrol.cnc_obj.vars["wy"]
+    def set_gimbal_tilt_min_locked(self, is_locked):
+        
+        self.gimbal_tilt_min_locked=is_locked
     
-    def set_gimbal_tilt_max(self):
-         #set current gimbal tilt as hightestpoint
-        self.gimbal_tilt_max = self.mcontrol.cnc_obj.vars["wy"]
+    def set_gimbal_tilt_max_locked(self, is_locked):
+        
+        self.gimbal_tilt_max_locked = is_locked
 
     def set_gimbal_pan_middle(self):
-        #set current gimbal pan as centred
+        
         self.crane_pan_middle = self.mcontrol.cnc_obj.vars["wx"]
 
-    def set_zoom_min(self):
-        #set current z as full wide
-        self.z_min = self.mcontrol.cnc_obj.vars["wz"]
+    def set_zoom_min_locked(self, is_locked):
+        
+        self.z_min_locked=is_locked
     
-    def set_zoom_max(self):
-        #set current z as full wide
-        self.z_max = self.mcontrol.cnc_obj.vars["wz"]
+    def set_zoom_max_locked(self, is_locked):
+        
+        self.z_max_locked=is_locked
     
     def set_zoom_medium(self):
-        #set current z as full wide
+        #set current z as medium point
         self.z_medium = self.mcontrol.cnc_obj.vars["wz"]
 
     def zoom_full_out(self):
@@ -367,12 +381,12 @@ class grbl_controller:
         jogStep = self.current_feed_speed / 600;
         jogStep = jogStep*multiplier
         if (axis == "z"):
-            if (self.z_max is not None):
+            if (self.z_max_locked):
                 #current setup has z -negative moves zooming in
                 if (jogStep+self.mcontrol.cnc_obj.vars["wz"] < self.z_max):
                     self.logger.info("detected zoom in too far command")
                     return
-            if (self.z_min is not None):
+            if (self.z_min_locked):
                 if (jogStep+self.mcontrol.cnc_obj.vars["wz"] > self.z_min):
                     self.logger.info("detected zoom out too far command")
                     return
@@ -390,19 +404,22 @@ class grbl_controller:
         ajogStep = jogStep*self.ajog_factor*aaxis_multiplier
         bjogStep = jogStep*self.bjog_factor*baxis_multiplier
         #drop any move that takes us outside min/max bounds
-        #if (self.crane_tilt_max is not None):
-        #    if (bjogStep+self.mcontrol.cnc_obj.vars["wb"] > self.crane_tilt_max):
-        #        bjogStep=0
-        #if (self.crane_tilt_min is not None):
-        #    if (bjogStep-self.mcontrol.cnc_obj.vars["wb"] < self.crane_tilt_min):
-        #        bjogStep=0
-        #if (self.gimbal_tilt_max is not None):
-        #    if (yjogStep+self.mcontrol.cnc_obj.vars["wy"] > self.gimbal_tilt_max):
-        #        yjogStep=0
-        #if (self.gimbal_tilt_min is not None):
-        #    if (yjogStep-self.mcontrol.cnc_obj.vars["wy"] < self.gimbal_tilt_min):
-        #        yjogStep=0
-
+        if self.gimbal_pan_max_locked and self.gimbal_pan_max < (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
+            xJogStep=0
+        if self.gimbal_pan_min_locked and self.gimbal_pan_min > (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
+            xJogStep=0
+        if self.gimbal_tilt_max_locked and self.gimbal_tilt_max < (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
+            yJogStep=0
+        if self.gimbal_tilt_min_locked and self.gimbal_tilt_min > (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
+            yJogStep=0
+        if self.crane_pan_max_locked and self.crane_pan_max < (self.mcontrol.cnc_obj.vars["wa"]+ajogStep):
+            aJogStep=0
+        if self.crane_pan_min_locked and self.crane_pan_min > (self.mcontrol.cnc_obj.vars["wa"]+ajogStep):
+            aJogStep=0
+        if self.crane_tilt_max_locked and self.crane_tilt_max < (self.mcontrol.cnc_obj.vars["wb"]+bjogStep):
+            bJogStep=0
+        if self.crane_tilt_min_locked and self.crane_tilt_min > (self.mcontrol.cnc_obj.vars["wb"]+bjogStep):
+            bJogStep=0
         #only jog if the buffer is clear
         if (self.buffer_length==0):
             self.queue.put("$J=G91 x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep, self.current_feed_speed))
@@ -419,6 +436,15 @@ class grbl_controller:
         jogStep = self.current_feed_speed / 600;
         xjogStep = jogStep*self.xjog_factor*xaxis_multiplier
         yjogStep = jogStep*self.yjog_factor*yaxis_multiplier
+        #limit movement beyond min/max values
+        if self.gimbal_pan_max_locked and self.gimbal_pan_max < (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
+            xJogStep=0
+        if self.gimbal_pan_min_locked and self.gimbal_pan_min > (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
+            xJogStep=0
+        if self.gimbal_tilt_max_locked and self.gimbal_tilt_max < (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
+            yJogStep=0
+        if self.gimbal_tilt_min_locked and self.gimbal_tilt_min > (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
+            yJogStep=0
         #only jog if the buffer is clear
         if (self.buffer_length==0):
             self.queue.put("$J=G91 x{} y{} f{}\n".format(xjogStep,yjogStep,self.current_feed_speed))
@@ -620,6 +646,27 @@ class grbl_controller:
     def emptybuffer(self):
         self.reset_buffer=True
 
+    def update_min_max(self):
+        if self.mcontrol.cnc_obj.vars["wa"] < self.crane_pan_min:
+            self.crane_pan_min = self.mcontrol.cnc_obj.vars["wb"]
+        if self.mcontrol.cnc_obj.vars["wa"] > self.crane_pan_max:
+            self.crane_pan_max = self.mcontrol.cnc_obj.vars["wa"]
+        if self.mcontrol.cnc_obj.vars["wb"] < self.crane_tilt_min:
+            self.crane_tilt_min = self.mcontrol.cnc_obj.vars["wb"]
+        if self.mcontrol.cnc_obj.vars["wb"] > self.crane_tilt_max:
+            self.crane_tilt_max = self.mcontrol.cnc_obj.vars["wb"]
+        if self.mcontrol.cnc_obj.vars["wx"] < self.gimbal_pan_min:
+            self.gimbal_pan_min = self.mcontrol.cnc_obj.vars["wx"]
+        if self.mcontrol.cnc_obj.vars["wx"] > self.gimbal_pan_max:
+            self.gimbal_pan_max = self.mcontrol.cnc_obj.vars["wx"]
+        if self.mcontrol.cnc_obj.vars["wy"] < self.gimbal_tilt_min:
+            self.gimbal_tilt_min = self.mcontrol.cnc_obj.vars["wy"]
+        if self.mcontrol.cnc_obj.vars["wy"] > self.gimbal_tilt_max:
+            self.gimbal_tilt_max = self.mcontrol.cnc_obj.vars["wy"]
+        if self.mcontrol.cnc_obj.vars["wz"] < self.z_min:
+            self.z_min = self.mcontrol.cnc_obj.vars["wz"]
+        if self.mcontrol.cnc_obj.vars["wz"] > self.z_max:
+            self.z_max = self.mcontrol.cnc_obj.vars["wz"]
 
     def control_thread(self, name):
         self.logger.info("########################################")
@@ -635,7 +682,7 @@ class grbl_controller:
         lastWriteAt = tg = time.time()
         while self.app_running:
             self.update_buffer_info(cline,sline)
-
+            self.update_min_max()
             try:
                 if self.reset_buffer == True:
                     for line in sline:
