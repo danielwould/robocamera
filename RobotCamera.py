@@ -108,10 +108,10 @@ class RobotCamera():
 
     
         
-    def timelapse(self):
+    def timelapse(self, duration, step_interval):
         #trigger a timelapse from current position to Save position 2
         savepoint = self.save_position_2
-        self.controller.absolute_move_timelapse(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos, self.timelapse_time,  self.timelapse_steps)
+        self.controller.absolute_move_timelapse(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos, duration,  step_interval)
 
     def set_initial_pos(self):
         #initial position should be min gimbal tilt, max crane tilt, middle position pan on both, zoom all the way out
@@ -157,12 +157,6 @@ class RobotCamera():
 
     def set_move_time(self, value):
         self.controller.set_move_duration(value)
-
-    def set_timelapse_time(self, value):
-        self.timelapse_time = value
-        
-    def set_timelapse_steps(self, value):
-        self.timelapse_steps = value
 
     def add_waypoint(self,dwell_time):
         print("add waypoint")  # (x, y, z,focus, feed), dwell time
@@ -471,6 +465,9 @@ def handle_request(request, rc):
             response = {"result":"crane_tilt_up"}
         elif request["action"] == "crane_tilt_down":
             rc.crane_tilt_down()
+            response = {"result":"crane_tilt_down"}
+        elif request["action"] == "timelapse":
+            rc.timelapse(request["duration"],request["step-interval"])
             response = {"result":"crane_tilt_down"}
     elif "toggle" in request:
         if request["toggle"]=="moveby_switch":

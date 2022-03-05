@@ -73,6 +73,15 @@ def add_waypoint():
     response = send_camera_request(json.dumps({"add":"waypoint","dwell-time":dwell_time}))
     return response
 
+@app.route("/timelapse_start" , methods = ['POST'])
+def timelapse_start():
+    data = request.get_json()
+    tl_duration = data['duration']
+    tl_stepinterval = data['step-interval']
+    response = send_camera_request(json.dumps({"action":"timelapse","duration":tl_duration,"step-interval":tl_stepinterval}))
+    return response
+
+
 @app.route("/move_to_savepoint" , methods = ['POST'])
 def moveto_waypoint():
     data = request.get_json()

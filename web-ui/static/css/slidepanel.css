@@ -7,10 +7,16 @@
     right: 2rem;
     top: 2rem;
     padding: 0.5rem 1rem;
-    background: #212121;
+    background: #ffcc33;
+    border-radius:12px;
     color: white;
     font-size: 1.2rem;
+    font-family:Verdana;
   }
+  .waypointtoggle:hover {
+	background:linear-gradient(to bottom, #303030 5%, #383838 100%);
+	background-color:#333333;
+    }
   .waypointpane {
     position: fixed;
     top: 0;
@@ -25,4 +31,35 @@
   }
   .waypointpane.open {
     left: 0%;
+  }
+
+  .timelapsetoggle {
+    position: absolute;
+    left: 2rem;
+    top: 2rem;
+    padding: 0.5rem 1rem;
+    background: #ffcc33;
+    border-radius:12px;
+    color: white;
+    font-size: 1.2rem;
+    font-family:Verdana;
+  }
+  .timelapsetoggle:hover {
+	background:linear-gradient(to bottom, #303030 5%, #383838 100%);
+	background-color:#333333;
+    }
+  .timelapsepane {
+    position: fixed;
+    top: 0;
+    margin-left: 100%;
+    padding: 1rem 2rem;
+    padding-top: 50px;
+    height: 100vh;
+    width: 50%;
+    background: white;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+    transition: 0.5s all ease;
+  }
+  .timelapsepane.open {
+    margin-left:50%
   }

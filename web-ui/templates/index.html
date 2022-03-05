@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/toggles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/slidepanel.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/buttons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/value_sliders.css') }}">
     <style type="text/css">
       .container {
         max-width: 600px;
@@ -18,16 +20,19 @@
   </head>
   <body>
     <div class="container" id=status>
+      <input type = "button" class="timelapsetoggle" id = "timelapse-view" value="Timelapse"/>
       <p id=status-text>Status: {{status_text}}</p>
       <input type = "button" class="waypointtoggle" id = "waypoint-view" value="Waypoints"/>
     </div>
     <div class="container" id=savepoints>
       <p>Savepoints:</p>
-      <ul>
+      
+        <table>
         {% for n in savepoints %}
-        <li> <input type = "button" id = "save_savepoint_{{loop.index0}}" value = "Save" onclick='save_savepoint({{loop.index0}})'/>{{savepoints[n]}}<input type = "button" id = "move_to_savepoint_{{loop.index0}}" value = "Move" onclick='move_to_savepoint({{loop.index0}})'/></li>
+        <tr><td> <input type = "button" class="myButton" id = "save_savepoint_{{loop.index0}}" value = "Save" onclick='save_savepoint({{loop.index0}})'/></td><td>{{savepoints[n]}}</td><td><input type = "button" class="myButton" id = "move_to_savepoint_{{loop.index0}}" value = "Move" onclick='move_to_savepoint({{loop.index0}})'/></td></tr>
         {% endfor %}
-      </ul>
+        </table>
+      
       
     </div>
     
@@ -114,135 +119,30 @@
       <input type = "button" id = "add-waypoint" value = "Save" onclick='add_waypoint()'/>
       <input type = "button" class="waypointtoggle" id = "waypoint-view-close" value="Close"/>
     </div>
+    <div class="timelapsepane">
+      <h2>Timelapse</h2>
+      <div class="slidecontainer">
+        <div><p style="margin: 20px 5px 30px;">Seconds</p></div>
+        <div class="range-slider" style='--min:0; --max:300; --step:1; --value:60; --text-value:"60";'>
+          
+          <input type="range" id="tl-duration" min="0" max="300" step="1" value="60" oninput="this.parentNode.style.setProperty('--value',this.value); this.parentNode.style.setProperty('--text-value', JSON.stringify(this.value))">
+          <output></output>
+          <div class='range-slider__progress'></div>
+        </div>
+      <div><p style="margin: 20px 5px 30px;">Minimum time between steps</p></div>
+        <div class="range-slider" style='--min:0; --max:60; --step:1; --value:60; --text-value:"10";'>
+          
+          <input type="range" id="tl-steptime" min="0" max="60" step="1" value="50" oninput="this.parentNode.style.setProperty('--value',this.value); this.parentNode.style.setProperty('--text-value', JSON.stringify(this.value))">
+          <output></output>
+          <div class='range-slider__progress'></div>
+        </div>
+      </div>
+      <input type = "button" class="timelapsestart" id = "timelapse-start" value="Go" onclick='start_timelapse()'/>
+      <input type = "button" class="timelapsetoggle" id = "timelapse-view-close" value="Close"/>
+    </div>
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-    <script type=text/javascript> 
-        const button = document.querySelector('.waypointtoggle');
-        const close_button = document.querySelector('#waypoint-view-close');
-        const pane = document.querySelector('.waypointpane');
-
-        button.addEventListener('click', () => {
-          pane.classList.toggle('open');
-        });
-        close_button.addEventListener('click', () => {
-          pane.classList.toggle('open');
-        });
-        (async function polling(){
-            
-            const response = await fetch('/refresh/status', {
-                method: 'post',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({"refresh": "status"})
-            });
-            response.json().then(data =>{
-              console.log(data); // JSON data parsed by `data.json()` call
-              update_status(data);
-            });
-            
-            
-                                  
-            // periodically refresh
-            setTimeout(polling, 30000);
-        })();
-        async function update_status(status){
-            var element = document.getElementById("status-text");  
-            
-            state = status.status;
-            update_time = status.last_update;
-            work_position = status.work_pos;
-            machine_position = status.machine_pos;
-            element.innerHTML = "Status:<b>"+state + "</b> Updated:<b>"+update_time+"</b></br>Work position:"+work_string+"</br>Machine position:"+machine_string;
-        }
-        async function update_waypoints(wp){
-             var element = document.getElementById("waypoint-list"); 
-             element.options.length = 0;
-             console.log(wp)
-             wp.forEach(child => {
-                console.log(child);
-                var opt = document.createElement('option');
-                opt.value = child;
-                opt.innerHTML = JSON.stringify(child);
-                element.appendChild(opt)
-               });
-        }
-        async function save_savepoint(id) { 
-            const response = fetch('/save_savepoint', {
-                method: 'post',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "savepoint_id": id
-                })
-            });
-            console.log('Completed!', response);
-        }; 
-        async function add_waypoint(){
-            var value = document.getElementById("dwell-time").value;
-            response = post_command('/add_waypoint',JSON.stringify({"waypoint": "add","dwell_time":value}));
-            response.then(data =>{
-              console.log(data); // JSON data parsed by `data.json()` call
-              update_waypoints(data);
-            });
-            
-        }
-        async function move_to_savepoint(id) { 
-            const response = fetch('/move_to_savepoint', {
-                method: 'post',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "savepoint_id": id
-                })
-            });
-            console.log('Completed!', response);
-        };
-        
-        async function showHideForm(box, id,id_2) {
-            var elm = document.getElementById(id);
-            var secondelem = document.getElementById(id_2);
-            if(box.checked){
-                elm.style.display = "none";
-                secondelem.style.display ="";
-            } else {
-                elm.style.display = "";
-                secondelem.style.display ="none";
-            }
-        }
-        async function toggle_flip(cb){
-          console.log(cb)
-            var idAttr = $(cb).prop('id');
-            console.log(idAttr +" toggled  "+cb.checked)
-            
-            post_command('/toggle/'+idAttr, '{"state": '+cb.checked+'}')
-            
-        }
-        async function drop_down_select(elem_id){
-          var value = document.getElementById(elem_id).value;
-          if (isNaN(value)){
-            payload = '{"'+elem_id+'":"'+value+'"}'
-          }else{
-            payload = '{"'+elem_id+'":'+value+'}'
-          }
-          post_command('/update/'+elem_id, payload);
-        }
-        async function post_command(url,payload){
-          const response = await fetch(url, {
-                method: 'post',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                },
-                body: payload
-          });
-          return response.json()
-        }
-        </script> 
+    <script src="{{ url_for('static', filename='js/robocam.js') }}"></script>
+    
 </body>
 </html>
