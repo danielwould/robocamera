@@ -6,6 +6,7 @@ import socket
 import select
 import json
 
+
 HOST = '192.168.86.37' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
@@ -13,13 +14,20 @@ PORT = 9009
 
 
 app = Flask(__name__)
-hostname = socket.gethostname()
-local_ip = socket.gethostbyname(hostname)
 
-if sys.platform == "win32":
-    HOST='192.168.86.37' 
-else:
-    HOST=local_ip
+
+def get_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.settimeout(0)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
 
 @app.route("/")
 def index():
@@ -156,8 +164,8 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/images'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-
-app.run(host=local_ip, port=8080, debug=True)
+HOST=get_ip()
+app.run(host=HOST, port=8080, debug=True)
 
 
 
