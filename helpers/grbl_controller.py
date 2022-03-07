@@ -329,26 +329,54 @@ class grbl_controller:
     def get_feed_speed(self):
         return self.current_feed_speed
 
-    def set_crane_tilt_min_locked(self, is_locked):
-        
-        self.crane_tilt_min_locked=is_locked
+    def toggle_crane_tilt_min_locked(self):
+        if self.crane_tilt_min_locked:
+            self.crane_tilt_min_locked=False
+        else:
+            self.crane_tilt_min_locked=True
     
-    def set_crane_tilt_max_locked(self, is_locked):
-        
-        self.crane_tilt_maxlocked=is_locked
-
+    def toggle_crane_tilt_max_locked(self):
+        if self.crane_tilt_max_locked:
+            self.crane_tilt_max_locked=False
+        else:
+            self.crane_tilt_max_locked=True
+    def toggle_crane_pan_min_locked(self):
+        if self.crane_pan_min_locked:
+            self.crane_pan_min_locked=False
+        else:
+            self.crane_pan_min_locked=True
+    
+    def toggle_crane_pan_max_locked(self):
+        if self.crane_pan_max_locked:
+            self.crane_pan_max_locked=False
+        else:
+            self.crane_pan_max_locked=True
     def set_crane_pan_middle(self):
         
         self.crane_pan_middle = self.mcontrol.cnc_obj.vars["wa"]
 
-    def set_gimbal_tilt_min_locked(self, is_locked):
-        
-        self.gimbal_tilt_min_locked=is_locked
+    def toggle_gimbal_tilt_min_locked(self):
+        if self.gimbal_tilt_min_locked:
+            self.gimbal_tilt_min_locked=False
+        else:
+            self.gimbal_tilt_min_locked=True
     
-    def set_gimbal_tilt_max_locked(self, is_locked):
-        
-        self.gimbal_tilt_max_locked = is_locked
-
+    def toggle_gimbal_tilt_max_locked(self):
+        if self.gimbal_tilt_max_locked:
+            self.gimbal_tilt_max_locked=False
+        else:
+            self.gimbal_tilt_max_locked=True
+    def toggle_gimbal_pan_min_locked(self):
+        if self.gimbal_pan_min_locked:
+            self.gimbal_pan_min_locked=False
+        else:
+            self.gimbal_pan_min_locked=True
+    
+    def toggle_gimbal_pan_max_locked(self):
+        if self.gimbal_pan_max_locked:
+            self.gimbal_pan_max_locked=False
+        else:
+            self.gimbal_pan_max_locked=True
     def set_gimbal_pan_middle(self):
         
         self.crane_pan_middle = self.mcontrol.cnc_obj.vars["wx"]

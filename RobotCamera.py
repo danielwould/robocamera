@@ -403,6 +403,30 @@ def handle_request(request, rc):
             for wp in rc.sequence_steps.waypoints:
                 waypoint_payload.append(wp.get_waypoint_data())
             response = json.dumps(waypoint_payload)
+        elif request["request"] == "limits":
+            response = {"Gimbal":{
+            "pan_min":{"label":"Pan min","state":rc.controller.gimbal_pan_min_locked,
+            "value":rc.controller.gimbal_pan_min},
+            "pan_max":{"label":"Pan max","state": rc.controller.gimbal_pan_min_locked,
+            "value":rc.controller.gimbal_pan_max},
+            "tilt_min":{"label":"Tilt min","state":rc.controller.gimbal_tilt_min_locked,
+            "value":rc.controller.gimbal_tilt_min},
+            "tilt_max":{"label":"Tilt max","state":rc.controller.gimbal_tilt_max_locked,
+            "value":rc.controller.gimbal_tilt_max},
+            "z_min":{"label":"Zoom min","state":rc.controller.z_min_locked,
+            "value":rc.controller.z_min},
+            "z_max":{"label":"Zoom max","state":rc.controller.z_max_locked,
+            "value":rc.controller.z_max},
+            },
+            "Crane":{"pan_min":{"label":"Pan min","state":rc.controller.crane_pan_min_locked,
+            "value":rc.controller.crane_pan_min},
+            "pan_max":{"label":"Pan max","state": rc.controller.crane_pan_min_locked,
+            "value":rc.controller.crane_pan_max},
+            "tilt_min":{"label":"Tilt min","state":rc.controller.crane_tilt_min_locked,
+            "value":rc.controller.crane_tilt_min},
+            "tilt_max":{"label":"Tilt max","state":rc.controller.crane_tilt_max_locked,
+            "value":rc.controller.crane_tilt_max},
+            }}
         
     elif("update" in request):
         if request["update"] == "storepoint":
@@ -476,8 +500,36 @@ def handle_request(request, rc):
         elif request["toggle"]=="tracking_switch":
             rc.toggle_tracking_mode()
             response = {"result": rc.TRACKING}
-    
-
+        elif request["toggle"]=="gimbal_pan_min":
+            rc.controller.toggle_gimbal_pan_min_locked()
+            response = {"result": rc.controller.gimbal_pan_min_locked}
+        elif request["toggle"]=="gimbal_pan_max":
+            rc.controller.toggle_gimbal_pan_max_locked()
+            response = {"result": rc.controller.gimbal_pan_max_locked}
+        elif request["toggle"]=="gimbal_tilt_min":
+            rc.controller.toggle_gimbal_tilt_min_locked()
+            response = {"result": rc.controller.gimbal_tilt_min_locked}
+        elif request["toggle"]=="gimbal_tilt_max":
+            rc.controller.toggle_gimbal_tilt_max_locked()
+            response = {"result": rc.controller.gimbal_tilt_max_locked}
+        elif request["toggle"]=="z_min":
+            rc.controller.toggle_z_min_locked()
+            response = {"result": rc.controller.z_min_locked}
+        elif request["toggle"]=="z_max":
+            rc.controller.toggle_z_max_locked()
+            response = {"result": rc.controller.z_max_locked}
+        elif request["toggle"]=="crane_pan_min":
+            rc.controller.toggle_crane_pan_min_locked()
+            response = {"result": rc.controller.crane_pan_min_locked}
+        elif request["toggle"]=="crane_pan_max":
+            rc.controller.toggle_crane_pan_max_locked()
+            response = {"result": rc.controller.crane_pan_max_locked}
+        elif request["toggle"]=="crane_tilt_min":
+            rc.controller.toggle_crane_tilt_min_locked()
+            response = {"result": rc.controller.crane_tilt_min_locked}
+        elif request["toggle"]=="crane_tilt_max":
+            rc.controller.toggle_crane_tilt_max_locked()
+            response = {"result": rc.controller.crane_tilt_max_locked}
     return response
 
 if __name__ == "__main__":

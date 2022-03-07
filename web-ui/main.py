@@ -6,7 +6,7 @@ import socket
 import select
 import json
 
-HOST = '192.168.86.37' 
+HOST = '127.0.0.1' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
@@ -34,6 +34,8 @@ def index():
         tracking_state=""
     values = send_camera_request(json.dumps({"request":"values"}))
     waypoints = json.loads(send_camera_request(json.dumps({"request":"waypoints"})))
+    limits = send_camera_request(json.dumps({"request":"limits"}))
+    
     return render_template('index.html', 
                         status_text=status,
                         savepoints=savepoints,
@@ -47,7 +49,8 @@ def index():
                         tracking_modes=values["tracking_modes"],
                         dwell_time=10,
                         dwell_time_values=[10,20,30,60],
-                        waypoints = waypoints)
+                        waypoints = waypoints,
+                        limits=limits)
 
 @app.route("/refresh/<id>" , methods = ['POST'])
 def refresh_info(id):
@@ -147,7 +150,7 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/images'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-app.run(host="192.168.86.238", port=8080, debug=True)
+app.run(host="", port=8080, debug=True)
 
 
 

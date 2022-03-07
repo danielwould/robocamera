@@ -141,6 +141,29 @@
       <input type = "button" class="myButton" id = "timelapse-start" value="Go" onclick='start_timelapse()'/>
       <input type = "button" class="timelapsetoggle" id = "timelapse-view-close" value="Close"/>
     </div>
+    
+    <div class="axislocks">
+      {% for controller in limits %}
+      
+        {% for limit in controller %}
+        <label class="label-block" for="{{ controller }}{{ limit }}">{{ limit['label'] }}: {{ limit['value'] }}</label>
+          <label class="switch" id="{{ controller }}{{ limit }}">
+            <input id="{{ controller }}-{{ limit }}" type="checkbox" onclick='toggle_flip(this);' onchange="showHideForm(this,'feed-selector', 'time-selector')" {{ move_toggle }}>
+            
+            <div class="slider round">
+              <!--ADDED HTML -->
+              <span class="on">LOCKED</span>
+              <span class="off">unlocked</span>
+              
+              <!--END-->
+            </div>
+            
+          </label>    
+        {% endfor %}
+        {% endfor %}
+            
+    </div>
+    
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/robocam.js') }}"></script>
