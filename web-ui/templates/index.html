@@ -144,11 +144,12 @@
     
     <div class="axislocks">
       {% for controller in limits %}
-      
-        {% for limit in controller %}
-        <label class="label-block" for="{{ controller }}{{ limit }}">{{ limit['label'] }}: {{ limit['value'] }}</label>
+      <p>{{ controller }} limits</p>
+        <form class="form-inline">
+        {% for limit in limits[controller] %}
+        <label class="label-block" for="{{ controller }}{{ limit }}">{{ limits[controller][limit].label }}: {{ limits[controller][limit].value }}</label>
           <label class="switch" id="{{ controller }}{{ limit }}">
-            <input id="{{ controller }}-{{ limit }}" type="checkbox" onclick='toggle_flip(this);' onchange="showHideForm(this,'feed-selector', 'time-selector')" {{ move_toggle }}>
+            <input id="{{ controller }}_{{ limit }}" type="checkbox" onclick='toggle_flip(this);' onchange="showHideForm(this,'feed-selector', 'time-selector')" {{ limits[controller][limit].state }}>
             
             <div class="slider round">
               <!--ADDED HTML -->
@@ -160,6 +161,7 @@
             
           </label>    
         {% endfor %}
+        </form>
         {% endfor %}
             
     </div>

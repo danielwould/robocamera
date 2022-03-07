@@ -500,34 +500,34 @@ def handle_request(request, rc):
         elif request["toggle"]=="tracking_switch":
             rc.toggle_tracking_mode()
             response = {"result": rc.TRACKING}
-        elif request["toggle"]=="gimbal_pan_min":
+        elif request["toggle"]=="Gimbal_pan_min":
             rc.controller.toggle_gimbal_pan_min_locked()
             response = {"result": rc.controller.gimbal_pan_min_locked}
-        elif request["toggle"]=="gimbal_pan_max":
+        elif request["toggle"]=="Gimbal_pan_max":
             rc.controller.toggle_gimbal_pan_max_locked()
             response = {"result": rc.controller.gimbal_pan_max_locked}
-        elif request["toggle"]=="gimbal_tilt_min":
+        elif request["toggle"]=="Gimbal_tilt_min":
             rc.controller.toggle_gimbal_tilt_min_locked()
             response = {"result": rc.controller.gimbal_tilt_min_locked}
-        elif request["toggle"]=="gimbal_tilt_max":
+        elif request["toggle"]=="Gimbal_tilt_max":
             rc.controller.toggle_gimbal_tilt_max_locked()
             response = {"result": rc.controller.gimbal_tilt_max_locked}
-        elif request["toggle"]=="z_min":
+        elif request["toggle"]=="Gimbal_z_min":
             rc.controller.toggle_z_min_locked()
             response = {"result": rc.controller.z_min_locked}
-        elif request["toggle"]=="z_max":
+        elif request["toggle"]=="Gimbal_z_max":
             rc.controller.toggle_z_max_locked()
             response = {"result": rc.controller.z_max_locked}
-        elif request["toggle"]=="crane_pan_min":
+        elif request["toggle"]=="Crane_pan_min":
             rc.controller.toggle_crane_pan_min_locked()
             response = {"result": rc.controller.crane_pan_min_locked}
-        elif request["toggle"]=="crane_pan_max":
+        elif request["toggle"]=="Crane_pan_max":
             rc.controller.toggle_crane_pan_max_locked()
             response = {"result": rc.controller.crane_pan_max_locked}
-        elif request["toggle"]=="crane_tilt_min":
+        elif request["toggle"]=="Crane_tilt_min":
             rc.controller.toggle_crane_tilt_min_locked()
             response = {"result": rc.controller.crane_tilt_min_locked}
-        elif request["toggle"]=="crane_tilt_max":
+        elif request["toggle"]=="Crane_tilt_max":
             rc.controller.toggle_crane_tilt_max_locked()
             response = {"result": rc.controller.crane_tilt_max_locked}
     return response
