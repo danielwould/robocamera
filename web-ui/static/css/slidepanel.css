@@ -66,7 +66,10 @@
 
   .limitstoggle {
     position: absolute;
-    left: 50%;
+    left: 40%; 
+    right: 40%; 
+    margin-left: auto; 
+    margin-right: auto; 
     top: 2rem;
     padding: 0.5rem 1rem;
     background: #ffcc33;

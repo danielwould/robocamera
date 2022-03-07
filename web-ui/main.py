@@ -157,7 +157,7 @@ def favicon():
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
-app.run(host="", port=8080, debug=True)
+app.run(host=local_ip, port=8080, debug=True)
 
 
 
