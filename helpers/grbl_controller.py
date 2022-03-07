@@ -432,12 +432,18 @@ class grbl_controller:
         ajogStep = jogStep*self.ajog_factor*aaxis_multiplier
         bjogStep = jogStep*self.bjog_factor*baxis_multiplier
         #drop any move that takes us outside min/max bounds
-        if self.gimbal_pan_max_locked and self.gimbal_pan_max < (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
-            xJogStep=0
+        if self.gimbal_pan_max_locked:
+            print("pan max limit locked")
+            if self.gimbal_pan_max < (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
+                print("pan max limited move to position {}".format(self.mcontrol.cnc_obj.vars["wx"]+xjogStep))
+                xJogStep=0
         if self.gimbal_pan_min_locked and self.gimbal_pan_min > (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
             xJogStep=0
-        if self.gimbal_tilt_max_locked and self.gimbal_tilt_max < (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
-            yJogStep=0
+        if self.gimbal_tilt_max_locked:
+            print ("tilt max limit locked")
+            if self.gimbal_tilt_max < (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
+                print("tilt max limited move to {}".format(self.mcontrol.cnc_obj.vars["wy"]+yjogStep))
+                yJogStep=0
         if self.gimbal_tilt_min_locked and self.gimbal_tilt_min > (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
             yJogStep=0
         if self.crane_pan_max_locked and self.crane_pan_max < (self.mcontrol.cnc_obj.vars["wa"]+ajogStep):
