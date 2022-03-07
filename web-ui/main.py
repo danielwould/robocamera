@@ -7,7 +7,7 @@ import select
 import json
 
 
-HOST = '192.168.86.37' 
+BACKEND_HOST = '192.168.86.37' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
@@ -129,7 +129,7 @@ def send_camera_request(request_message):
      
     # connect to remote host
     try :
-        s.connect((HOST, PORT))
+        s.connect((BACKEND_HOST, PORT))
     except :
         print ('Unable to connect')
         return ""
@@ -165,6 +165,10 @@ def favicon():
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 HOST=get_ip()
+if sys.platform == "win32":
+    BACKEND_HOST="192.168.86.37"
+else:
+    BACKEND_HOST=HOST
 app.run(host=HOST, port=8080, debug=True)
 
 
