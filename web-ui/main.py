@@ -13,7 +13,13 @@ PORT = 9009
 
 
 app = Flask(__name__)
+hostname = socket.gethostname()
+local_ip = socket.gethostbyname(hostname)
 
+if sys.platform == "win32":
+    HOST='192.168.86.37' 
+else:
+    HOST=local_ip
 
 @app.route("/")
 def index():
@@ -149,6 +155,7 @@ def send_camera_request(request_message):
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/images'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 
 app.run(host="", port=8080, debug=True)
 
