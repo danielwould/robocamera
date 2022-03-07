@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/slidepanel.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/buttons.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/value_sliders.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/locks.css') }}">
     <style type="text/css">
       .container {
         max-width: 600px;
@@ -22,6 +23,7 @@
     <div class="container" id=status>
       <input type = "button" class="timelapsetoggle" id = "timelapse-view" value="Timelapse"/>
       <p id=status-text>Status: {{status_text}}</p>
+      <input type = "button" class="limitstoggle" id = "limits-view" value="Axis Limits"/>
       <input type = "button" class="waypointtoggle" id = "waypoint-view" value="Waypoints"/>
     </div>
     <div class="container" id=savepoints>
@@ -142,28 +144,35 @@
       <input type = "button" class="timelapsetoggle" id = "timelapse-view-close" value="Close"/>
     </div>
     
-    <div class="axislocks">
+    <div class="limitspane">
       {% for controller in limits %}
       <p>{{ controller }} limits</p>
         <form class="form-inline">
         {% for limit in limits[controller] %}
-        <label class="label-block" for="{{ controller }}{{ limit }}">{{ limits[controller][limit].label }}: {{ limits[controller][limit].value }}</label>
-          <label class="switch" id="{{ controller }}{{ limit }}">
-            <input id="{{ controller }}_{{ limit }}" type="checkbox" onclick='toggle_flip(this);' onchange="showHideForm(this,'feed-selector', 'time-selector')" {{ limits[controller][limit].state }}>
+          
+          <label class="lock-toggle" id="{{ controller }}_{{ limit }}">
+            <input id="{{ controller }}_{{ limit }}" type="checkbox" onclick='toggle_flip(this);' onchange="showHideForm(this,'feed-selector', 'time-selector')"  {% if limits[controller][limit].state %}checked{% endif %}>
             
-            <div class="slider round">
-              <!--ADDED HTML -->
+            
+              <!--ADDED HTML 
+              <span class="label-block">{{ limits[controller][limit].label }}: {{ limits[controller][limit].value }}</span>
               <span class="on">LOCKED</span>
-              <span class="off">unlocked</span>
+              <span class="off">unlocked</span>-->
               
+              <span>
+              <em></em>
+              <strong></strong>
+              </span>
+              <span class="limitvalue">{{ limits[controller][limit].label }}: {{ limits[controller][limit].value }}</span>
               <!--END-->
-            </div>
             
+          
           </label>    
+        
         {% endfor %}
         </form>
         {% endfor %}
-            
+        <input type = "button" class="limitstoggle" id = "limits-view-close" value="Close"/>
     </div>
     
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>

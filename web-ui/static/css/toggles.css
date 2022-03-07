@@ -3,6 +3,7 @@
     display: inline-block;
     width: 90px;
     height: 34px;
+    
   }
   
   .switch input {display:none;}
@@ -13,7 +14,7 @@
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom:0;
     background-color: #333333;
     -webkit-transition: .4s;
     transition: .4s;
@@ -63,8 +64,12 @@
   }
   
   .label-block {
+    position: absolute;
+    transform: translate(0%,-140%);
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    font-size: 10px;
+    font-family: Verdana, sans-serif;
   }
 
   input:checked+ .slider .on
@@ -78,6 +83,7 @@
   /* Rounded sliders */
   .slider.round {
     border-radius: 34px;
+    
   }
   
   .slider.round:before {

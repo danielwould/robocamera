@@ -19,6 +19,17 @@ tl_button.addEventListener('click', () => {
 tl_close_button.addEventListener('click', () => {
     tl_pane.classList.toggle('open');
 });
+
+const al_button = document.querySelector('.limitstoggle');
+const al_close_button = document.querySelector('#limits-view-close');
+const al_pane = document.querySelector('.limitspane');
+
+al_button.addEventListener('click', () => {
+    al_pane.classList.toggle('open');
+});
+al_close_button.addEventListener('click', () => {
+    al_pane.classList.toggle('open');
+});
 (async function polling(){
     
     const response = await fetch('/refresh/status', {

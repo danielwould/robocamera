@@ -63,3 +63,34 @@
   .timelapsepane.open {
     margin-left:50%
   }
+
+  .limitstoggle {
+    position: absolute;
+    left: 50%;
+    top: 2rem;
+    padding: 0.5rem 1rem;
+    background: #ffcc33;
+    border-radius:12px;
+    color: white;
+    font-size: 1.2rem;
+    font-family:Verdana;
+  }
+  .limitstoggle:hover {
+	background:linear-gradient(to bottom, #303030 5%, #383838 100%);
+	background-color:#333333;
+    }
+  .limitspane {
+    position: fixed;
+    top: 0;
+    margin-top: 200%;
+    padding: 1rem 2rem;
+    padding-top: 50px;
+    height: 100vh;
+    width: 100%;
+    background: white;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+    transition: 0.5s all ease;
+  }
+  .limitspane.open {
+    margin-top:20%
+  }
