@@ -436,24 +436,24 @@ class grbl_controller:
             print("pan max limit locked")
             if self.gimbal_pan_max < (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
                 print("pan max limited move to position {}".format(self.mcontrol.cnc_obj.vars["wx"]+xjogStep))
-                xJogStep=0
+                xjogStep=0
         if self.gimbal_pan_min_locked and self.gimbal_pan_min > (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
-            xJogStep=0
+            xjogStep=0
         if self.gimbal_tilt_max_locked:
             print ("tilt max limit locked")
             if self.gimbal_tilt_max < (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
                 print("tilt max limited move to {}".format(self.mcontrol.cnc_obj.vars["wy"]+yjogStep))
-                yJogStep=0
+                yjogStep=0
         if self.gimbal_tilt_min_locked and self.gimbal_tilt_min > (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
-            yJogStep=0
+            yjogStep=0
         if self.crane_pan_max_locked and self.crane_pan_max < (self.mcontrol.cnc_obj.vars["wa"]+ajogStep):
-            aJogStep=0
+            ajogStep=0
         if self.crane_pan_min_locked and self.crane_pan_min > (self.mcontrol.cnc_obj.vars["wa"]+ajogStep):
-            aJogStep=0
+            ajogStep=0
         if self.crane_tilt_max_locked and self.crane_tilt_max < (self.mcontrol.cnc_obj.vars["wb"]+bjogStep):
-            bJogStep=0
+            bjogStep=0
         if self.crane_tilt_min_locked and self.crane_tilt_min > (self.mcontrol.cnc_obj.vars["wb"]+bjogStep):
-            bJogStep=0
+            bjogStep=0
         #only jog if the buffer is clear
         if (self.buffer_length==0):
             self.queue.put("$J=G91 x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep, self.current_feed_speed))
@@ -472,13 +472,13 @@ class grbl_controller:
         yjogStep = jogStep*self.yjog_factor*yaxis_multiplier
         #limit movement beyond min/max values
         if self.gimbal_pan_max_locked and self.gimbal_pan_max < (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
-            xJogStep=0
+            xjogStep=0
         if self.gimbal_pan_min_locked and self.gimbal_pan_min > (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
-            xJogStep=0
+            xjogStep=0
         if self.gimbal_tilt_max_locked and self.gimbal_tilt_max < (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
-            yJogStep=0
+            yjogStep=0
         if self.gimbal_tilt_min_locked and self.gimbal_tilt_min > (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
-            yJogStep=0
+            yjogStep=0
         #only jog if the buffer is clear
         if (self.buffer_length==0):
             self.queue.put("$J=G91 x{} y{} f{}\n".format(xjogStep,yjogStep,self.current_feed_speed))
