@@ -453,25 +453,28 @@ class grbl_controller:
         #drop any move that takes us outside min/max bounds
         if self.gimbal_pan_max_locked:
             print("pan max limit locked")
-            if self.gimbal_pan_max < (self.instructed_x_pos+xjogStep):
+            if self.gimbal_pan_max <= (self.instructed_x_pos+xjogStep):
                 print("pan max limited move to position {}".format(self.instructed_x_pos+xjogStep))
                 xjogStep=0
-        if self.gimbal_pan_min_locked and self.gimbal_pan_min > (self.instructed_x_pos+xjogStep):
-            xjogStep=0
+        if self.gimbal_pan_min_locked:
+            print("pan min limit locked")
+            if self.gimbal_pan_min >= (self.instructed_x_pos+xjogStep):
+                print("pan min limited move to position {}".format(self.instructed_x_pos+xjogStep))
+                xjogStep=0
         if self.gimbal_tilt_max_locked:
             print ("tilt max limit locked")
             if self.gimbal_tilt_max < (self.instructed_y_pos+yjogStep):
                 print("tilt max limited move to {}".format(self.instructed_y_pos+yjogStep))
                 yjogStep=0
-        if self.gimbal_tilt_min_locked and self.gimbal_tilt_min > (self.instructed_y_pos+yjogStep):
+        if self.gimbal_tilt_min_locked and self.gimbal_tilt_min >= (self.instructed_y_pos+yjogStep):
             yjogStep=0
-        if self.crane_pan_max_locked and self.crane_pan_max < (self.instructed_a_pos+ajogStep):
+        if self.crane_pan_max_locked and self.crane_pan_max <= (self.instructed_a_pos+ajogStep):
             ajogStep=0
-        if self.crane_pan_min_locked and self.crane_pan_min > (self.instructed_a_pos+ajogStep):
+        if self.crane_pan_min_locked and self.crane_pan_min >= (self.instructed_a_pos+ajogStep):
             ajogStep=0
-        if self.crane_tilt_max_locked and self.crane_tilt_max < (self.instructed_b_pos+bjogStep):
+        if self.crane_tilt_max_locked and self.crane_tilt_max <= (self.instructed_b_pos+bjogStep):
             bjogStep=0
-        if self.crane_tilt_min_locked and self.crane_tilt_min > (self.instructed_b_pos+bjogStep):
+        if self.crane_tilt_min_locked and self.crane_tilt_min >= (self.instructed_b_pos+bjogStep):
             bjogStep=0
         print ("Limit adjusted Jog x{} y{} a{} b{} \n".format(xjogStep,yjogStep,ajogStep,bjogStep))
         #only jog if the buffer is clear
