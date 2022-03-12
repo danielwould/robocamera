@@ -443,7 +443,7 @@ class grbl_controller:
         yjogStep = jogStep*self.yjog_factor*yaxis_multiplier
         ajogStep = jogStep*self.ajog_factor*aaxis_multiplier
         bjogStep = jogStep*self.bjog_factor*baxis_multiplier
-        print ("Proposed Jog x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep))
+        print ("Proposed Jog x{} y{} a{} b{} \n".format(xjogStep,yjogStep,ajogStep,bjogStep))
         #drop any move that takes us outside min/max bounds
         if self.gimbal_pan_max_locked:
             print("pan max limit locked")
@@ -467,7 +467,7 @@ class grbl_controller:
             bjogStep=0
         if self.crane_tilt_min_locked and self.crane_tilt_min > (self.instructed_b_pos+bjogStep):
             bjogStep=0
-        print ("Limit adjusted Jog x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep))
+        print ("Limit adjusted Jog x{} y{} a{} b{} \n".format(xjogStep,yjogStep,ajogStep,bjogStep))
         #only jog if the buffer is clear
         if (self.buffer_length==0):
             self.queue.put("$J=G91 x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep, self.current_feed_speed))
