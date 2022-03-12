@@ -186,6 +186,14 @@ class grbl_controller:
     z_max_locked=False
     z_medium=0.0
 
+    #in order for dynamic axis limits to work we need to know not to build up a queue of jogs
+    #that would lead to breaching the marked limit
+    instructed_x_pos=0
+    instructed_y_pos=0
+    instructed_z_pos=0
+    instructed_a_pos=0
+    instructed_b_pos=0
+
     xjog_factor=0.8
     yjog_factor=0.6
     ajog_factor=1
@@ -411,15 +419,19 @@ class grbl_controller:
         if (axis == "z"):
             if (self.z_max_locked):
                 #current setup has z -negative moves zooming in
-                if (jogStep+self.mcontrol.cnc_obj.vars["wz"] < self.z_max):
+                if (jogStep+self.instructed_z_pos < self.z_max):
                     self.logger.info("detected zoom in too far command")
                     return
             if (self.z_min_locked):
-                if (jogStep+self.mcontrol.cnc_obj.vars["wz"] > self.z_min):
+                if (jogStep+self.instructed_z_pos > self.z_min):
                     self.logger.info("detected zoom out too far command")
                     return
+        else:
+            print("relative move called for not z axis")
         if (self.buffer_length==0):
             self.queue.put("$J=G91 {}{} f{}\n".format(axis,jogStep, self.current_feed_speed))
+            if (axis == "z"):
+                self.instructed_z_pos=self.instructed_z_pos+jogStep
         else:
             self.logger.info("throttling jog move queue is {} long".format(self.queue.qsize()))
         time.sleep(0.1)
@@ -431,32 +443,38 @@ class grbl_controller:
         yjogStep = jogStep*self.yjog_factor*yaxis_multiplier
         ajogStep = jogStep*self.ajog_factor*aaxis_multiplier
         bjogStep = jogStep*self.bjog_factor*baxis_multiplier
+        print ("Proposed Jog x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep))
         #drop any move that takes us outside min/max bounds
         if self.gimbal_pan_max_locked:
             print("pan max limit locked")
-            if self.gimbal_pan_max < (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
-                print("pan max limited move to position {}".format(self.mcontrol.cnc_obj.vars["wx"]+xjogStep))
+            if self.gimbal_pan_max < (self.instructed_x_pos+xjogStep):
+                print("pan max limited move to position {}".format(self.instructed_x_pos+xjogStep))
                 xjogStep=0
-        if self.gimbal_pan_min_locked and self.gimbal_pan_min > (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
+        if self.gimbal_pan_min_locked and self.gimbal_pan_min > (self.instructed_x_pos+xjogStep):
             xjogStep=0
         if self.gimbal_tilt_max_locked:
             print ("tilt max limit locked")
-            if self.gimbal_tilt_max < (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
-                print("tilt max limited move to {}".format(self.mcontrol.cnc_obj.vars["wy"]+yjogStep))
+            if self.gimbal_tilt_max < (self.instructed_y_pos+yjogStep):
+                print("tilt max limited move to {}".format(self.instructed_y_pos+yjogStep))
                 yjogStep=0
-        if self.gimbal_tilt_min_locked and self.gimbal_tilt_min > (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
+        if self.gimbal_tilt_min_locked and self.gimbal_tilt_min > (self.instructed_y_pos+yjogStep):
             yjogStep=0
-        if self.crane_pan_max_locked and self.crane_pan_max < (self.mcontrol.cnc_obj.vars["wa"]+ajogStep):
+        if self.crane_pan_max_locked and self.crane_pan_max < (self.instructed_a_pos+ajogStep):
             ajogStep=0
-        if self.crane_pan_min_locked and self.crane_pan_min > (self.mcontrol.cnc_obj.vars["wa"]+ajogStep):
+        if self.crane_pan_min_locked and self.crane_pan_min > (self.instructed_a_pos+ajogStep):
             ajogStep=0
-        if self.crane_tilt_max_locked and self.crane_tilt_max < (self.mcontrol.cnc_obj.vars["wb"]+bjogStep):
+        if self.crane_tilt_max_locked and self.crane_tilt_max < (self.instructed_b_pos+bjogStep):
             bjogStep=0
-        if self.crane_tilt_min_locked and self.crane_tilt_min > (self.mcontrol.cnc_obj.vars["wb"]+bjogStep):
+        if self.crane_tilt_min_locked and self.crane_tilt_min > (self.instructed_b_pos+bjogStep):
             bjogStep=0
+        print ("Limit adjusted Jog x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep))
         #only jog if the buffer is clear
         if (self.buffer_length==0):
             self.queue.put("$J=G91 x{} y{} a{} b{} f{}\n".format(xjogStep,yjogStep,ajogStep,bjogStep, self.current_feed_speed))
+            self.instructed_x_pos=self.instructed_x_pos+xjogStep
+            self.instructed_y_pos=self.instructed_y_pos+yjogStep
+            self.instructed_x_pos=self.instructed_a_pos+ajogStep
+            self.instructed_y_pos=self.instructed_b_pos+bjogStep
         else:
             self.logger.info("throttling jog move queue is {} long".format(self.queue.qsize()))
         time.sleep(0.1)
@@ -471,26 +489,43 @@ class grbl_controller:
         xjogStep = jogStep*self.xjog_factor*xaxis_multiplier
         yjogStep = jogStep*self.yjog_factor*yaxis_multiplier
         #limit movement beyond min/max values
-        if self.gimbal_pan_max_locked and self.gimbal_pan_max < (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
+        if self.gimbal_pan_max_locked and self.gimbal_pan_max < (self.instructed_x_pos+xjogStep):
             xjogStep=0
-        if self.gimbal_pan_min_locked and self.gimbal_pan_min > (self.mcontrol.cnc_obj.vars["wx"]+xjogStep):
+        if self.gimbal_pan_min_locked and self.gimbal_pan_min > (self.instructed_x_pos+xjogStep):
             xjogStep=0
-        if self.gimbal_tilt_max_locked and self.gimbal_tilt_max < (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
+        if self.gimbal_tilt_max_locked and self.gimbal_tilt_max < (self.instructed_y_pos+yjogStep):
             yjogStep=0
-        if self.gimbal_tilt_min_locked and self.gimbal_tilt_min > (self.mcontrol.cnc_obj.vars["wy"]+yjogStep):
+        if self.gimbal_tilt_min_locked and self.gimbal_tilt_min > (self.instructed_y_pos+yjogStep):
             yjogStep=0
         #only jog if the buffer is clear
+        
         if (self.buffer_length==0):
             self.queue.put("$J=G91 x{} y{} f{}\n".format(xjogStep,yjogStep,self.current_feed_speed))
+            self.instructed_x_pos=self.instructed_x_pos+xjogStep
+            self.instructed_y_pos=self.instructed_y_pos+yjogStep
         else:
             self.logger.info("throttling tracking jog move queue is {} long".format(self.queue.qsize()))
         time.sleep(0.1)
 
+    def set_instructed_position(self,x,y,z,a,b):
+        self.instructed_x_pos=x
+        self.instructed_y_pos=y
+        self.instructed_z_pos=z
+        self.instructed_a_pos=a
+        self.instructed_b_pos=b
+    
+    def reset_instructed_position(self):
+        self.instructed_x_pos=self.mcontrol.cnc_obj.vars["wx"]
+        self.instructed_y_pos=self.mcontrol.cnc_obj.vars["wy"]
+        self.instructed_z_pos=self.mcontrol.cnc_obj.vars["wz"]
+        self.instructed_a_pos=self.mcontrol.cnc_obj.vars["wa"]
+        self.instructed_b_pos=self.mcontrol.cnc_obj.vars["wb"]
 
     def absolute_move(self, x, y, z, a, b, feedrate, dwell):
         self.sendGCode("g90")
         self.sendGCode("g94")
         self.sendGCode("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z, a,b,feedrate))
+        self.set_instructed_position(x,y,z,a,b)
         
     def absolute_move_by_time(self, x, y, z, a, b, seconds, dwell):
         # calculate f value from desired
@@ -499,6 +534,7 @@ class grbl_controller:
         self.sendGCode("g90")
         self.sendGCode("g93")
         self.sendGCode("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z, a,b,feedval))
+        self.set_instructed_position(x,y,z,a,b)
         
     def absolute_move_timelapse(self, x, y, z, a, b, timelapse_duration_secs,minimum_time_between_steps):
         #figure out difference between current location and desired location for each axis
@@ -528,6 +564,7 @@ class grbl_controller:
         for x in range(1, steps):
             self.logger.info("timelapse move at {}".format(time.time()))
             self.queue.put("$J=G91 x{} y{} z{} a{} b{} f{}\n".format(x_steps,y_steps,z_steps,a_steps,b_steps, 250))
+            self.set_instructed_position(x,y,z,a,b)
             time.sleep(minimum_time_between_steps)
 
     def calculate_axis_timelapse_step(self, diff,pos, axis, jogstep, timelapse_duration_secs, minimum_time_between_steps):
@@ -583,6 +620,7 @@ class grbl_controller:
         while (self.grbl_status != "Idle"):
             time.sleep(0.5)
             self.logger.info("waiting for idle post sequence run")
+            self.reset_instructed_position()
 
     
 
@@ -662,7 +700,8 @@ class grbl_controller:
         self.logger.info("Controller state changed to: %s (Running: %s)" %
               (state, self.running))
         self.grbl_status = state
-        #if state in ("Idle"):
+        if state in ("Idle"):
+            self.reset_instructed_position()
         #    self.mcontrol.viewParameters()
         #    self.mcontrol.viewState()
 
@@ -690,7 +729,7 @@ class grbl_controller:
         if self.mcontrol.cnc_obj.vars["wb"] > self.crane_tilt_max:
             self.crane_tilt_max = self.mcontrol.cnc_obj.vars["wb"]
         if self.mcontrol.cnc_obj.vars["wx"] < self.gimbal_pan_min:
-            self.gimbal_pan_min = self.mcontrol.cnc_obj.vars["wx"]
+            self.gimba_pan_min = self.mcontrol.cnc_obj.vars["wx"]
         if self.mcontrol.cnc_obj.vars["wx"] > self.gimbal_pan_max:
             self.gimbal_pan_max = self.mcontrol.cnc_obj.vars["wx"]
         if self.mcontrol.cnc_obj.vars["wy"] < self.gimbal_tilt_min:
