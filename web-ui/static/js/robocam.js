@@ -129,8 +129,11 @@ async function toggle_flip(cb){
     var idAttr = $(cb).prop('id');
     console.log(idAttr +" toggled  "+cb.checked)
     
-    post_command('/toggle/'+idAttr, '{"state": '+cb.checked+'}')
-    
+    response = post_command('/toggle/'+idAttr, '{"state": '+cb.checked+'}')
+    response.then(data =>{
+        console.log(data); // JSON data parsed by `data.json()` call
+        cb.checked = data.result;
+    });
 }
 async function drop_down_select(elem_id){
     var value = document.getElementById(elem_id).value;

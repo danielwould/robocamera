@@ -407,7 +407,7 @@ def handle_request(request, rc):
             response = {"Gimbal":{
             "pan_min":{"label":"Pan min","state":rc.controller.gimbal_pan_min_locked,
             "value":rc.controller.gimbal_pan_min},
-            "pan_max":{"label":"Pan max","state": rc.controller.gimbal_pan_min_locked,
+            "pan_max":{"label":"Pan max","state": rc.controller.gimbal_pan_max_locked,
             "value":rc.controller.gimbal_pan_max},
             "tilt_min":{"label":"Tilt min","state":rc.controller.gimbal_tilt_min_locked,
             "value":rc.controller.gimbal_tilt_min},
@@ -420,7 +420,7 @@ def handle_request(request, rc):
             },
             "Crane":{"pan_min":{"label":"Pan min","state":rc.controller.crane_pan_min_locked,
             "value":rc.controller.crane_pan_min},
-            "pan_max":{"label":"Pan max","state": rc.controller.crane_pan_min_locked,
+            "pan_max":{"label":"Pan max","state": rc.controller.crane_pan_max_locked,
             "value":rc.controller.crane_pan_max},
             "tilt_min":{"label":"Tilt min","state":rc.controller.crane_tilt_min_locked,
             "value":rc.controller.crane_tilt_min},
@@ -513,10 +513,10 @@ def handle_request(request, rc):
             rc.controller.toggle_gimbal_tilt_max_locked()
             response = {"result": rc.controller.gimbal_tilt_max_locked}
         elif request["toggle"]=="Gimbal_z_min":
-            rc.controller.toggle_z_min_locked()
+            rc.controller.toggle_zoom_min_locked()
             response = {"result": rc.controller.z_min_locked}
         elif request["toggle"]=="Gimbal_z_max":
-            rc.controller.toggle_z_max_locked()
+            rc.controller.toggle_zoom_max_locked()
             response = {"result": rc.controller.z_max_locked}
         elif request["toggle"]=="Crane_pan_min":
             rc.controller.toggle_crane_pan_min_locked()

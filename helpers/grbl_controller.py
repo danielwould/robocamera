@@ -160,6 +160,8 @@ class grbl_controller:
     all_time_character_count=0
     grbl_status="disconnected"
     lastResponseTime = 0
+    queue_idle=False
+    idle_since=time.ctime()
     reset_buffer = False
     #dynamic limits configuration
     crane_tilt_min=0.0
@@ -389,13 +391,17 @@ class grbl_controller:
         
         self.crane_pan_middle = self.mcontrol.cnc_obj.vars["wx"]
 
-    def set_zoom_min_locked(self, is_locked):
-        
-        self.z_min_locked=is_locked
+    def toggle_zoom_min_locked(self):
+        if self.z_min_locked:
+            self.z_min_locked=False
+        else:
+            self.z_min_locked=True
     
-    def set_zoom_max_locked(self, is_locked):
-        
-        self.z_max_locked=is_locked
+    def toggle_zoom_max_locked(self):
+        if self.z_max_locked:
+            self.z_max_locked=False
+        else:
+            self.z_max_locked=True
     
     def set_zoom_medium(self):
         #set current z as medium point
@@ -475,6 +481,7 @@ class grbl_controller:
             self.instructed_y_pos=self.instructed_y_pos+yjogStep
             self.instructed_x_pos=self.instructed_a_pos+ajogStep
             self.instructed_y_pos=self.instructed_b_pos+bjogStep
+
         else:
             self.logger.info("throttling jog move queue is {} long".format(self.queue.qsize()))
         time.sleep(0.1)
@@ -631,6 +638,7 @@ class grbl_controller:
                 self.queue.put(cmd)
             else:
                 self.queue.put(cmd+"\n")
+            self.queue_idle=False
 
     def position_str(self):
         pos_str =  "wx:{},wy:{},wz:{},wa:{},wb:{}\nmx:{},my:{},mz:{},ma:{},mb:{}".format(self.mcontrol.cnc_obj.vars["wx"], self.mcontrol.cnc_obj.vars["wy"], self.mcontrol.cnc_obj.vars["wz"],self.mcontrol.cnc_obj.vars["wa"],self.mcontrol.cnc_obj.vars["wb"],self.mcontrol.cnc_obj.vars["mx"], self.mcontrol.cnc_obj.vars["my"], self.mcontrol.cnc_obj.vars["mz"],self.mcontrol.cnc_obj.vars["ma"],self.mcontrol.cnc_obj.vars["mb"])
@@ -701,7 +709,12 @@ class grbl_controller:
               (state, self.running))
         self.grbl_status = state
         if state in ("Idle"):
-            self.reset_instructed_position()
+            if (self.queue.qsize() ==0):
+                if self.queue_idle==False:
+                    self.queue_idle=True
+                    self.idle_since=time.ctime()
+                if self.queue_idle and time.ctime()-self.idle_since >10:
+                    self.reset_instructed_position()
         #    self.mcontrol.viewParameters()
         #    self.mcontrol.viewState()
 
