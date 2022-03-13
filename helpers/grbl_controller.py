@@ -499,13 +499,13 @@ class grbl_controller:
         xjogStep = jogStep*self.xjog_factor*xaxis_multiplier
         yjogStep = jogStep*self.yjog_factor*yaxis_multiplier
         #limit movement beyond min/max values
-        if self.gimbal_pan_max_locked and self.gimbal_pan_max < (self.instructed_x_pos+xjogStep):
+        if self.gimbal_pan_max_locked and self.gimbal_pan_max <= (self.instructed_x_pos+xjogStep):
             xjogStep=0
-        if self.gimbal_pan_min_locked and self.gimbal_pan_min > (self.instructed_x_pos+xjogStep):
+        if self.gimbal_pan_min_locked and self.gimbal_pan_min >= (self.instructed_x_pos+xjogStep):
             xjogStep=0
-        if self.gimbal_tilt_max_locked and self.gimbal_tilt_max < (self.instructed_y_pos+yjogStep):
+        if self.gimbal_tilt_max_locked and self.gimbal_tilt_max <= (self.instructed_y_pos+yjogStep):
             yjogStep=0
-        if self.gimbal_tilt_min_locked and self.gimbal_tilt_min > (self.instructed_y_pos+yjogStep):
+        if self.gimbal_tilt_min_locked and self.gimbal_tilt_min >= (self.instructed_y_pos+yjogStep):
             yjogStep=0
         #only jog if the buffer is clear
         
