@@ -735,6 +735,18 @@ class grbl_controller:
     def emptybuffer(self):
         self.reset_buffer=True
 
+    def reset_min_max(self):
+        self.crane_pan_min = self.mcontrol.cnc_obj.vars["wb"]
+        self.crane_pan_max = self.mcontrol.cnc_obj.vars["wa"]
+        self.crane_tilt_min = self.mcontrol.cnc_obj.vars["wb"]
+        self.crane_tilt_max = self.mcontrol.cnc_obj.vars["wb"]
+        self.gimbal_pan_min = self.mcontrol.cnc_obj.vars["wx"]
+        self.gimbal_pan_max = self.mcontrol.cnc_obj.vars["wx"]
+        self.gimbal_tilt_min = self.mcontrol.cnc_obj.vars["wy"]
+        self.gimbal_tilt_max = self.mcontrol.cnc_obj.vars["wy"]
+        self.z_min = self.mcontrol.cnc_obj.vars["wz"]
+        self.z_max = self.mcontrol.cnc_obj.vars["wz"]
+
     def update_min_max(self):
         if self.mcontrol.cnc_obj.vars["wa"] < self.crane_pan_min:
             self.crane_pan_min = self.mcontrol.cnc_obj.vars["wb"]

@@ -121,7 +121,13 @@ def dropdown_select(id):
     print("toggle {} {}".format(id,value))
     response = send_camera_request(json.dumps({"update":id, id: value }))
     return response 
-
+@app.route("/reset/<id>" , methods = ['POST'])
+def reset(id):
+    data = request.get_json()
+    value = data[id]
+    print("reset {} {}".format(id,value))
+    response = send_camera_request(json.dumps({"reset":id, id: value }))
+    return response 
 def send_camera_request(request_message):
    
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

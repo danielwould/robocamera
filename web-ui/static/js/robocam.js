@@ -113,6 +113,11 @@ async function start_timelapse(){
     response = post_command('/timelapse_start',JSON.stringify({"timelapse": "start","duration":tl_duration,"step-interval":tl_steptime}));
 }
 
+async function reset_limits(){
+    response = post_command('/reset/limits',JSON.stringify({"limits": "reset"}));
+}
+
+
 async function showHideForm(box, id,id_2) {
     var elm = document.getElementById(id);
     var secondelem = document.getElementById(id_2);

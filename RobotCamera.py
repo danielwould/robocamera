@@ -448,6 +448,9 @@ def handle_request(request, rc):
         elif request["update"]=="tracking-select":    
             rc.tracker.set_tracking_mode(request["tracking-select"])
             response = {"result": "OK"}
+    elif("reset" in request):
+        if request["reset"] == "limits":
+            rc.controller.reset_limits()
     elif("add" in request):
         if request["add"] == "waypoint":
             rc.add_waypoint(request["dwell-time"])
