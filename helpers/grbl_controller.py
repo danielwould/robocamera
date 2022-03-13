@@ -425,11 +425,11 @@ class grbl_controller:
         if (axis == "z"):
             if (self.z_max_locked):
                 #current setup has z -negative moves zooming in
-                if (jogStep+self.instructed_z_pos < self.z_max):
+                if (jogStep+self.instructed_z_pos <= self.z_max):
                     self.logger.info("detected zoom in too far command")
                     return
             if (self.z_min_locked):
-                if (jogStep+self.instructed_z_pos > self.z_min):
+                if (jogStep+self.instructed_z_pos >= self.z_min):
                     self.logger.info("detected zoom out too far command")
                     return
         else:
@@ -463,7 +463,7 @@ class grbl_controller:
                 xjogStep=0
         if self.gimbal_tilt_max_locked:
             print ("tilt max limit locked")
-            if self.gimbal_tilt_max < (self.instructed_y_pos+yjogStep):
+            if self.gimbal_tilt_max <= (self.instructed_y_pos+yjogStep):
                 print("tilt max limited move to {}".format(self.instructed_y_pos+yjogStep))
                 yjogStep=0
         if self.gimbal_tilt_min_locked and self.gimbal_tilt_min >= (self.instructed_y_pos+yjogStep):
