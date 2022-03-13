@@ -745,7 +745,7 @@ class grbl_controller:
         if self.mcontrol.cnc_obj.vars["wb"] > self.crane_tilt_max:
             self.crane_tilt_max = self.mcontrol.cnc_obj.vars["wb"]
         if self.mcontrol.cnc_obj.vars["wx"] < self.gimbal_pan_min:
-            self.gimba_pan_min = self.mcontrol.cnc_obj.vars["wx"]
+            self.gimbal_pan_min = self.mcontrol.cnc_obj.vars["wx"]
         if self.mcontrol.cnc_obj.vars["wx"] > self.gimbal_pan_max:
             self.gimbal_pan_max = self.mcontrol.cnc_obj.vars["wx"]
         if self.mcontrol.cnc_obj.vars["wy"] < self.gimbal_tilt_min:
