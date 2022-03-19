@@ -106,6 +106,10 @@ async function move_to_savepoint(id) {
     });
     console.log('Completed!', response);
 };
+async function move_to_waypoint(id) { 
+    response = post_command('/move_to_waypoint',JSON.stringify({"waypoint_id": id}));
+    console.log('way point move', response);
+};
 
 async function start_timelapse(){
     var tl_duration = document.getElementById("tl-duration").value;

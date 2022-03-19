@@ -106,12 +106,24 @@
     </div>
     <div class="waypointpane">
       <h2>Waypoints</h2>
-      <select class="waypoint_selector" id=waypoint-list name="waypoints" size=" {{ waypoints|length }} ">  
+      <table>
+        <tr>
+          <td>Step</td>
+          <td>Location</td>
+          <td>actions</td>
+        </tr>
         {% for w in waypoints %}
-        <option value="{{ w }}" {% if loop.index0 == 0 %}selected{% endif %}> {{ w }} </option>  
+        <tr>
+          <td>{{ w['id'] }}up/down</td>
+          <td>x{{ w['x'] }},y{{ w['y'] }},z{{ w['z'] }},a{{ w['a'] }},b{{ w['b'] }}<br/>{{ w['travel_duration'] }}sec ; {{ w['feed'] }}mm/s ; dwell : {{ w['dwell_time'] }}</td> 
+          <td>Edit
+            <input type = "button" class="myButton" id = "move_to_waypoint_{{ w['id']}}" value = "Move" onclick="move_to_waypoint({{ w['id'] }})"/>
+          </td>
+        </tr>
         {% endfor %} 
         
-      </select>  
+      </table>
+     
       <label for="time-select">Waypoint Dwell</label>
       <select id="dwell-time">
         {% for n in dwell_time_values %}
@@ -168,11 +180,12 @@
             
           
           </label>   
-          <input type = "button" class="myButton" id = "reset-limits" value="Reset" onclick='reset_limits()'/>
+          
         
         {% endfor %}
         </form>
         {% endfor %}
+        <input type = "button" class="myButton" id = "reset-limits" value="Reset" onclick='reset_limits()'/>
         <input type = "button" class="limitstoggle" id = "limits-view-close" value="Close"/>
     </div>
     

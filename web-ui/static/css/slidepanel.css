@@ -97,3 +97,6 @@
   .limitspane.open {
     margin-top:20%
   }
+  table, th, td {
+    border: 1px solid;
+  }

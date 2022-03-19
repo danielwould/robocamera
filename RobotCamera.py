@@ -213,11 +213,20 @@ class RobotCamera():
             savepoint=self.save_position_3
         if savepoint_id == 3:
             savepoint=self.save_position_4
+        self.move_to_location(savepoint)
+
+    def way_point_move(self,waypoint_id):
+        print("moving to waypoint")
+        waypoint = self.sequence_steps.waypoints[waypoint_id]
+        self.move_to_location(waypoint)
+
+    def move_to_location(self,location):
         if self.MOVE_TOGGLE == self.FEED_RATE:
-            self.controller.absolute_move(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,self.controller.get_feed_speed(),savepoint.get_dwell_time())
+            self.controller.absolute_move(location.xpos,location.ypos,location.zpos, location.apos,location.bpos,self.controller.get_feed_speed(),location.get_dwell_time())
         if self.MOVE_TOGGLE == self.MOVE_TIME:
-            self.controller.absolute_move_by_time(savepoint.xpos,savepoint.ypos,savepoint.zpos, savepoint.apos,savepoint.bpos,self.controller.get_move_duration(),savepoint.get_dwell_time())
-            
+            self.controller.absolute_move_by_time(location.xpos,location.ypos,location.zpos, location.apos,location.bpos,self.controller.get_move_duration(),location.get_dwell_time())
+
+
 
     def save_position(self,savepoint):
         
@@ -461,8 +470,12 @@ def handle_request(request, rc):
     elif("action" in request):
         if request["action"] == "movepoint":
             #save current location as savepoint
-            rc.save_point_move(request["savepoint_id"])
-            response = {"result":"moved_to_savepoint"}
+            if "savepoint_id" in request:
+                rc.save_point_move(request["savepoint_id"])
+                response = {"result":"moved_to_savepoint"}
+            if "waypoint_id" in request:
+                rc.way_point_move(request["waypoint_id"])
+                response = {"result":"moved_to_waypoint"}
         elif request["action"] == "zoom_in":
             rc.zoom_in()
             response = {"result":"zoomed_in"}
