@@ -47,9 +47,9 @@ class waypoint:
         return "Position: x{} y{} z{} a{} b{}".format(self.xpos,self.ypos, self.zpos, self.apos, self.bpos)
     def get_feed_info(self):
         return "dwell {} f:{} td:{}".format(self.dwell_time,self.feed_rate,self.travel_duration)
-    def get_waypoint_data(self):
+    def get_waypoint_data(self, id):
         return {
-            'id': self.id,
+            'id': id,
             'x': self.xpos,
             'y': self.ypos,
             'z': self.zpos,

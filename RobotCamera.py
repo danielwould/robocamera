@@ -464,15 +464,19 @@ def handle_request(request, rc):
         if request["add"] == "waypoint":
             rc.add_waypoint(request["dwell-time"])
             waypoint_payload =[]
+            index=0
             for wp in rc.sequence_steps.waypoints:
-                waypoint_payload.append(wp.get_waypoint_data())
+                waypoint_payload.append(wp.get_waypoint_data(index))
+                index=index+1
             response = json.dumps(waypoint_payload)
     elif("remove" in request):
         if request["remove"] == "waypoint":
             rc.remove_waypoint(request["id"])
             waypoint_payload =[]
+            index=0
             for wp in rc.sequence_steps.waypoints:
-                waypoint_payload.append(wp.get_waypoint_data())
+                waypoint_payload.append(wp.get_waypoint_data(index))
+                index=index+1
             response = json.dumps(waypoint_payload)
     elif("action" in request):
         if request["action"] == "movepoint":
