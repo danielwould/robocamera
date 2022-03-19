@@ -172,7 +172,7 @@ class RobotCamera():
                
         self.sequence_steps.add_waypoint(wp)
 
-    def delete_waypoint(self, id):
+    def remove_waypoint(self, id):
         # todo allow for deleting specific waypoint item
         self.sequence_steps.delete_waypoint(index=id)
             
@@ -463,6 +463,13 @@ def handle_request(request, rc):
     elif("add" in request):
         if request["add"] == "waypoint":
             rc.add_waypoint(request["dwell-time"])
+            waypoint_payload =[]
+            for wp in rc.sequence_steps.waypoints:
+                waypoint_payload.append(wp.get_waypoint_data())
+            response = json.dumps(waypoint_payload)
+    elif("remove" in request):
+        if request["remove"] == "waypoint":
+            rc.remove_waypoint(request["id"])
             waypoint_payload =[]
             for wp in rc.sequence_steps.waypoints:
                 waypoint_payload.append(wp.get_waypoint_data())

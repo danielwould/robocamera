@@ -106,18 +106,20 @@
     </div>
     <div class="waypointpane">
       <h2>Waypoints</h2>
-      <table>
+      <table id = "waypoint-table">
         <tr>
-          <td>Step</td>
-          <td>Location</td>
-          <td>actions</td>
+          <th>Step</th>
+          <th>Location</th>
+          <th>actions</th>
         </tr>
         {% for w in waypoints %}
         <tr>
           <td>{{ w['id'] }}up/down</td>
           <td>x{{ w['x'] }},y{{ w['y'] }},z{{ w['z'] }},a{{ w['a'] }},b{{ w['b'] }}<br/>{{ w['travel_duration'] }}sec ; {{ w['feed'] }}mm/s ; dwell : {{ w['dwell_time'] }}</td> 
           <td>Edit
+            
             <input type = "button" class="myButton" id = "move_to_waypoint_{{ w['id']}}" value = "Move" onclick="move_to_waypoint({{ w['id'] }})"/>
+            <input type = "button" class="myButton" id = "delete_waypoint_{{ w['id']}}" value = "X" onclick="delete_waypoint({{ w['id'] }})"/>
           </td>
         </tr>
         {% endfor %} 

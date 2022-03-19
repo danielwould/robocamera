@@ -88,6 +88,13 @@ def add_waypoint():
     data = request.get_json()
     dwell_time = data['dwell_time']
     response = send_camera_request(json.dumps({"add":"waypoint","dwell-time":dwell_time}))
+
+    return response
+@app.route("/delete_waypoint" , methods = ['POST'])
+def delete_waypoint():
+    data = request.get_json()
+    id = data['waypoint_id']
+    response = send_camera_request(json.dumps({"remove":"waypoint","id":id}))
     return response
 
 @app.route("/timelapse_start" , methods = ['POST'])
@@ -100,7 +107,7 @@ def timelapse_start():
 
 
 @app.route("/move_to_savepoint" , methods = ['POST'])
-def moveto_waypoint():
+def moveto_savepoint():
     data = request.get_json()
     savepoint_id = data['savepoint_id']
     response = send_camera_request(json.dumps({"action":"movepoint","savepoint_id":savepoint_id}))

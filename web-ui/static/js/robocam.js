@@ -60,16 +60,23 @@ async function update_status(status){
     element.innerHTML = "Status:<b>"+state + "</b> Updated:<b>"+update_time+"</b></br>Work position:"+work_position+"</br>Machine position:"+machine_position;
 }
 async function update_waypoints(wp){
-        var element = document.getElementById("waypoint-list"); 
-        element.options.length = 0;
-        console.log(wp)
-        wp.forEach(child => {
-        console.log(child);
-        var opt = document.createElement('option');
-        opt.value = child;
-        opt.innerHTML = JSON.stringify(child);
-        element.appendChild(opt)
-        });
+    var tbodyRef = document.getElementById('waypoint-table').getElementsByTagName('tbody')[0];
+    $("#waypoint-table tbody tr").remove(); 
+    wp.forEach(w => {
+        // Insert a row at the end of table
+        var newRow = tbodyRef.insertRow();
+        
+        // Insert a cell at the end of the row
+        var id_cell = newRow.insertCell();
+        id_cell.innerHTML = w['id']+"up/down"
+        
+        var loc_cell = newRow.insertCell();
+        loc_cell.innerHTML ="x"+w['x']+",y"+w['y']+",z"+w['z']+",a"+w['a']+",b"+w['b']+"<br/>"+ w['travel_duration']+"sec ;"+ w['feed']+"mm/s ; dwell : "+ w['dwell_time'] 
+
+        var action_cell = newRow.insertCell();
+        action_cell.innerHTML = 'Edit/<input type = "button" class="myButton" id = "move_to_waypoint_'+ w['id'] +'" value = "Move" onclick="move_to_waypoint('+ w['id']+')"/><br/><input type = "button" class="myButton" id = "delete_waypoint_'+ w['id'] +'" value = "X" onclick="delete_waypoint('+ w['id']+')"/>'
+    });
+    
 }
 async function save_savepoint(id) { 
     const response = fetch('/save_savepoint', {
@@ -109,6 +116,14 @@ async function move_to_savepoint(id) {
 async function move_to_waypoint(id) { 
     response = post_command('/move_to_waypoint',JSON.stringify({"waypoint_id": id}));
     console.log('way point move', response);
+};
+async function delete_waypoint(id) { 
+    response = post_command('/delete_waypoint',JSON.stringify({"waypoint_id": id}));
+    console.log('way point delete', response);
+    response.then(data =>{
+        console.log(data); // JSON data parsed by `data.json()` call
+        update_waypoints(data);
+    });
 };
 
 async function start_timelapse(){
