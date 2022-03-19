@@ -1,10 +1,11 @@
 
 import os
 import sys
-from flask import Flask, render_template, request, g,send_from_directory
+from flask import Flask, render_template, request, g,send_from_directory, safe_join
 import socket
 import select
 import json
+import hashlib
 
 
 BACKEND_HOST = '192.168.86.37' 
@@ -28,6 +29,26 @@ def get_ip():
     finally:
         s.close()
     return IP
+
+hash_cache = {}
+get_hash = lambda content, length: hashlib.md5(content).hexdigest()[:length]
+
+@app.url_defaults
+def add_hash_for_static_files(endpoint, values):
+    '''Add content hash argument for url to make url unique.
+    It's have sense for updates to avoid caches.
+    '''
+    if endpoint != 'static':
+        return
+    filename = values['filename']
+    if filename in hash_cache:
+        values['hash'] = hash_cache[filename]
+        return
+    filepath = safe_join(app.static_folder, filename)
+    if os.path.isfile(filepath):
+        with open(filepath, 'rb') as static_file:
+            filehash = get_hash(static_file.read(), 8)
+            values['hash'] = hash_cache[filename] = filehash
 
 @app.route("/")
 def index():
