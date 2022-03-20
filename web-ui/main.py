@@ -83,7 +83,7 @@ def index():
                         tracking_mode=values["tracking_mode"],
                         tracking_modes=values["tracking_modes"],
                         dwell_time=10,
-                        dwell_time_values=[10,20,30,60],
+                        dwell_time_values=[0,10,20,30,60],
                         waypoints = waypoints,
                         limits=limits)
 

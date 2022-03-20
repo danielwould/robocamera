@@ -406,7 +406,7 @@ def handle_request(request, rc):
         elif request["request"] == "toggles":
             response = {"move_mode":rc.MOVE_TOGGLE,"tracking_mode": rc.TRACKING}
         elif request["request"] == "values":
-            response = {"feed_rate":rc.controller.get_feed_speed(),"feed_rate_values":[100,200,500,1000,1500,2000],"move_time": rc.controller.get_move_duration(),"move_time_values":[1,2,5,10,15,30,60,120],"timelapse_time":rc.timelapse_time,"timelapse_steps":rc.timelapse_steps,"tracking_mode":rc.tracker.get_tracking_mode(),"tracking_modes": rc.tracker.get_tracking_modes()}
+            response = {"feed_rate":rc.controller.get_feed_speed(),"feed_rate_values":[100,200,500,1000,1500,2000],"move_time": rc.controller.get_move_duration(),"move_time_values":[1,2,5,10,15,30,60,120,300],"timelapse_time":rc.timelapse_time,"timelapse_steps":rc.timelapse_steps,"tracking_mode":rc.tracker.get_tracking_mode(),"tracking_modes": rc.tracker.get_tracking_modes()}
         elif request["request"] == "waypoints":
             waypoint_payload =[]
             index=0
