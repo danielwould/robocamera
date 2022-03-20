@@ -522,6 +522,9 @@ def handle_request(request, rc):
         elif request["action"] == "timelapse":
             rc.timelapse(request["duration"],request["step-interval"])
             response = {"result":"crane_tilt_down"}
+        elif request["action"]=="waypoint_sequence":
+            rc.trigger_whole_sequence()
+            response = {"result":"sequence_running"}
     elif "toggle" in request:
         if request["toggle"]=="moveby_switch":
             rc.toggle_move_mode()

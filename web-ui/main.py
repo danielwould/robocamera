@@ -126,6 +126,12 @@ def timelapse_start():
     response = send_camera_request(json.dumps({"action":"timelapse","duration":tl_duration,"step-interval":tl_stepinterval}))
     return response
 
+@app.route("/waypoint_sequence_start" , methods = ['POST'])
+def waypoint_sequence_start():
+    response = send_camera_request(json.dumps({"action":"waypoint_sequence"}))
+    return response
+
+
 
 @app.route("/move_to_savepoint" , methods = ['POST'])
 def moveto_savepoint():

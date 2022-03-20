@@ -114,7 +114,7 @@
         </tr>
         {% for w in waypoints %}
         <tr>
-          <td>{{ w['id'] }}up/down</td>
+          <td>{{ w['id'] }}</td>
           <td>x{{ w['x'] }},y{{ w['y'] }},z{{ w['z'] }},a{{ w['a'] }},b{{ w['b'] }}<br/>{{ w['travel_duration'] }}sec ; {{ w['feed'] }}mm/s ; dwell : {{ w['dwell_time'] }}</td> 
           <td>Edit
             
@@ -125,7 +125,7 @@
         {% endfor %} 
         
       </table>
-     
+      
       <label for="time-select">Waypoint Dwell</label>
       <select id="dwell-time">
         {% for n in dwell_time_values %}
@@ -133,6 +133,7 @@
         {% endfor %}
       </select>
       <input type = "button" id = "add-waypoint" value = "Save" onclick='add_waypoint()'/>
+      <input type = "button" class=myButton id = "waypoint-sequence-start" value = "Run" onclick='start_waypoint_sequence()'/>
       <input type = "button" class="waypointtoggle" id = "waypoint-view-close" value="Close"/>
     </div>
     <div class="timelapsepane">

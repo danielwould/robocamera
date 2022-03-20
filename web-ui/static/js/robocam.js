@@ -68,7 +68,7 @@ async function update_waypoints(wp){
         
         // Insert a cell at the end of the row
         var id_cell = newRow.insertCell();
-        id_cell.innerHTML = w['id']+"up/down"
+        id_cell.innerHTML = w['id']
         
         var loc_cell = newRow.insertCell();
         loc_cell.innerHTML ="x"+w['x']+",y"+w['y']+",z"+w['z']+",a"+w['a']+",b"+w['b']+"<br/>"+ w['travel_duration']+"sec ;"+ w['feed']+"mm/s ; dwell : "+ w['dwell_time'] 
@@ -130,6 +130,10 @@ async function start_timelapse(){
     var tl_duration = document.getElementById("tl-duration").value;
     var tl_steptime = document.getElementById("tl-steptime").value;
     response = post_command('/timelapse_start',JSON.stringify({"timelapse": "start","duration":tl_duration,"step-interval":tl_steptime}));
+}
+
+async function start_waypoint_sequence(){
+    response = post_command('/waypoint_sequence_start',JSON.stringify({"waypoint_sequence": "start"}));
 }
 
 async function reset_limits(){
