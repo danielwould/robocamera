@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/buttons.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/value_sliders.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/locks.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}">
     <style type="text/css">
       .container {
         max-width: 600px;
@@ -107,15 +108,17 @@
     <div class="waypointpane">
       <h2>Waypoints</h2>
       <table id = "waypoint-table">
+        <thead>
         <tr>
           <th>Step</th>
           <th>Location</th>
           <th>actions</th>
         </tr>
+      </thead>
         {% for w in waypoints %}
         <tr>
           <td>{{ w['id'] }}</td>
-          <td>x{{ w['x'] }},y{{ w['y'] }},z{{ w['z'] }},a{{ w['a'] }},b{{ w['b'] }}<br/>{{ w['travel_duration'] }}sec ; {{ w['feed'] }}mm/s ; dwell : {{ w['dwell_time'] }}</td> 
+          <td>x{{ w['x'] }};y{{ w['y'] }};z{{ w['z'] }};a{{ w['a'] }};b{{ w['b'] }};<br/>;move_sec:{{ w['travel_duration'] }};feed_mm:{{ w['feed'] }};dwell:{{ w['dwell_time'] }}</td> 
           <td>Edit
             
             <input type = "button" class="myButton" id = "move_to_waypoint_{{ w['id']}}" value = "Move" onclick="move_to_waypoint({{ w['id'] }})"/>
@@ -126,7 +129,7 @@
         
       </table>
       
-      <label for="time-select">Waypoint Dwell</label>
+      <label for="dwell-time">Waypoint Dwell</label>
       <select id="dwell-time">
         {% for n in dwell_time_values %}
           <option value="{{ n }}" {% if n == dwell_time %}selected{% endif %}>{{ n }}</option>
@@ -134,6 +137,28 @@
       </select>
       <input type = "button" id = "add-waypoint" value = "Save" onclick='add_waypoint()'/>
       <input type = "button" class=myButton id = "waypoint-sequence-start" value = "Run" onclick='start_waypoint_sequence()'/>
+      <div id = "edit-waypoint">
+        <label id="waypoint-edit-id">N/A</label>
+        <label for="edit-feed-rate">feed rate</label>
+        <select id="edit-feed-rate">
+          {% for n in feed_rate_values %}
+                  <option value="{{ n }}" >{{ n }}</option>
+          {% endfor %}
+        </select>
+        <label for="edit-move-time">move time</label>
+        <select id="edit-move-time">
+          {% for n in move_time_values %}
+                  <option value="{{ n }}" >{{ n }}</option>
+          {% endfor %}
+        </select>
+        <label for="edit-dwell-time">dwell</label>
+        <select id="edit-dwell-time">
+          {% for n in dwell_time_values %}
+            <option value="{{ n }}" >{{ n }}</option>
+          {% endfor %}
+        </select>
+        <input type = "button" class=myButton id = "waypoint-edit" value = "Save" onclick='update_waypoint()'/>
+      </div>
       <input type = "button" class="waypointtoggle" id = "waypoint-view-close" value="Close"/>
     </div>
     <div class="timelapsepane">

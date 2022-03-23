@@ -111,6 +111,18 @@ def add_waypoint():
     response = send_camera_request(json.dumps({"add":"waypoint","dwell-time":dwell_time}))
 
     return response
+
+@app.route("/edit_waypoint" , methods = ['POST'])
+def edit_waypoint():
+    data = request.get_json()
+    dwell_time = data['dwell_time']
+    feed_rate = data['feed_rate']
+    move_time = data['move_time']
+    wp_id = data['id']
+    response = send_camera_request(json.dumps({"update":"waypoint","id":wp_id,"feed_rate":feed_rate,"move_time":move_time,"dwell-time":dwell_time}))
+
+    return response
+
 @app.route("/delete_waypoint" , methods = ['POST'])
 def delete_waypoint():
     data = request.get_json()

@@ -30,6 +30,28 @@ al_button.addEventListener('click', () => {
 al_close_button.addEventListener('click', () => {
     al_pane.classList.toggle('open');
 });
+
+$("#waypoint-table tr").click(function(){
+    
+    $(this).addClass('selected-wp').siblings().removeClass('selected-wp');    
+    var value=$(this).find('td:first').html();
+    var data_value=$(this).find('td:eq(1)').html();
+    console.log(data_value)
+    selected_wp_values= data_value.split(';')
+    console.log(selected_wp_values)
+    let feed_element = document.getElementById('edit-feed-rate');
+    feed_element.value = parseInt(selected_wp_values[7].substring(8,selected_wp_values[7].length));
+    
+    let dwell_element = document.getElementById('edit-dwell-time');
+    dwell_element.value = parseInt(selected_wp_values[8].substring(6,selected_wp_values[8].length));
+    
+    let move_element = document.getElementById('edit-move-time');
+    move_element.value = parseInt(selected_wp_values[6].substring(9,selected_wp_values[6].length));
+    let wp_id = document.getElementById('waypoint-edit-id');
+    wp_id.innerHTML="Edit WP:"+value
+ });
+  
+
 (async function polling(){
     
     const response = await fetch('/refresh/status', {
@@ -61,7 +83,9 @@ async function update_status(status){
 }
 async function update_waypoints(wp){
     var tbodyRef = document.getElementById('waypoint-table').getElementsByTagName('tbody')[0];
-    $("#waypoint-table tbody tr").remove(); 
+    
+    $("#waypoint-table tbody tr").remove();
+    
     wp.forEach(w => {
         // Insert a row at the end of table
         var newRow = tbodyRef.insertRow();
@@ -71,10 +95,33 @@ async function update_waypoints(wp){
         id_cell.innerHTML = w['id']
         
         var loc_cell = newRow.insertCell();
-        loc_cell.innerHTML ="x"+w['x']+",y"+w['y']+",z"+w['z']+",a"+w['a']+",b"+w['b']+"<br/>"+ w['travel_duration']+"sec ;"+ w['feed']+"mm/s ; dwell : "+ w['dwell_time'] 
+        loc_cell.innerHTML ="x"+w['x']+";y"+w['y']+";z"+w['z']+";a"+w['a']+";b"+w['b']+";<br/>;"
+                            + "move_sec:"+w['travel_duration']+";feed_mm:"+ w['feed']+";dwell:"+ w['dwell_time'] 
 
         var action_cell = newRow.insertCell();
         action_cell.innerHTML = 'Edit/<input type = "button" class="myButton" id = "move_to_waypoint_'+ w['id'] +'" value = "Move" onclick="move_to_waypoint('+ w['id']+')"/><br/><input type = "button" class="myButton" id = "delete_waypoint_'+ w['id'] +'" value = "X" onclick="delete_waypoint('+ w['id']+')"/>'
+
+        newRow.onclick = function(){
+    
+            $(this).addClass('selected-wp').siblings().removeClass('selected-wp');    
+            var value=$(this).find('td:first').html();
+            var data_value=$(this).find('td:eq(1)').html();
+            console.log(data_value)
+            selected_wp_values= data_value.split(';')
+            console.log(selected_wp_values)
+            let feed_element = document.getElementById('edit-feed-rate');
+            feed_element.value = parseInt(selected_wp_values[7].substring(8,selected_wp_values[7].length));
+            
+            let dwell_element = document.getElementById('edit-dwell-time');
+            dwell_element.value = parseInt(selected_wp_values[8].substring(6,selected_wp_values[8].length));
+            
+            let move_element = document.getElementById('edit-move-time');
+            move_element.value = parseInt(selected_wp_values[6].substring(9,selected_wp_values[6].length));
+            let wp_id = document.getElementById('waypoint-edit-id');
+            wp_id.innerHTML="Edit WP:"+value
+        
+            
+         }
     });
     
 }
@@ -94,6 +141,20 @@ async function save_savepoint(id) {
 async function add_waypoint(){
     var value = document.getElementById("dwell-time").value;
     response = post_command('/add_waypoint',JSON.stringify({"waypoint": "add","dwell_time":value}));
+    response.then(data =>{
+        console.log(data); // JSON data parsed by `data.json()` call
+        update_waypoints(data);
+    });
+    
+}
+async function update_waypoint(){
+    wp_id_text = document.getElementById('waypoint-edit-id');
+    wp_id = wp_id_text.innerHTML.substring(8,wp_id_text.length)
+    var dwell_time = document.getElementById("edit-dwell-time").value;
+    var move_time = document.getElementById("edit-move-time").value;
+    var feed_rate = document.getElementById("edit-feed-rate").value;
+
+    response = post_command('/edit_waypoint',JSON.stringify({"waypoint": "edit","id":wp_id,"move_time":move_time,"feed_rate":feed_rate,"dwell_time":dwell_time}));
     response.then(data =>{
         console.log(data); // JSON data parsed by `data.json()` call
         update_waypoints(data);

@@ -172,6 +172,14 @@ class RobotCamera():
                
         self.sequence_steps.add_waypoint(wp)
 
+    def edit_waypoint(self,id,feed_rate,move_time,dwell_time):
+        print("edit waypoint")  # (x, y, z,focus, feed), dwell time
+        wp = self.sequence_steps.waypoints[id]
+        wp.set_feed_rate(feed_rate)
+        wp.set_travel_duration(move_time)
+        wp.set_dwell_time(dwell_time)
+        self.sequence_steps.update_waypoint(id,wp)
+
     def remove_waypoint(self, id):
         # todo allow for deleting specific waypoint item
         self.sequence_steps.delete_waypoint(index=id)
@@ -444,6 +452,17 @@ def handle_request(request, rc):
             #save current location as savepoint
             rc.save_position(request["savepoint_id"])
             response = {"result":"savepoint_stored"}
+        if request["update"] == "waypoint":
+            #save current location as savepoint
+            print ("edit waypoint")
+            rc.edit_waypoint(request["id"], request["feed_rate"],request["move_time"],request["dwell_time"])
+            waypoint_payload =[]
+            index=0
+            for wp in rc.sequence_steps.waypoints:
+                waypoint_payload.append(wp.get_waypoint_data(index))
+                index=index+1
+            print("return updated waypoints")
+            response = json.dumps(waypoint_payload)
         elif request["update"]=="feed-select":
             rc.set_feed_rate(request["feed-select"])
             response = {"result": "OK"}
