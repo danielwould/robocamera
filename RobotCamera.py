@@ -180,6 +180,14 @@ class RobotCamera():
         wp.set_dwell_time(dwell_time)
         self.sequence_steps.update_waypoint(id,wp)
 
+    def alter_waypoint_sequence(self,id,direction):
+        print("change waypoint order")  # (x, y, z,focus, feed), dwell time
+        if (direction == "up"):
+            self.sequence_steps.move_waypoint_up(id)
+        else:
+            self.sequence_steps.move_waypoint_down(id)
+        
+
     def remove_waypoint(self, id):
         # todo allow for deleting specific waypoint item
         self.sequence_steps.delete_waypoint(index=id)
@@ -452,10 +460,20 @@ def handle_request(request, rc):
             #save current location as savepoint
             rc.save_position(request["savepoint_id"])
             response = {"result":"savepoint_stored"}
-        if request["update"] == "waypoint":
+        elif request["update"] == "waypoint":
             #save current location as savepoint
             print ("edit waypoint")
             rc.edit_waypoint(request["id"], request["feed_rate"],request["move_time"],request["dwell_time"])
+            waypoint_payload =[]
+            index=0
+            for wp in rc.sequence_steps.waypoints:
+                waypoint_payload.append(wp.get_waypoint_data(index))
+                index=index+1
+            print("return updated waypoints")
+            response = json.dumps(waypoint_payload)
+        elif request["update"] == "waypoint_sequence":
+            print ("update waypoint sequence")
+            rc.alter_waypoint_sequence(request["id"],request["direction"])
             waypoint_payload =[]
             index=0
             for wp in rc.sequence_steps.waypoints:

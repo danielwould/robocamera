@@ -119,7 +119,16 @@ def edit_waypoint():
     feed_rate = data['feed_rate']
     move_time = data['move_time']
     wp_id = data['id']
-    response = send_camera_request(json.dumps({"update":"waypoint","id":wp_id,"feed_rate":feed_rate,"move_time":move_time,"dwell-time":dwell_time}))
+    response = send_camera_request(json.dumps({"update":"waypoint","id":int(wp_id),"feed_rate":int(feed_rate),"move_time":int(move_time),"dwell_time":int(dwell_time)}))
+
+    return response
+
+@app.route("/update_waypoint_sequence" , methods = ['POST'])
+def update_waypoint_sequence():
+    data = request.get_json()
+    direction = data['direction']
+    wp_id = data['id']
+    response = send_camera_request(json.dumps({"update":"waypoint_sequence","id":int(wp_id),"direction":direction}))
 
     return response
 

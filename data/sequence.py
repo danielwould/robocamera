@@ -25,6 +25,17 @@ class sequence:
         else:
             del self.waypoints[index]
 
+    def move_waypoint_up(self,item_index):
+        if item_index!=0:
+            move_item = self.waypoints.pop(item_index)
+            self.waypoints.insert((item_index-1),move_item)
+    
+    def move_waypoint_down(self,item_index):
+        if item_index!=len(self.waypoints)-1:
+            move_item = self.waypoints.pop(item_index)
+            self.waypoints.insert((item_index+1),move_item)
+
+
     def start(self):
         print ("starting seuqence")
         self.sequence_running=True

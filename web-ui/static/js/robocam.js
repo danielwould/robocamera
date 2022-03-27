@@ -161,6 +161,19 @@ async function update_waypoint(){
     });
     
 }
+
+async function update_waypoint_sequence(direction){
+    wp_id_text = document.getElementById('waypoint-edit-id');
+    wp_id = wp_id_text.innerHTML.substring(8,wp_id_text.length)
+    
+    response = post_command('/update_waypoint_sequence',JSON.stringify({"waypoint_sequence": "update","id":wp_id,"direction":direction}));
+    response.then(data =>{
+        console.log(data); // JSON data parsed by `data.json()` call
+        update_waypoints(data);
+    });
+    
+}
+
 async function move_to_savepoint(id) { 
     const response = fetch('/move_to_savepoint', {
         method: 'post',
