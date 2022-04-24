@@ -8,7 +8,7 @@ import json
 import hashlib
 
 
-BACKEND_HOST = '192.168.86.37' 
+BACKEND_HOST = '192.168.86.36' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
@@ -233,7 +233,7 @@ def favicon():
 
 HOST=get_ip()
 if sys.platform == "win32":
-    BACKEND_HOST="192.168.86.37"
+    BACKEND_HOST="192.168.86.36"
 else:
     BACKEND_HOST=HOST
 app.run(host=HOST, port=8080, debug=True)
