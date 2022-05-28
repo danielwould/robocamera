@@ -2,6 +2,8 @@
 from __future__ import absolute_import
 import serial
 import time
+from datetime import datetime
+
 import threading
 import sys
 import re
@@ -860,8 +862,10 @@ class grbl_controller:
                     self.serial_write(gcodeToSend.encode())
                     if self.log_moves:
                         if gcodeToSend.startswith("g1"):
+                            now = datetime.now() 
+                            date_time = now.strftime("%Y/%m/%d, %H:%M:%S")
                             self.move_log = open('move_log.txt', 'a+')
-                            self.move_log.write(t)
+                            self.move_log.write(date_time)
                             self.move_log.write(', ')
                             self.move_log.write(gcodeToSend.encode())
                             self.move_log.write("\n")
