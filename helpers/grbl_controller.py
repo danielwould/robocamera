@@ -863,7 +863,7 @@ class grbl_controller:
                             self.move_log = open('move_log.txt', 'a+')
                             self.move_log.write(t)
                             self.move_log.write(', ')
-                            self.move_log.write(gcodeToSend)
+                            self.move_log.write(gcodeToSend.encode())
                             self.move_log.write("\n")
                             self.move_log.close()
                     gcodeToSend = None
