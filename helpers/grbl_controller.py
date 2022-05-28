@@ -5,6 +5,7 @@ import time
 from datetime import datetime
 
 import threading
+import traceback
 import sys
 import re
 import os
@@ -885,6 +886,7 @@ class grbl_controller:
                 print(type(inst))    # the exception instance
                 print(inst.args)     # arguments stored in .args
                 print(inst)          # __str__ allows args to be printed directly, 
+                traceback.format_exc()
         self.logger.info("########################################")
         self.logger.info("Thread stopping for grbl on :{}".format(name))
         self.logger.info("########################################")
