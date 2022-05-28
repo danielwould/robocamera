@@ -683,7 +683,7 @@ class grbl_controller:
 
     def logMoves(self, enabled):
         self.log_moves=enabled
-        self.move_log = open('move_log.txt', 'a')
+        
     
     # ----------------------------------------------------------------------
     # Serial write
@@ -860,10 +860,12 @@ class grbl_controller:
                     self.serial_write(gcodeToSend.encode())
                     if self.log_moves:
                         if gcodeToSend.startsWith("g1"):
+                            self.move_log = open('move_log.txt', 'a+')
                             self.move_log.write(t)
                             self.move_log.write(', ')
                             self.move_log.write(gcodeToSend)
                             self.move_log.write("\n")
+                            self.move_log.close()
                     gcodeToSend = None
                 else:
                     if t-lastWriteAt > SERIAL_POLL:
