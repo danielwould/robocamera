@@ -876,8 +876,11 @@ class grbl_controller:
                     #    if t-tg > G_POLL:
                     #        self.sendGCode("$G\n")
                             
-            except:
-                self.logger.error("Exception in thread for {}".format(name))   
+            except Exception as inst:
+                self.logger.error("Exception {} in thread for {}".format(inst,name))  
+                print(type(inst))    # the exception instance
+                print(inst.args)     # arguments stored in .args
+                print(inst)          # __str__ allows args to be printed directly, 
         self.logger.info("########################################")
         self.logger.info("Thread stopping for grbl on :{}".format(name))
         self.logger.info("########################################")
