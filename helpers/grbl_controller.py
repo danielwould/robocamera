@@ -859,7 +859,7 @@ class grbl_controller:
                     self.logger.debug("writing queued instruction {}".format(gcodeToSend))
                     self.serial_write(gcodeToSend.encode())
                     if self.log_moves:
-                        if gcodeToSend.startsWith("g1"):
+                        if gcodeToSend.startswith("g1"):
                             self.move_log = open('move_log.txt', 'a+')
                             self.move_log.write(t)
                             self.move_log.write(', ')
