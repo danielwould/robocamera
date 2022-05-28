@@ -201,6 +201,8 @@ class grbl_controller:
     ajog_factor=1
     bjog_factor=1
 
+    log_moves=False
+
     def __init__(self, dwell_delay,name):
         
         self.name="init"
@@ -420,6 +422,7 @@ class grbl_controller:
             self.absolute_move(self.mcontrol.cnc_obj.vars["wx"],self.mcontrol.cnc_obj.vars["wy"],self.z_medium,self.mcontrol.cnc_obj.vars["wa"],self.mcontrol.cnc_obj.vars["wb"],self.get_feed_speed(),0)
 
     def relative_move(self, axis, multiplier):
+        self.logMoves(False)
         jogStep = self.current_feed_speed / 600;
         jogStep = jogStep*multiplier
         if (axis == "z"):
@@ -443,7 +446,7 @@ class grbl_controller:
         time.sleep(0.1)
 
     def jog(self, xaxis_multiplier, yaxis_multiplier, aaxis_multiplier, baxis_multiplier):
-
+        self.logMoves(False)
         jogStep = self.current_feed_speed / 600;
         xjogStep = jogStep*self.xjog_factor*xaxis_multiplier
         yjogStep = jogStep*self.yjog_factor*yaxis_multiplier
@@ -493,6 +496,7 @@ class grbl_controller:
         self.serial_write("0x85")
         
     def tracking_jog(self, xaxis_multiplier, yaxis_multiplier):
+        self.logMoves(False)
         #only accept tracking jog if controller is idle otherwise jogging should feed into joystick moves
         #if self.grbl_status == "Idle":
         jogStep = self.current_feed_speed / 600;
@@ -532,12 +536,14 @@ class grbl_controller:
         self.instructed_b_pos=self.mcontrol.cnc_obj.vars["wb"]
 
     def absolute_move(self, x, y, z, a, b, feedrate, dwell):
+        self.logMoves(True)
         self.sendGCode("g90")
         self.sendGCode("g94")
         self.sendGCode("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z, a,b,feedrate))
         self.set_instructed_position(x,y,z,a,b)
         
     def absolute_move_by_time(self, x, y, z, a, b, seconds, dwell):
+        self.logMoves(True)
         # calculate f value from desired
         # f2 = 60/2 = 30s
         feedval = 60 / seconds
@@ -547,6 +553,7 @@ class grbl_controller:
         self.set_instructed_position(x,y,z,a,b)
         
     def absolute_move_timelapse(self, x, y, z, a, b, timelapse_duration_secs,minimum_time_between_steps):
+        self.logMoves(True)
         #figure out difference between current location and desired location for each axis
         #figure out smallest incremental step we send to grbl
         #devide the differences up into an even number of those small increments
@@ -619,6 +626,7 @@ class grbl_controller:
         self.logger.info("########### END ##############")
 
     def run_sequence(self):
+        self.logMoves(True)
         self.logger.info("Queuing stored gcode sequence")
         for gcode in self.gcode_sequence:
             self.queue.put(gcode+"\n")
@@ -673,6 +681,10 @@ class grbl_controller:
         loc = location(self.mcontrol.cnc_obj.vars["w{}".format(rotation_axis)],self.mcontrol.cnc_obj.vars["w{}".format(tilt_axis)],self.mcontrol.cnc_obj.vars["w{}".format(zoom_axis)])
         return loc
 
+    def logMoves(self, enabled):
+        self.log_moves=enabled
+        self.move_log = open('move_log.txt', 'a')
+    
     # ----------------------------------------------------------------------
     # Serial write
     # ----------------------------------------------------------------------
@@ -846,7 +858,12 @@ class grbl_controller:
                         gcodeToSend = gcodeToSend.lower()
                     self.logger.debug("writing queued instruction {}".format(gcodeToSend))
                     self.serial_write(gcodeToSend.encode())
-
+                    if self.log_moves:
+                        if gcodeToSend.startsWith("g1"):
+                            self.move_log.write(t)
+                            self.move_log.write(', ')
+                            self.move_log.write(gcodeToSend)
+                            self.move_log.write("\n")
                     gcodeToSend = None
                 else:
                     if t-lastWriteAt > SERIAL_POLL:
