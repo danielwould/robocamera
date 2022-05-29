@@ -882,11 +882,12 @@ class grbl_controller:
                     #        self.sendGCode("$G\n")
                             
             except Exception as inst:
-                self.logger.error("Exception {} in thread for {}".format(inst,name))  
+                self.logger.error("Exception n thread for {}".format(name))  
                 print(type(inst))    # the exception instance
                 print(inst.args)     # arguments stored in .args
                 print(inst)          # __str__ allows args to be printed directly, 
                 traceback.format_exc()
+                self.logger.error(traceback.format_exc())
         self.logger.info("########################################")
         self.logger.info("Thread stopping for grbl on :{}".format(name))
         self.logger.info("########################################")
