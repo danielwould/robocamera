@@ -731,7 +731,7 @@ class grbl_controller:
                 if self.queue_idle==False:
                     self.queue_idle=True
                     self.idle_since=time.ctime()
-                if self.queue_idle and time.ctime()-self.idle_since >10:
+                if self.queue_idle and ((time.ctime()-self.idle_since) >10):
                     self.reset_instructed_position()
         #    self.mcontrol.viewParameters()
         #    self.mcontrol.viewState()
