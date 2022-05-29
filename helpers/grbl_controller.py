@@ -164,7 +164,7 @@ class grbl_controller:
     grbl_status="disconnected"
     lastResponseTime = 0
     queue_idle=False
-    idle_since=time.ctime()
+    idle_since=time.time()
     reset_buffer = False
     #dynamic limits configuration
     crane_tilt_min=0.0
@@ -730,8 +730,8 @@ class grbl_controller:
             if (self.queue.qsize() ==0):
                 if self.queue_idle==False:
                     self.queue_idle=True
-                    self.idle_since=time.ctime()
-                if self.queue_idle and ((time.ctime()-self.idle_since) >10):
+                    self.idle_since=time.time()
+                if self.queue_idle and ((time.time()-self.idle_since) >10):
                     self.reset_instructed_position()
         #    self.mcontrol.viewParameters()
         #    self.mcontrol.viewState()
