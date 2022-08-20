@@ -1,14 +1,16 @@
 
 import os
 import sys
-from flask import Flask, render_template, request, g,send_from_directory, safe_join
+from flask import Flask, render_template, request, g,send_from_directory, make_response 
+from werkzeug.utils import safe_join
 import socket
 import select
 import json
 import hashlib
+import ssl
 
 
-BACKEND_HOST = '192.168.86.36' 
+BACKEND_HOST = '192.168.86.40' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
 PORT = 9009
@@ -189,6 +191,15 @@ def reset(id):
     print("reset {} {}".format(id,value))
     response = send_camera_request(json.dumps({"reset":id, id: value }))
     return response 
+
+@app.route("/garmin" , methods = ['GET'])
+def garmin():
+    print("Request from garmin watch")
+    response = send_camera_request(json.dumps({"request":"status"}))
+    resp = make_response(response)
+    resp.mimetype = 'application/json; charset=utf-8'
+    return resp
+
 def send_camera_request(request_message):
    
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -233,10 +244,14 @@ def favicon():
 
 HOST=get_ip()
 if sys.platform == "win32":
-    BACKEND_HOST="192.168.86.36"
+    BACKEND_HOST="192.168.86.40"
 else:
     BACKEND_HOST=HOST
-app.run(host=HOST, port=8080, debug=True)
-
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+#context.verify_mode = ssl.CERT_REQUIRED
+context.load_verify_locations('/code/certs/ca_bundle.crt')
+context.load_cert_chain('/code/certs/certificate.crt', '/code/certs/private.key')
+app.run(host=HOST, port=8080, debug=True, ssl_context=context )
+#ssl_context=('c:\code\certs\certificate.crt','c:\code\certs\private.key')
 
 

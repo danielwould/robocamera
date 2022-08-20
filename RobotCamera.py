@@ -372,7 +372,7 @@ def camera_server():
         # get the list sockets which are ready to be read through select
         # 4th arg, time_out  = 0 : poll and never block
         ready_to_read,ready_to_write,in_error = select.select(SOCKET_LIST,[],[],0)
-      
+        isHtml = False
         for sock in ready_to_read:
             # a new connection request recieved
             if sock == server_socket: 
@@ -390,12 +390,18 @@ def camera_server():
                     if data:
                         # there is something in the socket
                         print("Received request {}".format(data)  )
+                        if (data.decode("utf8").startswith("GET")):
+                            isHtml=True
+                            data=b'{"request":"status"}'
                         #handle command
                         request = json.loads(data)
                         resp_message = handle_request(request, rc)
                         #send response
-                        
-                        response(sock,json.dumps(resp_message))
+                        if isHtml:
+                            httpresp="HTTP/1.0 200 OK\n\n"+json.dumps(resp_message)
+                            response(sock,httpresp)
+                        else:
+                            response(sock,json.dumps(resp_message))
                     else:
                         # remove the socket that's broken    
                         if sock in SOCKET_LIST:
