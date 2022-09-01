@@ -104,6 +104,16 @@
         <a href="/tracker_glyph">Show Glyph</a>
       </div>
       </form>
+      <label class="switch" id="record">
+        <input id="record_switch" type="checkbox" onclick='toggle_flip(this);' {{ recording_toggle }}>
+        
+         <div class="slider round">
+          <!--ADDED HTML -->
+          <span class="on">ON</span>
+          <span class="off">OFF</span>
+          <!--END-->
+         </div>
+      </label>
     </div>
     <div class="waypointpane">
       <h2>Waypoints</h2>

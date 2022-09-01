@@ -69,6 +69,11 @@ def index():
         tracking_state="checked"
     else:
         tracking_state=""
+    if toggle_state["recording_mode"] == True:
+        recording_state="checked"
+    else:
+        recording_state=""
+    
     values = send_camera_request(json.dumps({"request":"values"}))
     waypoints = json.loads(send_camera_request(json.dumps({"request":"waypoints"})))
     limits = send_camera_request(json.dumps({"request":"limits"}))
@@ -78,6 +83,7 @@ def index():
                         savepoints=savepoints,
                         move_toggle=move_state, 
                         tracking_toggle=tracking_state, 
+                        recording_toggle=recording_state,
                         feed_rate=values['feed_rate'],
                         feed_rate_values=values['feed_rate_values'],
                         move_time=values['move_time'],
