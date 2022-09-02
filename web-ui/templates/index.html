@@ -4,7 +4,7 @@
     <title>Robot Cameraman</title>
     <!--<meta http-equiv="refresh" content="30" >-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/toggles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dropdowns.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/slidepanel.css') }}">
@@ -104,6 +104,7 @@
         <a href="/tracker_glyph">Show Glyph</a>
       </div>
       </form>
+      <label class="label-block" for="record">Record</label>
       <label class="switch" id="record">
         <input id="record_switch" type="checkbox" onclick='toggle_flip(this);' {{ recording_toggle }}>
         

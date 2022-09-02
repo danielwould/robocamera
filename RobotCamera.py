@@ -82,9 +82,9 @@ class RobotCamera():
             self.extra_controls.set_device("COM7",115200,"ExtraControls")
         else:
             print("connecting to linux tty device")
-            self.controller.set_device("/dev/ttyACM0", 115200,"RoboCamera")
             self.extra_controls.set_device("/dev/ttyACM1",115200,"ExtraControls")
-
+            self.controller.set_device("/dev/ttyACM0", 115200,"RoboCamera")
+            
 
         self.gimbal_inst = gimbal("x","y","z", self.controller)
         self.gimbal_inst.set_small_step_rotate(0.2)
@@ -428,11 +428,11 @@ def handle_request(request, rc):
     response={"response":"pong"}
     if ("request" in request):
         if request["request"] == "status":
-            response = {"status":rc.controller.get_grbl_status(), "last_update":rc.controller.get_lastUpdateTime(),"work_pos":rc.controller.work_position_str(),"machine_pos":rc.controller.machine_position_str(),"gimbal_tilt_reading":rc.extra_controller.x_angle }
+            response = {"status":rc.controller.get_grbl_status(), "last_update":rc.controller.get_lastUpdateTime(),"work_pos":rc.controller.work_position_str(),"machine_pos":rc.controller.machine_position_str(),"gimbal_tilt_reading":rc.extra_controls.x_angle }
         elif request["request"] == "savepoints":
             response = {"savepoint_1": rc.save_position_1.location_str(),"savepoint_2": rc.save_position_2.location_str(),"savepoint_3": rc.save_position_3.location_str(),"savepoint_4": rc.save_position_4.location_str()}
         elif request["request"] == "toggles":
-            response = {"move_mode":rc.MOVE_TOGGLE,"tracking_mode": rc.TRACKING, "recording":rc.extra_controller.recording}
+            response = {"move_mode":rc.MOVE_TOGGLE,"tracking_mode": rc.TRACKING, "recording":rc.extra_controls.recording}
         elif request["request"] == "values":
             response = {"feed_rate":rc.controller.get_feed_speed(),"feed_rate_values":[100,200,500,1000,1500,2000],"move_time": rc.controller.get_move_duration(),"move_time_values":[1,2,5,10,15,30,60,120,300],"timelapse_time":rc.timelapse_time,"timelapse_steps":rc.timelapse_steps,"tracking_mode":rc.tracker.get_tracking_mode(),"tracking_modes": rc.tracker.get_tracking_modes()}
         elif request["request"] == "waypoints":
@@ -584,7 +584,7 @@ def handle_request(request, rc):
             response = {"result": rc.TRACKING}
         elif request["action"]=="record_switch":
             rc.toggle_video()
-            response = {"result": rc.extra_controller.recording}
+            response = {"result": rc.extra_controls.recording}
         elif request["toggle"]=="Gimbal_pan_min":
             rc.controller.toggle_gimbal_pan_min_locked()
             response = {"result": rc.controller.gimbal_pan_min_locked}

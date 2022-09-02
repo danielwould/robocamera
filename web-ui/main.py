@@ -69,7 +69,7 @@ def index():
         tracking_state="checked"
     else:
         tracking_state=""
-    if toggle_state["recording_mode"] == True:
+    if toggle_state["recording"] == True:
         recording_state="checked"
     else:
         recording_state=""
@@ -255,8 +255,8 @@ else:
     BACKEND_HOST=HOST
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 #context.verify_mode = ssl.CERT_REQUIRED
-context.load_verify_locations('/code/certs/ca_bundle.crt')
-context.load_cert_chain('/code/certs/certificate.crt', '/code/certs/private.key')
+context.load_verify_locations('/home/d.would@orbis.co.uk/code/certs/ca_bundle.crt')
+context.load_cert_chain('/home/d.would@orbis.co.uk/code/certs/certificate.crt', '/home/d.would@orbis.co.uk/code/certs/private.key')
 app.run(host=HOST, port=8080, debug=True, ssl_context=context )
 #ssl_context=('c:\code\certs\certificate.crt','c:\code\certs\private.key')
 

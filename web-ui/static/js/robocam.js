@@ -228,7 +228,7 @@ async function showHideForm(box, id,id_2) {
 }
 async function toggle_flip(cb){
     console.log(cb)
-    var idAttr = $(cb).prop('id');
+    var idAttr = cb.prop('id');
     console.log(idAttr +" toggled  "+cb.checked)
     
     response = post_command('/toggle/'+idAttr, '{"state": '+cb.checked+'}')

@@ -33,30 +33,11 @@ class extra_controller:
 
     def set_device(self, device, baudrate, name):
         self.serial_device = device
-        #self.serial = serial.Serial(
-        self.serial = serial.serial_for_url(
-						device.replace('\\', '\\\\'), #Escape for windows
-						baudrate,
-						bytesize=serial.EIGHTBITS,
-						parity=serial.PARITY_NONE,
-						stopbits=serial.STOPBITS_ONE,
-						timeout=SERIAL_TIMEOUT,
-						xonxoff=False,
-						rtscts=False)
-		# Toggle DTR to reset Arduino
-        #try:
-        #    self.serial.setDTR(0)
-        #except IOError:
-        #    pass
+        self.serial = serial.Serial('/dev/ttyACM1',115200,timeout=1)
+        
         time.sleep(1)
         self.serial.flushInput()
-        #try:
-        #    self.serial.setDTR(1)
-        #except IOError:
-        #    pass
-        #time.sleep(1)
-        self.serial_write("\n\n")
-        
+        self.serial.flushOutput()
         self.app_running = True
         self.thread = threading.Thread(
             target=self.control_thread, args=(name,))
@@ -71,17 +52,10 @@ class extra_controller:
         self.queue.put("ToggleVideo")
 
     def serial_write(self, data):
-        if data == b"?":
-            self.logger.debug("W "+str(type(data))+" : "+str(data))
-        else:
-            self.logger.info("W "+str(type(data))+" : "+str(data))
-
-        # if sys.version_info[0] == 2:
-        #	ret = self.serial.write(str(data))
-        if isinstance(data, bytes):
-            ret = self.serial.write(data)
-        else:
-            ret = self.serial.write(data.encode())
+        ret = self.serial.write(data.encode())
+        time.sleep(0.5)
+        self.logger.info("serial return code {}".format(ret))
+        self.serial.flush()
         return ret
 
     def control_thread(self, name):
@@ -105,7 +79,10 @@ class extra_controller:
                     commandToSend = None
             if t-lastWriteAt > SERIAL_POLL:
                 try:
-                    self.serial_write(b"?")
+                    self.logger.info("requesting status")
+                    self.serial_write("?")
+                    self.logger.info("? sent")
+
                 except Exception as e:
                     self.logger.error("Error writing value to controller")
                     self.logger.error(e)
@@ -121,8 +98,8 @@ class extra_controller:
                         self.logger.info("Toggle Video Confirmed")
                         
             except Exception as e:
-                self.logger.error("Error reading value from controller")
-                self.logger.error(e)
+                #self.logger.error("Error reading value from controller")
+                self.logger.debug(e)
                     
 
             if commandToSend != None:
