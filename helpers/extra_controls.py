@@ -33,7 +33,7 @@ class extra_controller:
 
     def set_device(self, device, baudrate, name):
         self.serial_device = device
-        self.serial = serial.Serial('/dev/ttyACM1',115200,timeout=1)
+        self.serial = serial.Serial(device,baudrate,timeout=1)
         
         time.sleep(1)
         self.serial.flushInput()
