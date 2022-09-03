@@ -79,7 +79,7 @@ class RobotCamera():
         if sys.platform == "win32":
             print("connecting to windows com device")
             #self.controller.set_device("COM3", 115200,"RoboCamera")
-            self.extra_controls.set_device("COM7",115200,"ExtraControls")
+            self.extra_controls.set_device("COM3",115200,"ExtraControls")
         else:
             print("connecting to linux tty device")
             self.extra_controls.set_device("/dev/ttyACM1",115200,"ExtraControls")
@@ -582,7 +582,7 @@ def handle_request(request, rc):
         elif request["toggle"]=="tracking_switch":
             rc.toggle_tracking_mode()
             response = {"result": rc.TRACKING}
-        elif request["action"]=="record_switch":
+        elif request["toggle"]=="record_switch":
             rc.toggle_video()
             response = {"result": rc.extra_controls.recording}
         elif request["toggle"]=="Gimbal_pan_min":
