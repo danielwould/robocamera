@@ -79,10 +79,10 @@ class RobotCamera():
         if sys.platform == "win32":
             print("connecting to windows com device")
             #self.controller.set_device("COM3", 115200,"RoboCamera")
-            self.extra_controls.set_device("COM3",115200,"ExtraControls")
+            self.extra_controls.set_device("COM3",9600,"ExtraControls")
         else:
             print("connecting to linux tty device")
-            self.extra_controls.set_device("/dev/ttyACM1",115200,"ExtraControls")
+            self.extra_controls.set_device("/dev/ttyACM1",9600,"ExtraControls")
             self.controller.set_device("/dev/ttyACM0", 115200,"RoboCamera")
             
 

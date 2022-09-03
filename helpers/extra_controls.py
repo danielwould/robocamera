@@ -3,6 +3,7 @@ import time
 import logging
 import threading
 import json
+import sys
 try:
     from Queue import *
 except ImportError:
@@ -49,13 +50,13 @@ class extra_controller:
             self.recording=True
         else:
             self.recording=False
-        self.queue.put("ToggleVideo")
+        self.logger.info("requesting video record toggle")
+        self.queue.put("r")
 
     def serial_write(self, data):
         ret = self.serial.write(data.encode())
         time.sleep(0.5)
-        self.logger.info("serial return code {}".format(ret))
-        self.serial.flush()
+        #self.logger.info("serial return code {}".format(ret))
         return ret
 
     def control_thread(self, name):
@@ -63,36 +64,37 @@ class extra_controller:
         self.logger.info("Thread start for extras control :{}".format(name))
         self.logger.info("########################################")
         # wait for commands to complete (status change to Idle)
-        #self.sleep_event    = threading.Event()
+        self.sleep_event    = threading.Event()
         
         commandToSend = None			# next string to send
         lastWriteAt = tg = time.time()
         while self.app_running:
             t = time.time()
+            time.sleep(0.1)
             if commandToSend is None:
                 try:
-                    self.logger.debug("Command queue length {}".format(self.queue.qsize()))
+                    #self.logger.debug("Command queue length {}".format(self.queue.qsize()))
                     commandToSend = self.queue.get_nowait()
-                    self.logger.debug("pulled new gcode line to send: {}".format(commandToSend))
+                    #self.logger.debug("pulled new gcode line to send: {}".format(commandToSend))
                 except Empty:
                     #nothing to send
                     commandToSend = None
             if t-lastWriteAt > SERIAL_POLL:
                 try:
-                    self.logger.info("requesting status")
-                    self.serial_write("?")
-                    self.logger.info("? sent")
+                    #self.logger.info("requesting status")
+                    self.serial_write("?\n")
+                    #self.logger.info("? sent")
 
                 except Exception as e:
                     self.logger.error("Error writing value to controller")
                     self.logger.error(e)
             try:     
                 line = str(self.serial.readline().decode()).strip()
-                self.logger.info("Read value: {}".format(line))
+                #self.logger.info("Read value: {}".format(line))
                 if (line != ''):
                     data = json.loads(line)
                     if ("angleX" in data):
-                        self.logger.info("X angle = {}".format(data["angleX"]))
+                        #self.logger.info("X angle = {}".format(data["angleX"]))
                         self.x_angle=data["angleX"]
                     if ("ToggleVideo" in data):
                         self.logger.info("Toggle Video Confirmed")
@@ -103,6 +105,7 @@ class extra_controller:
                     
 
             if commandToSend != None:
-                self.serial_write("{}".format(commandToSend))
+                self.logger.info("sending command {}".format(commandToSend))
+                self.serial_write("{}\n".format(commandToSend))
                 commandToSend=None
                 lastWriteAt = t
