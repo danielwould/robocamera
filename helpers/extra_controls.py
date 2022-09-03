@@ -36,7 +36,7 @@ class extra_controller:
         self.serial_device = device
         self.serial = serial.Serial(device,baudrate,timeout=1)
         
-        time.sleep(1)
+        time.sleep(2)
         self.serial.flushInput()
         self.serial.flushOutput()
         self.app_running = True
@@ -54,9 +54,11 @@ class extra_controller:
         self.queue.put("r")
 
     def serial_write(self, data):
-        ret = self.serial.write(data.encode())
-        time.sleep(0.5)
-        #self.logger.info("serial return code {}".format(ret))
+        ret = self.serial.write(bytes(data, encoding="utf-8"))
+        time.sleep(0.2)
+        self.serial.flush()
+        buffered_output = self.serial.out_waiting
+        self.logger.info("serial out waiting {}".format(buffered_output))
         return ret
 
     def control_thread(self, name):
@@ -106,6 +108,7 @@ class extra_controller:
 
             if commandToSend != None:
                 self.logger.info("sending command {}".format(commandToSend))
-                self.serial_write("{}\n".format(commandToSend))
+                ret = self.serial_write("{}\n".format(commandToSend))
+                self.logger.info("command send bytes: {}".format(ret))
                 commandToSend=None
                 lastWriteAt = t
