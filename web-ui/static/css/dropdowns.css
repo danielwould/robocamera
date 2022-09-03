@@ -60,9 +60,9 @@ select:focus + .focus {
     display: flex;
     flex-flow: row wrap;
     align-items: center;
+    margin-bottom: 20px;
   }
   
 .form-inline label {
-margin: 5px 10px 5px 0;
+margin: 5px 10px 5px 1;
 }
-  
