@@ -185,6 +185,7 @@ class grbl_controller:
     gimbal_pan_max=0.0
     gimbal_pan_min_locked=False
     gimbal_pan_max_locked=False
+    gimbal_tilt_pot_reading=0
     z_min=0.0
     z_min_locked=False
     z_max=0.0
@@ -424,6 +425,17 @@ class grbl_controller:
         if (self.z_medium is not None):
             self.absolute_move(self.mcontrol.cnc_obj.vars["wx"],self.mcontrol.cnc_obj.vars["wy"],self.z_medium,self.mcontrol.cnc_obj.vars["wa"],self.mcontrol.cnc_obj.vars["wb"],self.get_feed_speed(),0)
 
+    def auto_level_gimbal(self):
+        if self.gimbal_tilt_pot_reading !=0:
+            while self.gimbal_tilt_pot_reading < 110:
+                self.jog(0,-0.5,0,0)
+                time.sleep(0.05)
+            time.sleep(1)
+            while self.gimbal_tilt_pot_reading > 112:
+                self.jog(0,0.2,0,0)
+                time.sleep(0.05)
+                
+
     def relative_move(self, axis, multiplier):
         self.logMoves(False)
         jogStep = self.current_feed_speed / 600;
@@ -457,6 +469,12 @@ class grbl_controller:
         bjogStep = jogStep*self.bjog_factor*baxis_multiplier
         print ("Proposed Jog x{} y{} a{} b{} \n".format(xjogStep,yjogStep,ajogStep,bjogStep))
         #drop any move that takes us outside min/max bounds
+        if self.gimbal_tilt_pot_reading <=70:
+            if yjogStep >0 :
+                print("limited gimbal tilt down to avoid crash")
+                gimbal_tilt_max_locked=True
+                self.gimbal_tilt_max=self.mcontrol.cnc_obj.vars["wy"]
+                yjogStep=0
         if self.gimbal_pan_max_locked:
             print("pan max limit locked")
             if self.gimbal_pan_max <= (self.instructed_x_pos+xjogStep):

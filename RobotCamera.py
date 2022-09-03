@@ -82,7 +82,7 @@ class RobotCamera():
             self.extra_controls.set_device("COM3",115200,"ExtraControls")
         else:
             print("connecting to linux tty device")
-            self.extra_controls.set_device("/dev/ttyACM2",115200,"ExtraControls")
+            self.extra_controls.set_device("/dev/ttyACM1",115200,"ExtraControls")
             self.controller.set_device("/dev/ttyACM0", 115200,"RoboCamera")
             
 
@@ -97,9 +97,12 @@ class RobotCamera():
         self.crane_inst.set_small_step_tilt(2)
         self.crane_inst.set_big_step_tilt(10)
         #self.controller.reset()
-        #TODO re-enable
+        self.extra_controls.set_controller(self.controller)
         self.tracker = aruco_tracker(self.controller,self)
         self.tracker.initialise_video()
+        time.sleep(1)
+        self.controller.auto_level_gimbal()
+
 
 
     def init_joysticks(self):
@@ -163,7 +166,7 @@ class RobotCamera():
 
     def toggle_video(self):
         self.extra_controls.toggle_video()
-
+        
     def add_waypoint(self,dwell_time):
         print("add waypoint")  # (x, y, z,focus, feed), dwell time
         crane_position = self.crane_inst.get_current_location()

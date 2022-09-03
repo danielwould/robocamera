@@ -45,6 +45,9 @@ class extra_controller:
         #self.thread.daemon = True
         self.thread.start()
 
+    def set_controller(self,controller):
+        self.controller=controller
+
     def toggle_video(self):
         if self.recording==False:
             self.recording=True
@@ -96,6 +99,7 @@ class extra_controller:
                     if ("angleX" in data):
                         #self.logger.info("X angle = {}".format(data["angleX"]))
                         self.x_angle=data["angleX"]
+                        self.controller.gimbal_tilt_pot_reading=self.x_angle
                     if ("ToggleVideo" in data):
                         self.logger.info("Toggle Video Confirmed")
                         
