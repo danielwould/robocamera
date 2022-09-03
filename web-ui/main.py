@@ -251,9 +251,9 @@ def favicon():
 context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
 HOST=get_ip()
 if sys.platform == "win32":
-    BACKEND_HOST="192.168.86.40"
-    context.load_verify_locations('c:\code\certs\ca_bundle.crt')
-    context.load_cert_chain('c:\code\certs\certificate.crt', 'c:\code\certs\private.key')
+    BACKEND_HOST="192.168.86.40" #192.168.86.40 is surface
+    context.load_verify_locations('c:/code/certs/ca_bundle.crt')
+    context.load_cert_chain('c:/code/certs/certificate.crt', 'c:/code/certs/private.key')
 else:
     context.load_verify_locations('/home/d.would@orbis.co.uk/code/certs/ca_bundle.crt')
     context.load_cert_chain('/home/d.would@orbis.co.uk/code/certs/certificate.crt', '/home/d.would@orbis.co.uk/code/certs/private.key')

@@ -79,7 +79,8 @@ async function update_status(status){
     update_time = status.last_update;
     work_position = status.work_pos;
     machine_position = status.machine_pos;
-    element.innerHTML = "Status:<b>"+state + "</b> Updated:<b>"+update_time+"</b></br>Work position:"+work_position+"</br>Machine position:"+machine_position;
+    gimbal_tilt = status.gimbal_tilt_reading;
+    element.innerHTML = "Status:<b>"+state + "</b> Updated:<b>"+update_time+"</b></br>Work position:"+work_position+"</br>Machine position:"+machine_position+"</br>Gimbal Tilt:"+gimbal_tilt;
 }
 async function update_waypoints(wp){
     var tbodyRef = document.getElementById('waypoint-table').getElementsByTagName('tbody')[0];
@@ -228,7 +229,7 @@ async function showHideForm(box, id,id_2) {
 }
 async function toggle_flip(cb){
     console.log(cb)
-    var idAttr = cb.prop('id');
+    var idAttr = $(cb).prop('id');
     console.log(idAttr +" toggled  "+cb.checked)
     
     response = post_command('/toggle/'+idAttr, '{"state": '+cb.checked+'}')
