@@ -64,8 +64,8 @@
   }
   
   .label-block {
-    position: absolute;
-    transform: translate(0%,-140%);
+    position: relative;
+    transform: translate(50%,-150%);
     display: block;
     margin-bottom: 10px;
     font-size: 10px;
