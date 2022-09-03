@@ -104,4 +104,5 @@ class extra_controller:
 
             if commandToSend != None:
                 self.serial_write("{}".format(commandToSend))
+                commandToSend=None
                 lastWriteAt = t
