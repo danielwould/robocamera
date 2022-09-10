@@ -248,13 +248,15 @@ class RobotCamera():
     
     def random_way_point_move(self):
         print("moving to random waypoint")
+        crane_position = self.crane_inst.get_current_location()
+        gimbal_position = self.gimbal_inst.get_current_location()
         waypoint = random.choice(self.sequence_steps.waypoints)
         #don't just pick the current location
-        while (waypoint.xpos == self.gimbal_position.get_rotation_pos() 
-           and waypoint.ypos == self.gimbal_position.get_tilt_pos()
-           and waypoint.zpos == self.gimbal_position.get_zoom_pos()
-           and waypoint.apos == self.crane_position.get_rotation_pos()
-           and waypoint.bpos == self.crane_position.get_tilt_pos()) :
+        while (waypoint.xpos == gimbal_position.get_rotation_pos() 
+           and waypoint.ypos == gimbal_position.get_tilt_pos()
+           and waypoint.zpos == gimbal_position.get_zoom_pos()
+           and waypoint.apos == crane_position.get_rotation_pos()
+           and waypoint.bpos == crane_position.get_tilt_pos()) :
             waypoint = random.choice(self.sequence_steps.waypoints)
 
         self.move_to_location(waypoint)
