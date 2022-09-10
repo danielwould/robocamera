@@ -22,6 +22,7 @@ class waypoint:
         self.feed_rate=200
         
 
+    
 
 
     def set_dwell_time(self,time):
