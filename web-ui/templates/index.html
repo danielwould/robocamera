@@ -108,7 +108,8 @@
       <form class="form-inline">
         <label class="label-block" for="record">Record</label>
         <label class="switch" id="record">
-          <input id="record_switch" type="checkbox" onclick='toggle_flip(this);' {{ recording_toggle }}>
+          <input id="
+          " type="checkbox" onclick='toggle_flip(this);' {{ recording_toggle }}>
           
           <div class="slider round">
             <!--ADDED HTML -->
@@ -175,6 +176,7 @@
         <input type = "button" class=myButton id = "waypoint-sequence_up" value = "Up" onclick='update_waypoint_sequence("up")'/>
         <input type = "button" class=myButton id = "waypoint-sequence_down" value = "Down" onclick='update_waypoint_sequence("down")'/>
       </div>
+      <input type = "button" class="waypointtoggle" id = "waypoint-random-move" value="Random" onclick='random_waypoint()'/>
       <input type = "button" class="waypointtoggle" id = "waypoint-view-close" value="Close"/>
     </div>
     <div class="timelapsepane">

@@ -19,6 +19,7 @@ import sys
 import json
 import socket
 import select
+import random
 HOST = '' 
 SOCKET_LIST = []
 RECV_BUFFER = 4096 
@@ -243,6 +244,19 @@ class RobotCamera():
     def way_point_move(self,waypoint_id):
         print("moving to waypoint")
         waypoint = self.sequence_steps.waypoints[waypoint_id]
+        self.move_to_location(waypoint)
+    
+    def random_way_point_move(self):
+        print("moving to random waypoint")
+        waypoint = random.choice(self.sequence_steps.waypoints)
+        #don't just pick the current location
+        while (waypoint.xpos == self.gimbal_position.get_rotation_pos() 
+           and waypoint.ypos == self.gimbal_position.get_tilt_pos()
+           and waypoint.zpos == self.gimbal_position.get_zoom_pos()
+           and waypoint.apos == self.crane_position.get_rotation_pos()
+           and waypoint.bpos == self.crane_position.get_tilt_pos()) :
+            waypoint = random.choice(self.sequence_steps.waypoints)
+
         self.move_to_location(waypoint)
 
     def move_to_location(self,location):
@@ -577,7 +591,9 @@ def handle_request(request, rc):
         elif request["action"]=="waypoint_sequence":
             rc.trigger_whole_sequence()
             response = {"result":"sequence_running"}
-        
+        elif request["action"]=="waypoint_random":
+            rc.random_way_point_move()
+            response = {"result":"random_move"}
     elif "toggle" in request:
         if request["toggle"]=="moveby_switch":
             rc.toggle_move_mode()

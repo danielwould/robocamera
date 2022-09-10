@@ -210,7 +210,9 @@ async function start_timelapse(){
 async function start_waypoint_sequence(){
     response = post_command('/waypoint_sequence_start',JSON.stringify({"waypoint_sequence": "start"}));
 }
-
+async function random_waypoint(){
+    response = post_command('/move_to_random_waypoint',JSON.stringify({"waypoint_random": "go"}));
+}
 async function reset_limits(){
     response = post_command('/reset/limits',JSON.stringify({"limits": "reset"}));
 }

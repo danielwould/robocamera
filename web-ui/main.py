@@ -176,6 +176,11 @@ def moveto_waypoint():
     response = send_camera_request(json.dumps({"action":"movepoint","waypoint_id":id}))
     return response
 
+@app.route("/move_to_random_waypoint" , methods = ['POST'])
+def moveto_waypoint():
+    response = send_camera_request(json.dumps({"action":"waypoint_random"}))
+    return response
+
 @app.route("/toggle/<id>" , methods = ['POST'])
 def toggle_flip(id):
     data = request.get_json()
