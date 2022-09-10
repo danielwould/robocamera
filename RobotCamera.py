@@ -251,12 +251,15 @@ class RobotCamera():
         crane_position = self.crane_inst.get_current_location()
         gimbal_position = self.gimbal_inst.get_current_location()
         waypoint = random.choice(self.sequence_steps.waypoints)
-        #don't just pick the current location
+        random_guesses=0
+        #don't just pick the current location but set a max for testing with no new positions
         while (waypoint.xpos == gimbal_position.get_rotation_pos() 
            and waypoint.ypos == gimbal_position.get_tilt_pos()
            and waypoint.zpos == gimbal_position.get_zoom_pos()
            and waypoint.apos == crane_position.get_rotation_pos()
-           and waypoint.bpos == crane_position.get_tilt_pos()) :
+           and waypoint.bpos == crane_position.get_tilt_pos() 
+           and random_guesses <10):
+            random_guesses=random_guesses+1
             waypoint = random.choice(self.sequence_steps.waypoints)
 
         self.move_to_location(waypoint)
