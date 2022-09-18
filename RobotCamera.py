@@ -598,17 +598,17 @@ def handle_request(request, rc):
             response = {"result":"sequence_running"}
         elif request["action"]=="waypoint_random":
             rc.random_way_point_move()
-            response = {"result":"random_move"}
+            response = {"result":"random_move","move_mode":rc.MOVE_TOGGLE,"tracking_mode": rc.TRACKING, "recording":rc.extra_controls.recording}
     elif "toggle" in request:
         if request["toggle"]=="moveby_switch":
             rc.toggle_move_mode()
             response = {"result": rc.MOVE_TOGGLE}
         elif request["toggle"]=="tracking_switch":
             rc.toggle_tracking_mode()
-            response = {"result": rc.TRACKING}
+            response = {"result": rc.TRACKING,"move_mode":rc.MOVE_TOGGLE,"tracking_mode": rc.TRACKING, "recording":rc.extra_controls.recording}
         elif request["toggle"]=="record_switch":
             rc.toggle_video()
-            response = {"result": rc.extra_controls.recording}
+            response = {"result": "success","move_mode":rc.MOVE_TOGGLE,"tracking_mode": rc.TRACKING, "recording":rc.extra_controls.recording}
         elif request["toggle"]=="Gimbal_pan_min":
             rc.controller.toggle_gimbal_pan_min_locked()
             response = {"result": rc.controller.gimbal_pan_min_locked}
