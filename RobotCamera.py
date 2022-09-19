@@ -458,19 +458,19 @@ def handle_request(request, rc):
             else:
                 move_mode=False
             response = {"toggles":
-                {"recording":
+                {"Recording":
                     {"url":"/toggle/record_switch",
                     "enabled_text":"Recording",
                     "disabled_text":"stopped",
                     "state":rc.extra_controls.recording
                     }
-                ,"tracking":
+                ,"Tracking":
                     {"url":"/toggle/tracking_switch",
                     "enabled_text":"Tracking",
                     "disabled_text":"stopped",
                     "state":rc.TRACKING
                     }
-                ,"move_mode":
+                ,"Move mode":
                     {"url":"/toggle/moveby_switch",
                     "enabled_text":"Time",
                     "disabled_text":"Feed",
