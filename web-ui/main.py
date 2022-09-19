@@ -203,6 +203,12 @@ def reset(id):
     response = send_camera_request(json.dumps({"reset":id, id: value }))
     return response 
 
+@app.route("/init_location" , methods = ['POST'])
+def garmin():
+    print("initialise camera position")
+    response = send_camera_request(json.dumps({"action":"init_location"}))
+    return response
+
 @app.route("/garmin_init" , methods = ['POST'])
 def garmin():
     print("Request from garmin watch")

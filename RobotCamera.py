@@ -112,7 +112,8 @@ class RobotCamera():
     def init_info_updater(self):
         self.info_update = info(self)
 
-
+    def init_location(self):
+        self.controller.auto_level_gimbal()
     
         
     def timelapse(self, duration, step_interval):
@@ -465,12 +466,23 @@ def handle_request(request, rc):
                     "disabled_text":"stopped",
                     "state":rc.TRACKING
                     }
+                ,"move_mode":
+                    {"url":"/toggle/moveby_switch",
+                    "enabled_text":"Time",
+                    "disabled_text":"Feed",
+                    "state":rc.MOVE_TOGGLE
+                    }
                 }, 
             "actions":
                 {"move_random":
                     {"url":"/move_to_random_waypoint",
                     "Header":"Move",
                     "SubHeader":"Random"
+                    },
+                "level":
+                    {"url":"/init_location",
+                    "Header":"Level",
+                    "SubHeader":"init"
                     }
                 }
             }
@@ -586,6 +598,9 @@ def handle_request(request, rc):
         elif request["action"] == "zoom_in":
             rc.zoom_in()
             response = {"result":"zoomed_in"}
+        elif request["action"] == "init_location":
+            rc.init_location()
+            response = {"result":"success"}
         elif request["action"] == "zoom_out":
             rc.zoom_out()
             response = {"result":"zoomed_out"}
