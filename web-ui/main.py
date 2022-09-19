@@ -203,10 +203,10 @@ def reset(id):
     response = send_camera_request(json.dumps({"reset":id, id: value }))
     return response 
 
-@app.route("/garmin" , methods = ['GET'])
+@app.route("/garmin_init" , methods = ['GET'])
 def garmin():
     print("Request from garmin watch")
-    response = send_camera_request(json.dumps({"request":"status"}))
+    response = send_camera_request(json.dumps({"request":"controls"}))
     resp = make_response(response)
     resp.mimetype = 'application/json; charset=utf-8'
     return resp
