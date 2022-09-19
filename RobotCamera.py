@@ -453,6 +453,10 @@ def handle_request(request, rc):
         if request["request"] == "status":
             response = {"status":rc.controller.get_grbl_status(), "last_update":rc.controller.get_lastUpdateTime(),"work_pos":rc.controller.work_position_str(),"machine_pos":rc.controller.machine_position_str(),"gimbal_tilt_reading":rc.extra_controls.x_angle }
         elif request["request"] == "controls":
+            if (rc.MOVE_TOGGLE == rc.MOVE_TIME):
+                move_mode=True
+            else:
+                move_mode=False
             response = {"toggles":
                 {"recording":
                     {"url":"/toggle/record_switch",
@@ -470,7 +474,7 @@ def handle_request(request, rc):
                     {"url":"/toggle/moveby_switch",
                     "enabled_text":"Time",
                     "disabled_text":"Feed",
-                    "state":rc.MOVE_TOGGLE
+                    "state":move_mode
                     }
                 }, 
             "actions":
