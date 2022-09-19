@@ -467,7 +467,13 @@ def handle_request(request, rc):
                     }
                 }, 
             "actions":
-                {"move_random":"/move_to_random_waypoint"}}
+                {"move_random":
+                    {"url":"/move_to_random_waypoint",
+                    "Header":"Move",
+                    "SubHeader":"Random"
+                    }
+                }
+            }
         elif request["request"] == "savepoints":
             response = {"savepoint_1": rc.save_position_1.location_str(),"savepoint_2": rc.save_position_2.location_str(),"savepoint_3": rc.save_position_3.location_str(),"savepoint_4": rc.save_position_4.location_str()}
         elif request["request"] == "toggles":
