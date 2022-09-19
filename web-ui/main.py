@@ -204,7 +204,7 @@ def reset(id):
     return response 
 
 @app.route("/init_location" , methods = ['POST'])
-def garmin():
+def init_location():
     print("initialise camera position")
     response = send_camera_request(json.dumps({"action":"init_location"}))
     return response
