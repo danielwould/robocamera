@@ -452,7 +452,22 @@ def handle_request(request, rc):
         if request["request"] == "status":
             response = {"status":rc.controller.get_grbl_status(), "last_update":rc.controller.get_lastUpdateTime(),"work_pos":rc.controller.work_position_str(),"machine_pos":rc.controller.machine_position_str(),"gimbal_tilt_reading":rc.extra_controls.x_angle }
         elif request["request"] == "controls":
-            response = {"toggles":{"recording":"/toggle/record_switch","tracking":"/toggle/tracking_switch"}, "controls":{"move_random":"/move_to_random_waypoint"}}
+            response = {"toggles":
+                {"recording":
+                    {"url":"/toggle/record_switch",
+                    "enabled_text":"Recording",
+                    "disabled_text":"stopped",
+                    "state":rc.extra_controls.recording
+                    }
+                ,"tracking":
+                    {"url":"/toggle/tracking_switch",
+                    "enabled_text":"Tracking",
+                    "disabled_text":"stopped",
+                    "state":rc.TRACKING
+                    }
+                }, 
+            "actions":
+                {"move_random":"/move_to_random_waypoint"}}
         elif request["request"] == "savepoints":
             response = {"savepoint_1": rc.save_position_1.location_str(),"savepoint_2": rc.save_position_2.location_str(),"savepoint_3": rc.save_position_3.location_str(),"savepoint_4": rc.save_position_4.location_str()}
         elif request["request"] == "toggles":
