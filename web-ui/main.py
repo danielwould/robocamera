@@ -178,7 +178,10 @@ def moveto_waypoint():
 
 @app.route("/move_to/<id>" , methods = ['POST'])
 def move_to(id):
-    response=send_camera_request(json.dumps({"action":"movepoint","waypoint_id":id}))
+    if id.isnumeric():
+        response=send_camera_request(json.dumps({"action":"movepoint","waypoint_id":int(id)}))
+    else:
+        respone="Invalid id"
     return response
 
 @app.route("/move_to_random_waypoint" , methods = ['POST'])
