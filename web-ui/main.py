@@ -176,6 +176,11 @@ def moveto_waypoint():
     response = send_camera_request(json.dumps({"action":"movepoint","waypoint_id":id}))
     return response
 
+@app.route("/move_to/<id>" , methods = ['POST'])
+def move_to(id):
+    response=send_camera_request(json.dumps({"action":"movepoint","waypoint_id":id}))
+    return response
+
 @app.route("/move_to_random_waypoint" , methods = ['POST'])
 def moveto_random_waypoint():
     response = send_camera_request(json.dumps({"action":"waypoint_random"}))
