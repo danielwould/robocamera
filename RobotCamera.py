@@ -491,11 +491,13 @@ def handle_request(request, rc):
                 }
             }
             for wp in rc.sequence_steps.waypoints:
-                response['actions'].append({"move_waypoint":
+                templist = response['actions']
+                templist.extend({"move_waypoint":
                     {"url":"/move_to/{}".format(wp.id),
                     "Header":"Move",
                     "SubHeader": "Waypint-{}".format(wp.id)
                     }})
+                response['actions'] = templist
         elif request["request"] == "savepoints":
             response = {"savepoint_1": rc.save_position_1.location_str(),"savepoint_2": rc.save_position_2.location_str(),"savepoint_3": rc.save_position_3.location_str(),"savepoint_4": rc.save_position_4.location_str()}
         elif request["request"] == "toggles":
