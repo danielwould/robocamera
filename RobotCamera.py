@@ -492,7 +492,7 @@ def handle_request(request, rc):
             }
             for wp in rc.sequence_steps.waypoints:
                 templist = response['actions']
-                templist.extend({"move_waypoint":
+                templist.update({"move_waypoint{}".format(wp.id):
                     {"url":"/move_to/{}".format(wp.id),
                     "Header":"Move",
                     "SubHeader": "Waypint-{}".format(wp.id)
