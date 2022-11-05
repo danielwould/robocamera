@@ -272,8 +272,8 @@ if sys.platform == "win32":
     context.load_verify_locations('c:/code/certs/ca_bundle.crt')
     context.load_cert_chain('c:/code/certs/certificate.crt', 'c:/code/certs/private.key')
 else:
-    context.load_verify_locations('/home/d.would@orbis.co.uk/code/certs/ca_bundle.crt')
-    context.load_cert_chain('/home/d.would@orbis.co.uk/code/certs/certificate.crt', '/home/d.would@orbis.co.uk/code/certs/private.key')
+    context.load_verify_locations('/etc/letsencrypt/live/camera.makergeek.co.uk/fullchain.pem')
+    context.load_cert_chain('/etc/letsencrypt/live/camera.makergeek.co.uk/fullchain.pem', '/etc/letsencrypt/live/camera.makergeek.co.uk/privkey.pem')
 
     BACKEND_HOST=HOST
 app.run(host=HOST, port=8080, debug=True, ssl_context=context )
