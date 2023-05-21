@@ -265,18 +265,18 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static/images'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+#ontext = ssl.SSLContext()
 HOST=get_ip()
 if sys.platform == "win32":
     BACKEND_HOST="192.168.86.40" #192.168.86.40 is surface
-    context.load_verify_locations('c:/code/certs/ca_bundle.crt')
-    context.load_cert_chain('c:/code/certs/certificate.crt', 'c:/code/certs/private.key')
+#    context.load_verify_locations('c:/code/certs/ca_bundle.crt')
+#    context.load_cert_chain('c:/code/certs/certificate.crt', 'c:/code/certs/private.key')
 else:
-    context.load_verify_locations('/etc/letsencrypt/live/camera.makergeek.co.uk/fullchain.pem')
-    context.load_cert_chain('/etc/letsencrypt/live/camera.makergeek.co.uk/fullchain.pem', '/etc/letsencrypt/live/camera.makergeek.co.uk/privkey.pem')
+#    context.load_verify_locations('/etc/letsencrypt/live/camera.makergeek.co.uk/fullchain.pem')
+#    context.load_cert_chain('/etc/letsencrypt/live/camera.makergeek.co.uk/fullchain.pem', '/etc/letsencrypt/live/camera.makergeek.co.uk/privkey.pem')
 
     BACKEND_HOST=HOST
-app.run(host=HOST, port=8080, debug=True, ssl_context=context )
+app.run(host=HOST, port=8080, debug=True)
 
 
 

@@ -4,7 +4,7 @@ import argparse
 import datetime
 import imutils
 import time
-import cv2
+import cv2 as cv
 import threading
 
 
@@ -32,7 +32,10 @@ class aruco_tracker:
         self.vs = VideoStream(src=2,resolution=(1280,720)).start()
         #vs = VideoStream(usePiCamera=True).start()
         time.sleep(2.0)
-        self.arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_5X5_100)
+        self.arucoDict = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_5X5_100)
+        self.arucoParams =  cv.aruco.DetectorParameters()
+        self.detector = cv.aruco.ArucoDetector(self.arucoDict, self.arucoParams)
+
         
     def render_tracker(self, status):
         self.render_window = status
@@ -111,8 +114,9 @@ class aruco_tracker:
             image = imutils.rotate(frame,180)
             #image = imutils.resize(image, width=800)
             # find the barcodes in the frame and decode each of the barcodes
-            arucoParams = cv2.aruco.DetectorParameters_create()
-            (corners, ids, rejected) = cv2.aruco.detectMarkers(image, self.arucoDict,parameters=arucoParams)
+            #arucoParams = cv2.aruco.DetectorParameters_create()
+            
+            (corners, ids, rejected) = self.detector.detectMarkers(image)
             # verify *at least* one ArUco marker was detected
             if len(corners) > 0:
                 # flatten the ArUco IDs list
