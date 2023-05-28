@@ -426,11 +426,11 @@ def camera_server():
                         request = json.loads(data)
                         resp_message = handle_request(request, rc)
                         #send response
-                        #if isHtml:
-                        httpresp="HTTP/1.0 200 OK\n\n"+json.dumps(resp_message)
-                        response(sock,httpresp)
-                        #else:
-                        #    response(sock,json.dumps(resp_message))
+                        if isHtml:
+                            httpresp="HTTP/1.0 200 OK\n\n"+json.dumps(resp_message)
+                            response(sock,httpresp)
+                        else:
+                            response(sock,json.dumps(resp_message))
                     else:
                         # remove the socket that's broken    
                         if sock in SOCKET_LIST:

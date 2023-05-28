@@ -252,7 +252,7 @@ def send_camera_request(request_message):
 
             data = sock.recv(4096)
             if not data :
-                print('\nDisconnected from chat server')
+                print('\nDisconnected server')
                 return ""
             else :
                 print (data)
