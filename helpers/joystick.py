@@ -71,99 +71,106 @@ class Joystick():
                         if axis_num == 3:
                             #self.crane_inst.tilt_jog(axis)
                             bjog=axis
-                    
-                #combined jog
-                #
-                if ( (xjog != 0)| (yjog != 0) | (ajog!= 0) | (bjog != 0) ):
-                    self.parent.first_move=True
-                    self.joystick_moving=True
-                    self.parent.tracker.set_static_tracking(False)
-                    self.control_last_toggled = time.time()
-                    if ((self.parent.TRACKING == True) & ((xjog==0) & (yjog==0)) ):
-                        #if we're tracking allow tracking input to joystick jog
-                        (trackingxjog, trackingyjog) = self.parent.tracker.get_jogmultipliers()
-                        print("adjusting jog with tracking deltas x{} y{}".format(trackingxjog,trackingyjog))
-                        self.parent.controller.jog(trackingxjog,trackingyjog,ajog,bjog)   
-                    else: 
-                        self.parent.controller.jog(xjog,yjog,ajog,bjog)             
-                else:
-                    if (self.joystick_moving ==True):
-                        self.parent.controller.jog_cancel()
-                        self.joystick_moving=False
-
-                if (time.time()-control_last_toggled > 0.5):
-                    self.parent.tracker.set_static_tracking(True)
- 
-                buttons = joystick.get_numbuttons()
-                if time.time() - last_command_sent_at > 0.2:
-                            
+                
+                #I'm getting phantom controls that drop the tilt axis when the controller goes into sleep mode.
+                #to counter act this I'm going to try and prevent any actions after 30 seconds of inactivity without explit press of the start button
+                if (time.time()-control_last_toggled > 30):
+                    buttons = joystick.get_numbuttons()
                     for button_num in range(buttons):
-                        button = joystick.get_button(button_num)
-                        if button_num == 0:
-
-                            if button == 1:
-                                # save position 1 when prssing
-                                self.parent.save_position(0)
-                        if button_num == 1:
-                            if button == 1:
-                                self.parent.save_position(1)
-                        if button_num == 2:
-                            if button == 1:
-                                self.parent.save_position(2)
-                        if button_num == 3:
-                            if button == 1:
-                                self.parent.save_position(3)
-                        if button_num == 4:
-                            if button == 1:
-                                self.parent.save_point_move(0)
-                                last_command_sent_at=time.time()                        
-                        if button_num == 5:
-                            if button == 1:
-                                self.parent.save_point_move(1)
-                                last_command_sent_at=time.time()
-                        if button_num == 6:
-                            if button == 1:
-                                self.parent.save_point_move(2)
-                                last_command_sent_at=time.time()
-                        if button_num == 7:
-                            if button == 1:
-                                self.parent.save_point_move(3)
-                                last_command_sent_at=time.time()
-                        if button_num == 8:
-                            if button == 1:
-                                # the reset button first for down and up, we only want to register on down
-                                if event.type == pygame.JOYBUTTONDOWN:
-                                    if time.time() - control_last_toggled > 0.5:
-                                        if self.parent.MOVE_TOGGLE == self.parent.MOVE_TIME:
-                                            self.parent.toggle_move_mode(self.parent.FEED_RATE)
-                                            control_last_toggled = time.time()
-                                        elif self.parent.MOVE_TOGGLE == self.parent.FEED_RATE:
-                                            self.parent.toggle_move_mode(self.parent.MOVE_TIME)
-                                            control_last_toggled = time.time()
-
                         if button_num == 9:
                             if button == 1:
-                                if (time.time() - last_command_sent_at) >0.5:
-                                    self.parent.trigger_whole_sequence()
+                                print("unlocking controller after sleep")
+                                last_command_sent_at=time.time()
+                else:
+                    #combined jog
+                    #
+
+                    if ( (xjog != 0)| (yjog != 0) | (ajog!= 0) | (bjog != 0) ):
+                        self.parent.first_move=True
+                        self.joystick_moving=True
+                        self.parent.tracker.set_static_tracking(False)
+                        self.control_last_toggled = time.time()
+                        if ((self.parent.TRACKING == True) & ((xjog==0) & (yjog==0)) ):
+                            #if we're tracking allow tracking input to joystick jog
+                            (trackingxjog, trackingyjog) = self.parent.tracker.get_jogmultipliers()
+                            print("adjusting jog with tracking deltas x{} y{}".format(trackingxjog,trackingyjog))
+                            self.parent.controller.jog(trackingxjog,trackingyjog,ajog,bjog)   
+                        else: 
+                            self.parent.controller.jog(xjog,yjog,ajog,bjog)             
+                    else:
+                        if (self.joystick_moving ==True):
+                            self.parent.controller.jog_cancel()
+                            self.joystick_moving=False
+
+                    if (time.time()-control_last_toggled > 0.5):
+                        self.parent.tracker.set_static_tracking(True)
+    
+                    buttons = joystick.get_numbuttons()
+                    if time.time() - last_command_sent_at > 0.2:
+                                
+                        for button_num in range(buttons):
+                            button = joystick.get_button(button_num)
+                            if button_num == 0:
+
+                                if button == 1:
+                                    # save position 1 when prssing
+                                    self.parent.save_position(0)
+                            if button_num == 1:
+                                if button == 1:
+                                    self.parent.save_position(1)
+                            if button_num == 2:
+                                if button == 1:
+                                    self.parent.save_position(2)
+                            if button_num == 3:
+                                if button == 1:
+                                    self.parent.save_position(3)
+                            if button_num == 4:
+                                if button == 1:
+                                    self.parent.save_point_move(0)
+                                    last_command_sent_at=time.time()                        
+                            if button_num == 5:
+                                if button == 1:
+                                    self.parent.save_point_move(1)
                                     last_command_sent_at=time.time()
+                            if button_num == 6:
+                                if button == 1:
+                                    self.parent.save_point_move(2)
+                                    last_command_sent_at=time.time()
+                            if button_num == 7:
+                                if button == 1:
+                                    self.parent.save_point_move(3)
+                                    last_command_sent_at=time.time()
+                            if button_num == 8:
+                                if button == 1:
+                                    # the reset button first for down and up, we only want to register on down
+                                    if event.type == pygame.JOYBUTTONDOWN:
+                                        if time.time() - control_last_toggled > 0.5:
+                                            self.parent.toggle_video()
+                                                
 
-                hats = joystick.get_numhats()
+                            if button_num == 9:
+                                if button == 1:
+                                    if (time.time() - last_command_sent_at) >0.5:
+                                        self.parent.trigger_whole_sequence()
+                                        last_command_sent_at=time.time()
 
-                # Hat position. All or nothing for direction, not a float like
-                # get_axis(). Position is a tuple of int values (x, y).
-                if time.time() - self.gimbal_inst.last_command_sent_at > 0.2:
-                    for hat_num in range(hats):
-                        hat = joystick.get_hat(hat_num)
-                        # text_print.tprint(screen, "Hat {} value: {}".format(i, str(hat)))
-                        # print "Hat {} value: {}".format(i, str(hat))
-                        if hat[0] == 1:
-                            self.gimbal_inst.zoom_in_large()
-                        if hat[0] == -1:
-                            self.gimbal_inst.zoom_out_large()
-                        if hat[1] == -1:
-                            self.gimbal_inst.zoom_in_small()
-                        if hat[1] == 1:
-                            self.gimbal_inst.zoom_out_small()
+                    hats = joystick.get_numhats()
+
+                    # Hat position. All or nothing for direction, not a float like
+                    # get_axis(). Position is a tuple of int values (x, y).
+                    if time.time() - self.gimbal_inst.last_command_sent_at > 0.2:
+                        for hat_num in range(hats):
+                            hat = joystick.get_hat(hat_num)
+                            # text_print.tprint(screen, "Hat {} value: {}".format(i, str(hat)))
+                            # print "Hat {} value: {}".format(i, str(hat))
+                            if hat[0] == 1:
+                                self.gimbal_inst.zoom_in_large()
+                            if hat[0] == -1:
+                                self.gimbal_inst.zoom_out_large()
+                            if hat[1] == -1:
+                                self.gimbal_inst.zoom_in_small()
+                            if hat[1] == 1:
+                                self.gimbal_inst.zoom_out_small()
 
 
         # stop handling joysticks
