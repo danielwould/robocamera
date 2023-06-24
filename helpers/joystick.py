@@ -22,7 +22,7 @@ class Joystick():
 
     def main(self):
         
-        control_last_toggled = time.time()
+        last_record_toggle= time.time()
         last_command_sent_at = time.time()
         # Loop until the user clicks the close button.
         
@@ -43,7 +43,7 @@ class Joystick():
             joystick_count = pygame.joystick.get_count()
             for event in pygame.event.get():
                 if event.type == pygame.JOYBUTTONDOWN:
-                    print ("Joystick button pressed")
+                    print ("Joystick input - button")
 
             # For each joystick:
             for joystick_num in range(joystick_count):
@@ -147,10 +147,11 @@ class Joystick():
                                 if button == 1:
                                     # the reset button first for down and up, we only want to register on down
                                     if event.type == pygame.JOYBUTTONDOWN:
-                                        if time.time() - last_command_sent_at > 10:
+                                        if time.time() - last_record_toggle > 10:
+                                            print("toggle Video")
                                             self.parent.toggle_video()
-                                            last_command_send_at = time.time()
-                                                
+                                            last_record_toggle = time.time()
+                                              
 
                             if button_num == 9:
                                 if button == 1:
