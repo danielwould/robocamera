@@ -74,9 +74,11 @@ class Joystick():
                 
                 #I'm getting phantom controls that drop the tilt axis when the controller goes into sleep mode.
                 #to counter act this I'm going to try and prevent any actions after 30 seconds of inactivity without explit press of the start button
-                if (time.time()-control_last_toggled > 30):
+                if (time.time()-last_command_sent_at > 30):
                     buttons = joystick.get_numbuttons()
                     for button_num in range(buttons):
+                        button = joystick.get_button(button_num)
+                            
                         if button_num == 9:
                             if button == 1:
                                 print("unlocking controller after sleep")
@@ -90,6 +92,7 @@ class Joystick():
                         self.joystick_moving=True
                         self.parent.tracker.set_static_tracking(False)
                         self.control_last_toggled = time.time()
+                        last_command_sent_at = time.time()
                         if ((self.parent.TRACKING == True) & ((xjog==0) & (yjog==0)) ):
                             #if we're tracking allow tracking input to joystick jog
                             (trackingxjog, trackingyjog) = self.parent.tracker.get_jogmultipliers()
@@ -102,7 +105,7 @@ class Joystick():
                             self.parent.controller.jog_cancel()
                             self.joystick_moving=False
 
-                    if (time.time()-control_last_toggled > 0.5):
+                    if (time.time()-last_command_sent_at > 0.5):
                         self.parent.tracker.set_static_tracking(True)
     
                     buttons = joystick.get_numbuttons()
@@ -144,8 +147,9 @@ class Joystick():
                                 if button == 1:
                                     # the reset button first for down and up, we only want to register on down
                                     if event.type == pygame.JOYBUTTONDOWN:
-                                        if time.time() - control_last_toggled > 0.5:
+                                        if time.time() - last_command_sent_at > 10:
                                             self.parent.toggle_video()
+                                            last_command_send_at = time.time()
                                                 
 
                             if button_num == 9:
