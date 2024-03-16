@@ -186,11 +186,12 @@ class grbl_controller:
     gimbal_pan_min_locked=False
     gimbal_pan_max_locked=False
     gimbal_tilt_pot_reading=0
-    z_min=0.0
+    z_current=0
+    z_min=0
     z_min_locked=False
-    z_max=0.0
+    z_max=180
     z_max_locked=False
-    z_medium=0.0
+    z_medium=80
 
     #in order for dynamic axis limits to work we need to know not to build up a queue of jogs
     #that would lead to breaching the marked limit
@@ -251,7 +252,9 @@ class grbl_controller:
         self.logger.addHandler(hdlr) 
         self.logger.setLevel(logging.INFO)
         
-        
+    def set_extras_controller(self,controller):
+        self.extras_controller=controller
+
 
     def set_device(self, device, baudrate, name):
         self.serial_device = device
@@ -414,16 +417,13 @@ class grbl_controller:
         self.z_medium = self.mcontrol.cnc_obj.vars["wz"]
 
     def zoom_full_out(self):
-        if (self.z_min is not None):
-            self.absolute_move(self.mcontrol.cnc_obj.vars["wx"],self.mcontrol.cnc_obj.vars["wy"],self.z_min,self.mcontrol.cnc_obj.vars["wa"],self.mcontrol.cnc_obj.vars["wb"],self.get_feed_speed(),0)
+        self.extras_controller.set_zoom(0)
 
     def zoom_full_in(self):
-        if (self.z_max is not None):
-            self.absolute_move(self.mcontrol.cnc_obj.vars["wx"],self.mcontrol.cnc_obj.vars["wy"],self.z_max,self.mcontrol.cnc_obj.vars["wa"],self.mcontrol.cnc_obj.vars["wb"],self.get_feed_speed(),0)
-
+        self.extras_controller.set_zoom(180)
+    
     def zoom_medium(self):
-        if (self.z_medium is not None):
-            self.absolute_move(self.mcontrol.cnc_obj.vars["wx"],self.mcontrol.cnc_obj.vars["wy"],self.z_medium,self.mcontrol.cnc_obj.vars["wa"],self.mcontrol.cnc_obj.vars["wb"],self.get_feed_speed(),0)
+        self.set_zoom(80)
 
     def auto_level_gimbal(self):
         if self.gimbal_tilt_pot_reading !=0:
@@ -441,15 +441,14 @@ class grbl_controller:
         jogStep = self.current_feed_speed / 600;
         jogStep = jogStep*multiplier
         if (axis == "z"):
-            if (self.z_max_locked):
-                #current setup has z -negative moves zooming in
-                if (jogStep+self.instructed_z_pos <= self.z_max):
-                    self.logger.info("detected zoom in too far command")
-                    return
-            if (self.z_min_locked):
-                if (jogStep+self.instructed_z_pos >= self.z_min):
-                    self.logger.info("detected zoom out too far command")
-                    return
+            if (multiplier>0):
+                if (self.z_current<180-multiplier):
+                    self.z_current=self.z_current+multiplier
+                    
+            else:
+                if( self.z_current>0-multiplier):
+                    self.z_current= self.z_current+multiplier
+            self.extras_controller.set_zoom(self.z_current)
         else:
             print("relative move called for not z axis")
         if (self.buffer_length==0):
@@ -560,6 +559,7 @@ class grbl_controller:
         self.logMoves(True)
         self.sendGCode("g90")
         self.sendGCode("g94")
+        self.extras_controller.set_zoom(z)
         self.sendGCode("g1 x{} y{} z{} a{} b{} f{}".format(x, y, z, a,b,feedrate))
         self.set_instructed_position(x,y,z,a,b)
         

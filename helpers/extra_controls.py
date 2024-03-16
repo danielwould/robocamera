@@ -54,7 +54,12 @@ class extra_controller:
         else:
             self.recording=False
         self.logger.info("requesting video record toggle")
-        self.queue.put("r")
+        self.queue.put("ToggleVideo")
+ 
+    def set_zoom(self, zoom_val):
+        
+        self.logger.info(f"requesting zoom value {zoom_val}")
+        self.queue.put(f"Zoom:{zoom_val}")
 
     def serial_write(self, data):
         ret = self.serial.write(bytes(data, encoding="utf-8"))

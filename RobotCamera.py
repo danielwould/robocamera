@@ -99,10 +99,11 @@ class RobotCamera():
         self.crane_inst.set_big_step_tilt(10)
         #self.controller.reset()
         self.extra_controls.set_controller(self.controller)
+        self.controller.set_extras_controller(self.extra_controls)
         self.tracker = aruco_tracker(self.controller,self)
         self.tracker.initialise_video()
-        time.sleep(1)
-        self.controller.auto_level_gimbal()
+        #time.sleep(1)
+        #self.controller.auto_level_gimbal()
 
 
 
